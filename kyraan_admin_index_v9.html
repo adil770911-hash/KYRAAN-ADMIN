@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101010">
+<title>KYRAAN — Администратор</title>
+<style>
+:root{--bg:#101010;--panel:#1b1b1b;--panel2:#222;--line:#333;--text:#f4f4f4;--muted:#aaa;--gold:#f5a623;--green:#20b477;--red:#e45d5d;--blue:#6aa8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#151515;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:800;letter-spacing:.5px}.brand span{color:var(--gold)}.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.status{font-size:11px;border:1px solid #795b27;color:#ffd27a;padding:6px 9px;border-radius:20px;white-space:nowrap}
+.layout{display:flex;max-width:1400px;margin:auto;min-height:calc(100vh - 65px)}
+nav{width:230px;flex-shrink:0;padding:16px 10px;border-right:1px solid var(--line);background:#141414}
+nav button{display:block;width:100%;text-align:left;background:transparent;color:#ccc;border:0;padding:12px;border-radius:9px;margin:3px 0;font-size:14px}
+nav button.active,nav button:hover{background:#2a2419;color:#ffd27a}
+main{padding:20px;width:100%;min-width:0}.page{display:none}.page.active{display:block}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 10px}
+.muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:14px}
+.metric{font-size:27px;font-weight:800;margin-top:8px}.metric.gold{color:var(--gold)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+button,.btn{cursor:pointer}.primary,.secondary,.danger{border:0;border-radius:8px;padding:10px 13px;font-weight:700}
+.primary{background:var(--gold);color:#171717}.secondary{background:#333;color:#eee;border:1px solid #484848}.danger{background:#492727;color:#ffb0b0;border:1px solid #743b3b}
+input,select,textarea{width:100%;background:#111;color:#eee;border:1px solid #444;border-radius:8px;padding:11px;margin:6px 0 12px;font:inherit}
+label{font-size:13px;color:#ccc;display:block}textarea{min-height:75px;resize:vertical}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:#aaa;font-weight:600}
+.tablewrap{overflow-x:auto}.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;background:#333;color:#ddd}.pill.wait{background:#49391c;color:#ffd27a}.pill.ok{background:#173d30;color:#8be0bb}.pill.block{background:#482727;color:#ffaaaa}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 9px;font-size:12px}
+.notice{border-left:3px solid var(--gold);padding:10px 12px;background:#282216;border-radius:5px;color:#e8d4ad;font-size:13px;margin:12px 0}
+.qrbox{border:1px dashed #666;border-radius:10px;min-height:135px;display:flex;align-items:center;justify-content:center;color:#999;background:#151515;text-align:center;padding:12px}
+.small{font-size:12px;color:var(--muted)}.hidden{display:none!important}
+.mobilebar{display:none}
+@media(max-width:800px){.layout{display:block}nav{width:100%;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:7px}nav button{white-space:nowrap;width:auto;margin:0 3px;padding:10px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:14px}.formgrid{grid-template-columns:1fr}header{padding:12px}.status{font-size:10px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">KYRAAN <span>ADMIN</span></div><div class="sub">Панель управления платформой</div></div><div class="status">ИНТЕРФЕЙС · BACKEND НЕ ПОДКЛЮЧЁН</div></header>
+<div class="layout">
+<nav id="nav">
+<button class="active" data-page="overview">▦ Обзор</button>
+<button data-page="executors">♙ Исполнители</button>
+<button data-page="orders">▣ Заказы</button>
+<button data-page="ads">▤ Объявления</button>
+<button data-page="payments">₸ Оплаты и чеки</button>
+<button data-page="qr">▦ QR-коды</button>
+<button data-page="dispatch">◎ Диспетчеризация</button>
+<button data-page="catalog">☷ Каталог</button>
+<button data-page="logs">≡ Журнал</button>
+</nav>
+<main>
+<section class="page active" id="overview">
+<h1>Обзор</h1><div class="muted">Сводка панели KYRAAN</div>
+<div class="notice">Это рабочий макет интерфейса в браузере. Данные сохраняются только в текущей вкладке/локальном браузере. Серверная авторизация, общая база данных и реальные действия ещё не подключены.</div>
+<div class="grid">
+<div class="card"><div class="muted">Исполнители</div><div class="metric" id="mTotal">0</div></div>
+<div class="card"><div class="muted">Ожидают проверки</div><div class="metric gold" id="mPending">0</div></div>
+<div class="card"><div class="muted">Активные заказы</div><div class="metric" id="mOrders">0</div></div>
+<div class="card"><div class="muted">Чеки на проверке</div><div class="metric gold" id="mReceipts">0</div></div>
+</div>
+<div class="card"><h2>Быстрые действия</h2><div class="actions"><button class="primary" onclick="showPage('executors')">Проверить заявки</button><button class="secondary" onclick="showPage('payments')">Проверить чеки</button><button class="secondary" onclick="showPage('dispatch')">Настроить волны</button></div></div>
+<div class="card"><h2>Зафиксированные правила</h2><ul class="muted"><li>Администратор вручную добавляет исполнителей, вручную одобряет или отклоняет заявки и может удалять профили.</li><li>Допуск исполнителя — только после ручного одобрения.</li><li>Уникальный ID выдаётся после одобрения.</li><li>Один профиль — одна деятельность.</li><li>PIN прибытия применяется только для бытовых услуг и проверяется сервером.</li><li>Межгород-такси и разнорабочие — объявления, а не заказная диспетчеризация.</li><li>Для 11 заказных направлений рейтинг: старт 15; пропуск заказа −2; выполненный заказ +1; пределы 5–15. Очерёдность назначения — только по расстоянию, рейтинг её не меняет.</li></ul></div>
+</section>
+
+<section class="page" id="monitoring">
+<h1>Мониторинг KYRAAN</h1>
+<div class="muted">Состояние исполнителей по всем направлениям</div>
+<div class="notice">Сейчас показатели рассчитываются только по профилям, добавленным в этом браузере. Реальные данные в реальном времени появятся после подключения Supabase Auth, общей базы данных и серверного обновления статусов.</div>
+<div class="grid">
+<div class="card"><div class="muted">Всего зарегистрировано</div><div class="metric" id="monTotal">0</div></div>
+<div class="card"><div class="muted">На линии</div><div class="metric" style="color:#20b477" id="monOnline">0</div></div>
+<div class="card"><div class="muted">На заказе</div><div class="metric gold" id="monBusy">0</div></div>
+<div class="card"><div class="muted">Не в сети</div><div class="metric" id="monOffline">0</div></div>
+<div class="card"><div class="muted">Ожидают одобрения</div><div class="metric" id="monPending">0</div></div>
+<div class="card"><div class="muted">Заблокированы</div><div class="metric" id="monBlocked">0</div></div>
+<div class="card"><div class="muted">Заказов поступило сегодня</div><div class="metric" id="monReceived">—</div></div>
+<div class="card"><div class="muted">Заказов выполнено сегодня</div><div class="metric" id="monCompleted">—</div></div>
+</div>
+<div class="card"><div class="row"><h2>По направлениям</h2><span class="small">Количество профилей</span></div><div class="tablewrap"><table><thead><tr><th>Направление</th><th>Всего</th><th>На линии</th><th>На заказе</th><th>Не в сети</th></tr></thead><tbody id="monitorCategoryRows"></tbody></table></div></div>
+<div class="card"><h2>Состояние исполнителей</h2><div class="tablewrap"><table><thead><tr><th>Исполнитель</th><th>Направление</th><th>Статус</th><th>Присутствие</th></tr></thead><tbody id="monitorPeopleRows"></tbody></table></div></div>
+<div class="small">«На линии» и «На заказе» — разные состояния. Исполнитель на заказе учитывается отдельно и не должен одновременно считаться свободным на линии.</div>
+</section>
+
+<section class="page" id="executors">
+<div class="row"><div><h1>Исполнители</h1><div class="muted">Ручная проверка, допуск и управление профилями</div></div><button class="primary" onclick="document.getElementById('addForm').classList.toggle('hidden')">＋ Добавить исполнителя вручную</button></div>
+<div class="card hidden" id="addForm"><h2>Добавить исполнителя вручную</h2><div class="notice">Администратор вручную добавляет профиль, выбирает одно направление и контролирует его статус. В рабочей версии исполнитель получит доступ только после серверного оформления и назначения уникального ID.</div><div class="formgrid"><div><label>Имя / название</label><input id="newName" placeholder="Имя исполнителя"></div><div><label>Телефон / WhatsApp</label><input id="newPhone" placeholder="+996..."></div><div><label>Email</label><input id="newEmail" placeholder="email@example.com"></div><div><label>Направление</label><select id="newCategory" onchange="updateTransportOptions()"></select></div><div id="transportVariantWrap" class="hidden"><label>Точный вариант транспорта</label><select id="newVariant"></select></div></div><button class="primary" onclick="addExecutor()">Добавить в список</button></div>
+<div class="card hidden" id="profileEditCard"><div class="row"><h2>Редактирование профиля</h2><button class="secondary" onclick="closeProfileEdit()">Закрыть</button></div><input type="hidden" id="editKey"><div class="formgrid"><div><label>Имя / название</label><input id="editName"></div><div><label>Телефон / WhatsApp</label><input id="editPhone"></div><div><label>Email</label><input id="editEmail"></div><div><label>Направление</label><select id="editCategory" disabled></select></div><div id="editVariantWrap"><label>Вариант транспорта</label><select id="editVariant" disabled></select></div></div><div class="small">Изменение категории и транспортного варианта в рабочей системе — только после отдельного подтверждения администратора и сохранения на сервере.</div><button class="primary" onclick="saveExecEdit()">Сохранить изменения</button></div>
+<div class="card hidden" id="profileHistoryCard"><div class="row"><h2 id="historyTitle">История исполнителя</h2><button class="secondary" onclick="closeHistory()">Закрыть</button></div><div class="grid"><div class="card"><div class="muted">Записи истории</div><div class="metric" id="historyCount">0</div></div><div class="card"><div class="muted">Транзакции</div><div class="metric" id="historyTransactions">0</div></div></div><div class="tablewrap"><table><thead><tr><th>Дата / время</th><th>Тип события</th><th>Описание</th><th>Сумма</th><th>Статус</th></tr></thead><tbody id="historyRows"></tbody></table></div><div class="small">История в этой версии — локальный демонстрационный журнал действий. Полная хронология заказов, оплат, возвратов и чеков будет загружаться из серверной базы после подключения backend.</div></div>
+<div class="card"><div class="row"><h2>Список исполнителей</h2><select id="execFilter" style="max-width:210px;margin:0" onchange="renderExecutors()"><option value="">Все статусы</option><option value="Ожидает проверки">Ожидают проверки</option><option value="Одобрен">Одобрены</option><option value="Заблокирован">Заблокированы</option></select></div><div class="tablewrap"><table><thead><tr><th>Профиль</th><th>Направление</th><th>ID</th><th>Статус</th><th>Присутствие</th><th>Действия</th></tr></thead><tbody id="execRows"></tbody></table></div><div class="small">В макете одобрение и ID демонстрационные. В рабочей системе ID должен назначаться сервером после ручного решения администратора.</div></div>
+</section>
+
+<section class="page" id="orders">
+<h1>Заказы</h1><div class="muted">Контроль текущих заказов и статусов</div>
+<div class="card"><div class="notice">Реальные заказы появятся здесь только после подключения backend и диспетчерского API.</div><div class="tablewrap"><table><thead><tr><th>Номер</th><th>Категория</th><th>Клиент</th><th>Исполнитель</th><th>Статус</th></tr></thead><tbody id="orderRows"><tr><td colspan="5" class="muted">Нет подключённых заказов</td></tr></tbody></table></div></div>
+</section>
+
+<section class="page" id="ads">
+<h1>Объявления</h1><div class="muted">Межгород-такси и разнорабочие</div>
+<div class="card"><h2>Зафиксированные правила публикации</h2><ul class="muted"><li>После самостоятельной регистрации участник межгород-такси или разнорабочих может самостоятельно публиковать объявление — отдельное одобрение каждой публикации администратором не требуется.</li><li>Один участник / аккаунт может иметь только <b>одно активное объявление одновременно</b> в своём направлении.</li><li>В каждый момент у одного аккаунта может быть только одно активное объявление. После закрытия или удаления участник может публиковать следующее; число циклов публикации не ограничено в пределах оплаченного периода.</li><li>Бесплатные 30 дней отсчитываются строго от даты первой регистрации аккаунта и предоставляются один раз.</li><li>С 31-го дня — 100 сом за следующие 30 дней. Это оплата права аккаунта на публикацию, а не каждого объявления или звонка. Удаление, закрытие и повторная публикация не сбрасывают и не перезапускают срок.</li><li>Объявления доступны всем посетителям сайта и заказчикам без регистрации.</li><li><b>При каждом объявлении:</b> если заказчик звонит и исполнитель отвечает на звонок, объявление автоматически закрывается и снимается с публичной доски.</li><li>Нажатие кнопки «Позвонить» само по себе не закрывает объявление: закрытие происходит только после подтверждённого ответа исполнителя.</li><li>Если звонок не состоялся или исполнитель не ответил, объявление остаётся опубликованным.</li><li>Объявление межгород-такси автоматически снимается с публичной доски за одну минуту до времени отправления (например, отправление в 09:00 — снятие в 08:59).</li><li>После закрытия объявления по подтверждённому ответу или по времени отправления участник может разместить следующее объявление, соблюдая лимит одного активного объявления.</li><li>Правило автоматического закрытия после ответа применяется к объявлениям межгород-такси и разнорабочих.</li><li>Администратор может в любой момент удалить любое объявление и заблокировать или разблокировать участника.</li><li>Межгород-такси и разнорабочие не участвуют в заказной диспетчеризации и рейтинге исполнителей.</li></ul></div>
+<div class="card"><h2>Публикации</h2><div class="notice">Администратор может модерировать публикации и блокировать участников. Самостоятельная публикация после регистрации не требует ручного одобрения каждой записи. При подтверждённом ответе исполнителя на звонок объявление автоматически закрывается; один лишь клик по кнопке звонка его не закрывает.</div><div class="muted">Автоматическое определение факта ответа на звонок требует интеграции с телефонией/провайдером звонков и backend. В текущем HTML звонки не отслеживаются, поэтому автоматическое закрытие пока не работает.</div></div>
+</section>
+
+<section class="page" id="payments">
+<h1>Оплаты и чеки</h1><div class="muted">Проверка подтверждений и ручное управление статусами</div>
+<div class="grid"><div class="card"><div class="muted">Комиссия за выполненный заказ</div><div class="metric gold">100 сом</div></div><div class="card"><div class="muted">Срок оплаты</div><div class="metric">24 часа</div></div><div class="card"><div class="muted">Блокировка</div><div class="metric">5 дней</div></div><div class="card"><div class="muted">Рассмотрение после оплаты</div><div class="metric">до 2 дней</div></div></div>
+<div class="card"><h2>Модель оплаты заказов</h2><ol class="muted"><li>100 сом за каждый выполненный заказ.</li><li>Оплата в течение 24 часов после взятия заказа.</li><li>При просрочке — блокировка на 5 дней.</li><li>После 5 дней исполнитель может отправить оплату и чек, но автоматически в онлайн не возвращается.</li><li>Администратор проверяет чек и вручную разблокирует/включает исполнителя в срок до 2 дней.</li></ol></div>
+<div class="card"><h2>Чеки на проверку</h2><div class="tablewrap"><table><thead><tr><th>Исполнитель</th><th>Сумма</th><th>Файл</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="receiptRows"><tr><td colspan="5" class="muted">Нет чеков. Подключение загрузки и проверки требует backend.</td></tr></tbody></table></div></div>
+<div class="card"><h2>Объявления: срок аккаунта</h2><p class="muted">День 1 — дата первой регистрации. Дни 1–30 — бесплатно. С 31-го дня — 100 сом за следующие 30 дней. Срок не зависит от количества публикаций, звонков, удаления или повторного создания объявления.</p></div>
+<div class="card"><h2>Рейтинг исполнителей — 11 заказных направлений</h2><ul class="muted"><li>Начальный рейтинг: 15.</li><li>Пропущенный / не принятый заказ: −2.</li><li>Успешно выполненный заказ: +1.</li><li>Минимум: 5. Максимум: 15.</li><li>Очередь диспетчеризации определяется строго расстоянием; рейтинг не меняет порядок.</li><li>Межгород-такси и разнорабочие исключены из рейтинга.</li><li>Каждое изменение рейтинга должно записываться в историю на сервере: дата и время, причина, ID заказа и изменение балла.</li></ul><div class="notice">В этом HTML рейтинг показан как зафиксированное правило. Автоматический расчёт и неизменяемый журнал требуют backend.</div></div>
+</section>
+
+<section class="page" id="qr">
+<h1>QR-коды KYRAAN</h1><div class="muted">Администратор загружает два платёжных QR. Это QR владельца KYRAAN, не личные QR исполнителей.</div>
+<div class="notice">Настоящие платёжные реквизиты не предоставлены. Не используйте тестовые или выдуманные QR как реальные платёжные реквизиты.</div>
+<div class="formgrid">
+<div class="card"><h2>QR №1 — транспорт</h2><p class="muted">Грузоперевозки, эвакуаторы, манипуляторы</p><div class="qrbox" id="qrPreview1">QR №1 не загружен</div><label>Загрузить изображение QR №1</label><input type="file" accept="image/*" onchange="previewQR(event,1)"></div>
+<div class="card"><h2>QR №2 — бытовые услуги и объявления</h2><p class="muted">Бытовые услуги, межгород-такси, разнорабочие</p><div class="qrbox" id="qrPreview2">QR №2 не загружен</div><label>Загрузить изображение QR №2</label><input type="file" accept="image/*" onchange="previewQR(event,2)"></div>
+</div><div class="small">Предпросмотр действует только в этом браузере. Передача QR в кабинеты исполнителей появится после подключения backend и хранилища.</div>
+</section>
+
+<section class="page" id="dispatch">
+<h1>Диспетчеризация</h1><div class="muted">Настройки радиуса сигнала и времени ответа отдельно для каждой из 11 услуг</div>
+<div class="notice">Сохранение ниже — только локальная демонстрация. Реальные параметры должны храниться на сервере и применяться диспетчером.</div>
+<div class="card"><label>Категория услуги (11 направлений; объявления исключены)</label><select id="dispatchCategory"></select><div class="formgrid"><div><label>Первая волна — радиус от, км</label><input id="r1min" type="number" min="0" step="0.1" value="1"></div><div><label>Первая волна — радиус до, км</label><input id="r1max" type="number" min="0" step="0.1" value="1.5"></div><div><label>Время ответа первой волны, секунд</label><input id="t1" type="number" min="1" value="11"></div><div><label>Вторая волна — радиус до, км</label><input id="r2max" type="number" min="0" step="0.1" value="5"></div></div><button class="primary" onclick="saveDispatch()">Сохранить настройки в этом браузере</button><div id="dispatchMsg" class="small"></div></div>
+<div class="card"><h2>Зафиксированная логика</h2><ul class="muted"><li>Первый ближайший подходящий исполнитель получает заказ.</li><li>Если не принимает за 11 секунд, заказ переходит следующему по очереди.</li><li>Первая волна: 1–1,5 км.</li><li>Вторая волна: расширение от 1,5 до 5 км.</li><li>Детальные последующие волны и сортировка требуют отдельного согласования.</li><li>Радиус сигнала и время ответа настраиваются отдельно для каждой из 11 услуг и применяются к подходящим исполнителям этой услуги.</li><li>Межгород-такси (включая маршрут Бишкек—Ош) и разнорабочие не участвуют в этой диспетчеризации.</li></ul></div>
+</section>
+
+<section class="page" id="catalog">
+<h1>Каталог направлений</h1><div class="muted">13 закреплённых направлений KYRAAN</div>
+<div class="card"><h2>11 услуг</h2><ol class="muted"><li>Эвакуатор</li><li>Манипулятор</li><li>Грузоперевозки</li><li>Сантехник</li><li>Клининг</li><li>Сварщик</li><li>Электрик</li><li>Ремонт холодильников</li><li>Ремонт стиральных машин</li><li>Телемастер</li><li>Мастер на час</li></ol></div>
+<div class="card"><h2>2 направления объявлений</h2><ol class="muted"><li>Межгород такси</li><li>Разнорабочие</li></ol></div>
+<div class="card"><h2>Транспортные варианты — источник истины</h2><h3>Грузоперевозки — 9 вариантов</h3><ol class="muted"><li>Porter</li><li>Sprinter 1-скат</li><li>1-скатная будка (рефрижератор)</li><li>1-скатный бортовой</li><li>Sprinter 2-скат</li><li>2-скатная будка (рефрижератор)</li><li>2-скатный бортовой</li><li>Гигант бортовой</li><li>Гигант будка (рефрижератор)</li></ol><h3>Эвакуатор — 4 варианта</h3><ol class="muted"><li>Sprinter</li><li>Sprinter + прицеп</li><li>Atego</li><li>Atego + прицеп</li></ol><h3>Манипулятор — 4 варианта</h3><ol class="muted"><li>3 тонны — стрела 3 м</li><li>5 тонн — стрела 4 м</li><li>8 тонн — стрела 7 м</li><li>10 тонн — стрела 7 м</li></ol></div>
+</section>
+
+<section class="page" id="logs">
+<h1>Журнал действий</h1><div class="muted">Локальные действия этого макета</div><div class="card"><div id="logRows" class="muted">Пока нет действий.</div></div><div class="small">Это не серверный аудит-лог. Для производственной версии журнал должен быть неизменяемым и храниться на backend.</div>
+</section>
+</main></div>
+<script>
+const categories=["Эвакуатор","Манипулятор","Грузоперевозки","Сантехник","Клининг","Сварщик","Электрик","Ремонт холодильников","Ремонт стиральных машин","Телемастер","Мастер на час","Межгород такси","Разнорабочие"];
+let executors=[];let logs=[];let dispatch={};
+function $(id){return document.getElementById(id)}
+function showPage(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+function log(t){logs.unshift(new Date().toLocaleString("ru-RU")+" — "+t);$("logRows").innerHTML=logs.map(x=>"<div style='padding:8px 0;border-bottom:1px solid #333'>"+escapeHtml(x)+"</div>").join("")}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function refresh(){ $("mTotal").textContent=executors.length;$("mPending").textContent=executors.filter(x=>x.status==="Ожидает проверки").length;$("mOrders").textContent="—";$("mReceipts").textContent="—";renderExecutors();renderMonitoring()}
+function renderExecutors(){let f=$("execFilter").value;let arr=executors.filter(x=>!f||x.status===f);$("execRows").innerHTML=arr.length?arr.map(x=>`<tr><td><b>${escapeHtml(x.name)}</b><br><span class="small">${escapeHtml(x.phone)}</span></td><td>${escapeHtml(x.category)}${x.variant?'<br><span class="small">'+escapeHtml(x.variant)+'</span>':""}</td><td>${x.id||"—"}</td><td><span class="pill ${x.status==="Одобрен"?"ok":x.status==="Заблокирован"?"block":"wait"}">${x.status}</span></td><td>${x.presence||"Не в сети"}</td><td><div class="actions">${x.status==="Ожидает проверки"?`<button class="primary" onclick="approve(${x.key})">Одобрить</button>`:""}${x.status==="Одобрен"?`<button class="secondary" onclick="toggleBlock(${x.key})">Заблокировать</button>`:""}${x.status==="Заблокирован"?`<button class="secondary" onclick="toggleBlock(${x.key})">Разблокировать</button>`:""}${x.status==="Одобрен"?`<button class="secondary" onclick="setPresence(${x.key},'На линии')">На линии</button><button class="secondary" onclick="setPresence(${x.key},'На заказе')">На заказе</button><button class="secondary" onclick="setPresence(${x.key},'Не в сети')">Не в сети</button>`:""}<button class="secondary" onclick="editExec(${x.key})">Редактировать</button><button class="secondary" onclick="showHistory(${x.key})">История</button><button class="danger" onclick="removeExec(${x.key})">Удалить профиль</button></div></td></tr>`).join(""):'<tr><td colspan="6" class="muted">Список пуст. Добавьте профиль или дождитесь заявок после подключения backend.</td></tr>'}
+let nextKey=1;
+const transportVariants={
+"Грузоперевозки":["Porter","Sprinter 1-скат","1-скатная будка (рефрижератор)","1-скатный бортовой","Sprinter 2-скат","2-скатная будка (рефрижератор)","2-скатный бортовой","Гигант бортовой","Гигант будка (рефрижератор)"],
+"Эвакуатор":["Sprinter","Sprinter + прицеп","Atego","Atego + прицеп"],
+"Манипулятор":["3 тонны — стрела 3 м","5 тонн — стрела 4 м","8 тонн — стрела 7 м","10 тонн — стрела 7 м"]
+};
+function updateTransportOptions(){
+ const cat=$("newCategory").value, variants=transportVariants[cat]||[], wrap=$("transportVariantWrap"), sel=$("newVariant");
+ sel.innerHTML="";
+ if(variants.length){wrap.classList.remove("hidden");variants.forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o)})}
+ else{wrap.classList.add("hidden")}
+}
+function addExecutor(){let name=$("newName").value.trim(),phone=$("newPhone").value.trim(),cat=$("newCategory").value,variant=transportVariants[cat]?$("newVariant").value:"";if(!name||!phone||!cat){alert("Заполните имя, телефон и направление.");return}if(transportVariants[cat]&&!variant){alert("Выберите точный вариант транспорта.");return}executors.push({key:nextKey++,name,phone,category:cat,variant,status:"Ожидает проверки",presence:"Не в сети",id:"",email:$("newEmail").value.trim(),history:[{date:new Date().toLocaleString("ru-RU"),type:"Регистрация",description:"Профиль добавлен администратором",amount:"—",status:"Ожидает проверки"}]});$("newName").value=$("newPhone").value=$("newEmail").value="";$("addForm").classList.add("hidden");log("Добавлен профиль: "+name+" ("+cat+")");refresh()}
+function approve(k){let x=executors.find(a=>a.key===k);if(!x)return;if(!confirm("Одобрить профиль? В рабочей системе уникальный ID должен выдать сервер."))return;x.status="Одобрен";x.presence="Не в сети";x.id="LOCAL-"+String(x.key).padStart(4,"0");addProfileEvent(x,"Одобрение","Заявка одобрена; назначен локальный демонстрационный ID "+x.id);log("ДЕМО: одобрен "+x.name+", локальный ID "+x.id);refresh()}
+function toggleBlock(k){let x=executors.find(a=>a.key===k);if(!x)return;x.status=x.status==="Заблокирован"?"Одобрен":"Заблокирован";if(x.status==="Заблокирован")x.presence="Не в сети";addProfileEvent(x,"Статус профиля","Статус изменён: "+x.status);log("Изменён локальный статус профиля "+x.name+": "+x.status);refresh()}
+function addProfileEvent(x,type,description,amount="—",status="Зафиксировано"){
+ if(!x.history)x.history=[];
+ x.history.unshift({date:new Date().toLocaleString("ru-RU"),type,description,amount,status});
+}
+function editExec(k){
+ const x=executors.find(a=>a.key===k);if(!x)return;
+ $("editKey").value=k;$("editName").value=x.name;$("editPhone").value=x.phone;$("editEmail").value=x.email||"";
+ $("editCategory").innerHTML="";let co=document.createElement("option");co.value=co.textContent=x.category;$("editCategory").appendChild(co);
+ $("editVariant").innerHTML="";if(x.variant){let vo=document.createElement("option");vo.value=vo.textContent=x.variant;$("editVariant").appendChild(vo);$("editVariantWrap").classList.remove("hidden")}else{$("editVariantWrap").classList.add("hidden")}
+ $("profileEditCard").classList.remove("hidden");$("profileHistoryCard").classList.add("hidden");$("profileEditCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeProfileEdit(){$("profileEditCard").classList.add("hidden")}
+function saveExecEdit(){
+ const k=Number($("editKey").value),x=executors.find(a=>a.key===k);if(!x)return;
+ const name=$("editName").value.trim(),phone=$("editPhone").value.trim();if(!name||!phone){alert("Имя и телефон обязательны.");return}
+ const changes=[];if(x.name!==name)changes.push("изменено имя");if(x.phone!==phone)changes.push("изменён телефон");if((x.email||"")!==$("editEmail").value.trim())changes.push("изменён email");
+ x.name=name;x.phone=phone;x.email=$("editEmail").value.trim();
+ if(changes.length){addProfileEvent(x,"Редактирование",changes.join(", "));log("ДЕМО: отредактирован профиль "+x.name+" — "+changes.join(", "))}
+ closeProfileEdit();refresh();
+}
+function showHistory(k){
+ const x=executors.find(a=>a.key===k);if(!x)return;
+ $("historyTitle").textContent="История: "+x.name;
+ const rows=x.history||[];
+ $("historyCount").textContent=rows.length;
+ $("historyTransactions").textContent=rows.filter(r=>/оплат|транзакц|чек|возврат/i.test(r.type+" "+r.description)).length;
+ $("historyRows").innerHTML=rows.length?rows.map(r=>`<tr><td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.type)}</td><td>${escapeHtml(r.description)}</td><td>${escapeHtml(r.amount||"—")}</td><td>${escapeHtml(r.status||"—")}</td></tr>`).join(""):'<tr><td colspan="5" class="muted">История пока пуста.</td></tr>';
+ $("profileHistoryCard").classList.remove("hidden");$("profileEditCard").classList.add("hidden");$("profileHistoryCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeHistory(){$("profileHistoryCard").classList.add("hidden")}
+function setPresence(k,p){let x=executors.find(a=>a.key===k);if(!x||x.status!=="Одобрен")return;x.presence=p;addProfileEvent(x,"Статус присутствия","Состояние изменено: "+p);log("ДЕМО: состояние "+x.name+" изменено на «"+p+"»");refresh()}
+function renderMonitoring(){
+ const approved=executors.filter(x=>x.status==="Одобрен");
+ const count=p=>approved.filter(x=>(x.presence||"Не в сети")===p).length;
+ $("monTotal").textContent=executors.length;
+ $("monOnline").textContent=count("На линии");
+ $("monBusy").textContent=count("На заказе");
+ $("monOffline").textContent=count("Не в сети");
+ $("monPending").textContent=executors.filter(x=>x.status==="Ожидает проверки").length;
+ $("monBlocked").textContent=executors.filter(x=>x.status==="Заблокирован").length;
+ const received=$("monReceived"),completed=$("monCompleted");
+ if(received)received.textContent="—";
+ if(completed)completed.textContent="—";
+ $("monitorCategoryRows").innerHTML=categories.map(c=>{
+  const a=executors.filter(x=>x.category===c), ok=a.filter(x=>x.status==="Одобрен");
+  return `<tr><td>${escapeHtml(c)}</td><td>${a.length}</td><td>${ok.filter(x=>x.presence==="На линии").length}</td><td>${ok.filter(x=>x.presence==="На заказе").length}</td><td>${ok.filter(x=>!x.presence||x.presence==="Не в сети").length}</td></tr>`;
+ }).join("");
+ $("monitorPeopleRows").innerHTML=executors.length?executors.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.category)}${x.variant?" · "+escapeHtml(x.variant):""}</td><td>${escapeHtml(x.status)}</td><td>${escapeHtml(x.presence||"Не в сети")}</td></tr>`).join(""):'<tr><td colspan="4" class="muted">Профилей пока нет.</td></tr>';
+}
+function removeExec(k){let x=executors.find(a=>a.key===k);if(!x||!confirm("Удалить профиль "+x.name+" из локального макета? В рабочей системе удаление должно быть подтверждено сервером и записано в журнал."))return;executors=executors.filter(a=>a.key!==k);log("ДЕМО: удалён локальный профиль "+x.name);refresh()}
+function previewQR(e,n){let f=e.target.files[0];if(!f)return;if(!f.type.startsWith("image/")){alert("Выберите файл изображения.");return}let u=URL.createObjectURL(f);$("qrPreview"+n).innerHTML=`<img src="${u}" alt="Предпросмотр QR ${n}" style="max-width:100%;max-height:180px;object-fit:contain">`;log("Загружен локальный предпросмотр QR №"+n+" (не отправлен на сервер)")}
+function saveDispatch(){let c=$("dispatchCategory").value;dispatch[c]={r1min:$("r1min").value,r1max:$("r1max").value,t1:$("t1").value,r2max:$("r2max").value};$("dispatchMsg").textContent="Локально сохранено для «"+c+"». Серверные настройки не изменены.";log("Сохранены локальные настройки диспетчеризации: "+c)}
+categories.forEach((c,i)=>{let o=document.createElement("option");o.value=o.textContent=c;$("newCategory").appendChild(o.cloneNode(true));if(i<11)$("dispatchCategory").appendChild(o)});
+updateTransportOptions();
+refresh();
+</script>
+</body></html>
