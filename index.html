@@ -219,4 +219,85 @@ categories.forEach((c,i)=>{let o=document.createElement("option");o.value=o.text
 updateTransportOptions();
 refresh();
 </script>
-</body></html>
+</body></html>    <!-- ПОДКЛЮЧЕНИЕ АДМИНКИ К SUPABASE -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    
+    const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
+    const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Загружаем реальных исполнителей из базы при открытии страницы
+    async function loadRealExecutors() {
+      const { data, error } = await supabase.from('executors').select('*');
+      if (error) {
+        console.error('Ошибка загрузки:', error);
+        return;
+      }
+
+      // Перезаписываем глобальный массив executors данными из базы
+      window.executors = data.map(x => ({
+        key: x.id, // Используем реальный UUID из базы
+        name: x.name || 'Без имени',
+        phone: x.phone,
+        category: x.service_id, // Временно показываем ID услуги
+        variant: '',
+        status: x.is_approved ? 'Одобрен' : 'Ожидает проверки',
+        presence: x.is_online ? 'На линии' : 'Не в сети',
+        id: x.id.substring(0, 8), // Короткий ID для отображения
+        email: '',
+        history: []
+      }));
+
+      // Перерисовываем таблицу
+      renderExecutors();
+      refresh();
+    }
+
+    // Запускаем загрузку сразу после открытия
+    loadRealExecutors();
+
+    // Перехватываем кнопку "Одобрить" для обновления в базе
+    const originalApprove = window.approve;
+    window.approve = async function(key) {
+      // Обновляем статус в Supabase
+      const { error } = await supabase
+        .from('executors')
+        .update({ is_approved: true })
+        .eq('id', key); // Здесь key - это реальный UUID из базы
+
+      if (error) {
+        alert('Ошибка обновления: ' + error.message);
+      } else {
+        alert('Исполнитель успешно одобрен в базе!');
+        loadRealExecutors(); // Перезагружаем список
+      }
+    };
+
+    // Перехватываем кнопку "Заблокировать"
+    const originalToggleBlock = window.toggleBlock;
+    window.toggleBlock = async function(key) {
+      // Находим текущий статус
+      const user = window.executors.find(x => x.key === key);
+      if (!user) return;
+      
+      const newStatus = user.status === 'Заблокирован' ? true : false; // Если был заблокирован - разблокируем
+
+      const { error } = await supabase
+        .from('executors')
+        .update({ is_approved: newStatus }) // Временно используем is_approved как блокировку
+        .eq('id', key);
+
+      if (error) {
+        alert('Ошибка: ' + error.message);
+      } else {
+        loadRealExecutors();
+      }
+    };
+
+    // Автоматическое обновление каждые 10 секунд
+    setInterval(loadRealExecutors, 10000);
+
+  </script>
+</body>
+</html>
