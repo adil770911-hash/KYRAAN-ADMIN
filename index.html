@@ -63,7 +63,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <div class="card hidden" id="addForm"><h2>Добавить исполнителя вручную</h2><div class="formgrid"><div><label>Имя / название</label><input id="newName" placeholder="Имя исполнителя"></div><div><label>Телефон / WhatsApp</label><input id="newPhone" placeholder="+996..."></div><div><label>Направление</label><select id="newCategory" onchange="updateTransportOptions()"></select></div><div id="transportVariantWrap" class="hidden"><label>Подкатегория</label><select id="newVariant"></select></div></div><button class="primary" onclick="addExecutor()">Добавить в список</button></div>
 
 <div class="card">
-  <h2>Мониторинг по категориям</h2>
+  <h2>Мониторинг по категориям (с подкатегориями)</h2>
   <div class="tablewrap">
     <table>
       <thead><tr><th>Направление</th><th>Всего</th><th>На линии</th><th>На задании</th></tr></thead>
@@ -131,13 +131,22 @@ function refresh(){
   renderMonitor();
 }
 function renderMonitor(){
-  $("monitorCategoryRows").innerHTML = categories.map(c => {
-    const inCat = executors.filter(x => x.category === c);
-    const total = inCat.length;
-    const online = inCat.filter(x => x.presence === 'На линии').length;
-    const busy = inCat.filter(x => x.presence === 'На заказе').length;
-    return `<tr><td>${escapeHtml(c)}</td><td>${total}</td><td style="color:var(--green)">${online}</td><td style="color:var(--gold)">${busy}</td></tr>`;
+  // Группируем по категории + подкатегории
+  const grouped = {};
+  executors.forEach(x => {
+    const key = x.variant ? `${x.category} (${x.variant})` : x.category;
+    if (!grouped[key]) grouped[key] = { total: 0, online: 0, busy: 0 };
+    grouped[key].total++;
+    if (x.presence === 'На линии') grouped[key].online++;
+    if (x.presence === 'На заказе') grouped[key].busy++;
+  });
+
+  const rows = Object.keys(grouped).map(key => {
+    const g = grouped[key];
+    return `<tr><td>${escapeHtml(key)}</td><td>${g.total}</td><td style="color:var(--green)">${g.online}</td><td style="color:var(--gold)">${g.busy}</td></tr>`;
   }).join("");
+
+  $("monitorCategoryRows").innerHTML = rows || '<tr><td colspan="4" class="muted">Нет исполнителей</td></tr>';
 }
 function renderExecutors(){
   let f=$("execFilter").value;
@@ -205,23 +214,31 @@ refresh();
     loadRealExecutors();
   };
 
+  // ФУНКЦИЯ СОХРАНЕНИЯ QR ССЫЛОК
   window.saveQR = async function(type) {
     const url = document.getElementById('qrInput' + type).value.trim();
+    if (!url) return alert("Вставьте ссылку на картинку");
+    
     const key = type === 1 ? 'qr_spec' : 'qr_home';
     const { error } = await supabase.from('settings').upsert({ key: key, value: url });
-    if (error) alert('Ошибка: ' + error.message);
-    else { alert('QR сохранен!'); document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px;">`; }
+    
+    if (error) {
+      alert('Ошибка сохранения: ' + error.message);
+    } else {
+      alert('QR-код сохранен!');
+      document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+    }
   };
 
   async function loadQR() {
     const { data } = await supabase.from('settings').select('*');
     data.forEach(item => {
       if (item.key === 'qr_spec' && item.value) {
-        document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
+        document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
         document.getElementById('qrInput1').value = item.value;
       }
       if (item.key === 'qr_home' && item.value) {
-        document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
+        document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
         document.getElementById('qrInput2').value = item.value;
       }
     });
@@ -233,4 +250,4 @@ refresh();
   setInterval(loadRealExecutors, 5000);
 </script>
 </body>
-</html>
+  </html>
