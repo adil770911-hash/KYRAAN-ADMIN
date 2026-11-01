@@ -42,17 +42,12 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <nav id="nav">
 <button class="active" data-page="overview">▦ Обзор</button>
 <button data-page="executors">♙ Исполнители</button>
-<button data-page="orders">▣ Заказы <nav id="nav">
-
-</nav> </button> <nav id="nav">
-<button class="active" data-page="overview">▦ Обзор</button>
-<button data-page="executors">♙ Исполнители</button>
 <button data-page="orders">▣ Заказы</button>
 <button data-page="ads">▤ Объявления</button>
 <button data-page="payments">₸ Оплаты и чеки</button>
-<button data-page="dispatch">◎ Диспетчеризац
+<button data-page="qr">▦ QR-коды</button>
+<button data-page="dispatch">◎ Диспетчеризация</button>
 </nav>
-</nav> 
 <main>
 <section class="page active" id="overview">
 <h1>Обзор</h1><div class="muted">Сводка панели KYRAAN</div>
@@ -67,25 +62,28 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <div class="row"><div><h1>Исполнители</h1><div class="muted">Ручная проверка, допуск и управление профилями</div></div><button class="primary" onclick="document.getElementById('addForm').classList.toggle('hidden')">＋ Добавить исполнителя вручную</button></div>
 <div class="card hidden" id="addForm"><h2>Добавить исполнителя вручную</h2><div class="formgrid"><div><label>Имя / название</label><input id="newName" placeholder="Имя исполнителя"></div><div><label>Телефон / WhatsApp</label><input id="newPhone" placeholder="+996..."></div><div><label>Направление</label><select id="newCategory" onchange="updateTransportOptions()"></select></div><div id="transportVariantWrap" class="hidden"><label>Подкатегория</label><select id="newVariant"></select></div></div><button class="primary" onclick="addExecutor()">Добавить в список</button></div>
 
-<!-- БЛОК СТАТИСТИКИ ПО КАТЕГОРИЯМ -->
 <div class="card">
-  <h2>Количество участников по категориям</h2>
+  <h2>Мониторинг по категориям</h2>
   <div class="tablewrap">
     <table>
-      <thead><tr><th>Направление</th><th>Подкатегория (вариант)</th><th>Всего человек</th></tr></thead>
-      <tbody id="statsRows"><tr><td colspan="3" class="muted">Загрузка...</td></tr></tbody>
+      <thead><tr><th>Направление</th><th>Всего</th><th>На линии</th><th>На задании</th></tr></thead>
+      <tbody id="monitorCategoryRows"><tr><td colspan="4" class="muted">Загрузка...</td></tr></tbody>
     </table>
   </div>
 </div>
 
-<div class="card"><div class="row"><h2>Список исполнителей</h2><select id="execFilter" style="max-width:210px;margin:0" onchange="renderExecutors()"><option value="">Все статусы</option><option value="Ожидает проверки">Ожидают проверки</option><option value="Одобрен">Одобрены</option><option value="Заблокирован">Заблокированы</option></select></div><div class="tablewrap"><table><thead><tr><th>Профиль</th><th>Направление</th><th>ID</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="execRows"></tbody></table></div></div>
+<div class="card"><div class="row"><h2>Список исполнителей</h2><select id="execFilter" style="max-width:210px;margin:0" onchange="renderExecutors()"><option value="">Все статусы</option><option value="Ожидает проверки">Ожидают проверки</option><option value="Одобрен">Одобрены</option><option value="Заблокирован">Заблокированы</option></select></div><div class="tablewrap"><table><thead><tr><th>Профиль</th><th>Направление</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="execRows"></tbody></table></div></div>
 </section>
 
 <section class="page" id="orders">
 <h1>Заказы</h1><div class="muted">Контроль текущих заказов и статусов</div>
 <div class="card"><div class="tablewrap"><table><thead><tr><th>Номер</th><th>Категория</th><th>Клиент</th><th>Статус</th></tr></thead><tbody id="orderRows"><tr><td colspan="4" class="muted">Загрузка...</td></tr></tbody></table></div></div>
 </section>
-</main></div>  <section class="page" id="qr">
+
+<section class="page" id="ads"><h1>Объявления</h1><div class="card"><div class="notice">Модерация объявлений (межгород такси и разнорабочие).</div></div></section>
+<section class="page" id="payments"><h1>Оплаты и чеки</h1><div class="card"><div class="notice">Проверка чеков и блокировка исполнителей.</div></div></section>
+
+<section class="page" id="qr">
 <h1>QR-коды KYRAAN</h1><div class="muted">Вставьте ссылку на картинку QR-кода. Она сохранится в базе и появится у исполнителей.</div>
 <div class="formgrid">
   <div class="card">
@@ -104,6 +102,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
   </div>
 </div>
 </section>
+<section class="page" id="dispatch"><h1>Диспетчеризация</h1><div class="card"><div class="notice">Настройки волн для Хищников.</div></div></section>
+</main></div>
 
 <script>
 const categories=["Эвакуатор","Манипулятор","Грузоперевозки","Сантехник","Клининг","Сварщик","Электрик","Ремонт холодильников","Ремонт стиральных машин","Телемастер","Мастер на час","Межгород такси","Разнорабочие"];
@@ -127,24 +127,18 @@ function updateTransportOptions(){
 function refresh(){
   $("mTotal").textContent = executors.length;
   $("mPending").textContent = executors.filter(x=>x.status==="Ожидает проверки").length;
-  $("mOrders").textContent = "0"; // Заказы грузим отдельно
   renderExecutors();
-  renderStats();
+  renderMonitor();
 }
-
-// Отрисовка статистики по категориям
-function renderStats(){
-  const counts = {};
-  executors.forEach(x => {
-    let key = x.category;
-    if (x.variant) key += " (" + x.variant + ")";
-    counts[key] = (counts[key] || 0) + 1;
-  });
-
-  const rows = Object.keys(counts).map(k => `<tr><td>${escapeHtml(k)}</td><td>${counts[k]} чел.</td></tr>`).join("");
-  $("statsRows").innerHTML = rows || '<tr><td colspan="2" class="muted">Нет исполнителей</td></tr>';
+function renderMonitor(){
+  $("monitorCategoryRows").innerHTML = categories.map(c => {
+    const inCat = executors.filter(x => x.category === c);
+    const total = inCat.length;
+    const online = inCat.filter(x => x.presence === 'На линии').length;
+    const busy = inCat.filter(x => x.presence === 'На заказе').length;
+    return `<tr><td>${escapeHtml(c)}</td><td>${total}</td><td style="color:var(--green)">${online}</td><td style="color:var(--gold)">${busy}</td></tr>`;
+  }).join("");
 }
-
 function renderExecutors(){
   let f=$("execFilter").value;
   let arr=executors.filter(x=>!f||x.status===f);
@@ -152,66 +146,42 @@ function renderExecutors(){
     <tr>
       <td><b>${escapeHtml(x.name)}</b><br><span class="small">${escapeHtml(x.phone)}</span></td>
       <td>${escapeHtml(x.category)}${x.variant?'<br><span class="small">'+escapeHtml(x.variant)+'</span>':""}</td>
-      <td>${x.id||"—"}</td>
       <td><span class="pill ${x.status==="Одобрен"?"ok":x.status==="Заблокирован"?"block":"wait"}">${x.status}</span></td>
       <td><div class="actions">${x.status==="Ожидает проверки"?`<button class="primary" onclick="approve('${x.key}')">Одобрить</button>`:""}</div></td>
-    </tr>`).join("") : '<tr><td colspan="5" class="muted">Список пуст.</td></tr>';
+    </tr>`).join("") : '<tr><td colspan="4" class="muted">Список пуст.</td></tr>';
 }
-
 categories.forEach((c)=>{ let o=document.createElement("option"); o.value=o.textContent=c; $("newCategory").appendChild(o); });
 updateTransportOptions();
 refresh();
 </script>
 
-<!-- ПОДКЛЮЧЕНИЕ К SUPABASE (ФИНАЛЬНАЯ ВЕРСИЯ С ЗАГРУЗКОЙ ДАННЫХ) -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-  
   const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
   const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const serviceCodes = {
-    "Эвакуатор": "evacuator", "Манипулятор": "manipulator", "Грузоперевозки": "cargo",
-    "Сантехник": "plumber", "Клининг": "cleaning", "Сварщик": "welder",
-    "Электрик": "electrician", "Ремонт холодильников": "fridge",
-    "Ремонт стиральных машин": "washer", "Телемастер": "tv", "Мастер на час": "hour",
-    "Межгород такси": "taxi", "Разнорабочие": "workers"
-  };
+  const serviceCodes = {"Эвакуатор":"evacuator","Манипулятор":"manipulator","Грузоперевозки":"cargo","Сантехник":"plumber","Клининг":"cleaning","Сварщик":"welder","Электрик":"electrician","Ремонт холодильников":"fridge","Ремонт стиральных машин":"washer","Телемастер":"tv","Мастер на час":"hour","Межгород такси":"taxi","Разнорабочие":"workers"};
   const codeToName = Object.fromEntries(Object.entries(serviceCodes).map(([k, v]) => [v, k]));
 
   async function loadRealExecutors() {
     const { data, error } = await supabase.from('executors').select('*');
     if (error) { console.error(error); return; }
-
     window.executors = data.map(x => ({
-      key: x.id,
-      name: x.name || 'Без имени',
-      phone: x.phone,
-      category: codeToName[x.service_id] || x.service_id,
-      variant: x.variant_id || '',
-      status: x.is_approved ? 'Одобрен' : 'Ожидает проверки',
-      presence: x.is_online ? 'На линии' : 'Не в сети',
+      key: x.id, name: x.name || 'Без имени', phone: x.phone,
+      category: codeToName[x.service_id] || x.service_id, variant: x.variant_id || '',
+      status: x.is_approved ? 'Одобрен' : 'Ожидает проверки', 
+      presence: x.is_online ? 'На линии' : (x.is_busy ? 'На заказе' : 'Не в сети'),
       id: x.id.substring(0, 8),
     }));
-
     renderExecutors();
     refresh();
   }
 
   async function loadOrders() {
     const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(50);
-    if (error) { console.error(error); return; }
-
-    document.getElementById('orderRows').innerHTML = data.length ? data.map(x => `
-      <tr>
-        <td>${x.id.substring(0, 8)}</td>
-        <td>${x.service_id}</td>
-        <td>${x.client_phone}</td>
-        <td><span class="pill wait">${x.status}</span></td>
-      </tr>
-    `).join("") : '<tr><td colspan="4" class="muted">Нет заказов</td></tr>';
-    
+    if (error) return;
+    document.getElementById('orderRows').innerHTML = data.length ? data.map(x => `<tr><td>${x.id.substring(0,8)}</td><td>${x.service_id}</td><td>${x.client_phone}</td><td><span class="pill wait">${x.status}</span></td></tr>`).join("") : '<tr><td colspan="4" class="muted">Нет заказов</td></tr>';
     document.getElementById('mOrders').textContent = data.filter(x => x.status === 'NEW' || x.status === 'SEARCHING').length;
   }
 
@@ -219,69 +189,48 @@ refresh();
     const name = document.getElementById('newName').value.trim();
     const phone = document.getElementById('newPhone').value.trim();
     const catName = document.getElementById('newCategory').value;
-    const variantInput = document.getElementById('newVariant');
-    const variant = variantInput ? variantInput.value : '';
-
+    const variant = document.getElementById('newVariant') ? document.getElementById('newVariant').value : '';
     if (!name || !phone) return alert("Введите имя и телефон");
     const serviceId = serviceCodes[catName];
-    if (!serviceId) return alert("Ошибка: неизвестная категория " + catName);
-
     let hunter = 'HUNTER_02';
     if (['cargo', 'evacuator', 'manipulator'].includes(serviceId)) hunter = 'HUNTER_01';
     else if (['taxi', 'workers'].includes(serviceId)) hunter = 'BOARD';
-
-    const { error } = await supabase.from('executors').insert([{
-      name: name, phone: phone, service_id: serviceId, hunter: hunter, variant_id: variant, is_approved: false, rating: 15
-    }]);
-
-    if (error) alert('Ошибка базы: ' + error.message);
-    else {
-      alert('Исполнитель ' + name + ' добавлен!');
-      document.getElementById('newName').value = '';
-      document.getElementById('newPhone').value = '';
-      loadRealExecutors();
-    }
+    const { error } = await supabase.from('executors').insert([{ name, phone, service_id: serviceId, hunter, variant_id: variant, is_approved: false, rating: 15, is_online: false, is_busy: false }]);
+    if (error) alert('Ошибка: ' + error.message);
+    else { alert('Добавлен!'); document.getElementById('newName').value = ''; document.getElementById('newPhone').value = ''; loadRealExecutors(); }
   };
 
   window.approve = async function(key) {
     await supabase.from('executors').update({ is_approved: true }).eq('id', key);
-    loadRealExecutors(); // Функция для сохранения ссылок на QR
-window.saveQR = async function(type) {
-  const url = document.getElementById('qrInput' + type).value.trim();
-  const key = type === 1 ? 'qr_spec' : 'qr_home';
-  
-  const { error } = await supabase.from('settings').upsert({ key: key, value: url });
-  
-  if (error) {
-    alert('Ошибка сохранения: ' + error.message);
-  } else {
-    alert('QR-код сохранен!');
-    document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
-  }
-};
-
-// Загрузка QR при открытии страницы
-async function loadQR() {
-  const { data } = await supabase.from('settings').select('*');
-  data.forEach(item => {
-    if (item.key === 'qr_spec' && item.value && item.value !== 'НЕТ_ССЫЛКИ') {
-      document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
-      document.getElementById('qrInput1').value = item.value;
-    }
-    if (item.key === 'qr_home' && item.value && item.value !== 'НЕТ_ССЫЛКИ') {
-      document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
-      document.getElementById('qrInput2').value = item.value;
-    }
-  });
-}
-
-// Вызываем загрузку QR
-loadQR();
+    loadRealExecutors();
   };
+
+  window.saveQR = async function(type) {
+    const url = document.getElementById('qrInput' + type).value.trim();
+    const key = type === 1 ? 'qr_spec' : 'qr_home';
+    const { error } = await supabase.from('settings').upsert({ key: key, value: url });
+    if (error) alert('Ошибка: ' + error.message);
+    else { alert('QR сохранен!'); document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px;">`; }
+  };
+
+  async function loadQR() {
+    const { data } = await supabase.from('settings').select('*');
+    data.forEach(item => {
+      if (item.key === 'qr_spec' && item.value) {
+        document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
+        document.getElementById('qrInput1').value = item.value;
+      }
+      if (item.key === 'qr_home' && item.value) {
+        document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
+        document.getElementById('qrInput2').value = item.value;
+      }
+    });
+  }
 
   loadRealExecutors();
   loadOrders();
+  loadQR();
   setInterval(loadRealExecutors, 5000);
 </script>
 </body>
- </html>
+</html>
