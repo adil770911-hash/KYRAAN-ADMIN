@@ -299,5 +299,155 @@ refresh();
     setInterval(loadRealExecutors, 10000);
 
   </script>
+</body>   <!-- ПОДКЛЮЧЕНИЕ АДМИНКИ К SUPABASE (v2) -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    
+    const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
+    const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function loadRealExecutors() {
+      const { data, error } = await supabase.from('executors').select('*');
+      if (error) { console.error(error); return; }
+
+      window.executors = data.map(x => ({
+        key: x.id, // Реальный UUID
+        name: x.name || 'Без имени',
+        phone: x.phone,
+        category: x.service_id, 
+        variant: '',
+        status: x.is_approved ? 'Одобрен' : 'Ожидает проверки',
+        presence: x.is_online ? 'На линии' : 'Не в сети',
+        id: x.id.substring(0, 8),
+        email: '',
+        history: []
+      }));
+
+      renderExecutors();
+      refresh();
+    }
+
+    // 1. Кнопка "Одобрить"
+    window.approve = async function(key) {
+      if (!confirm("Одобрить профиль?")) return;
+      const { error } = await supabase.from('executors').update({ is_approved: true }).eq('id', key);
+      if (error) alert('Ошибка: ' + error.message);
+      else { alert('Исполнитель одобрен!'); loadRealExecutors(); }
+    };
+
+    // 2. Кнопка "Заблокировать"
+    window.toggleBlock = async function(key) {
+      const user = window.executors.find(x => x.key === key);
+      if (!user) return;
+      const newApproved = user.status === 'Заблокирован'; 
+      const { error } = await supabase.from('executors').update({ is_approved: newApproved }).eq('id', key);
+      if (error) alert('Ошибка: ' + error.message);
+      else loadRealExecutors();
+    };
+
+    // 3. Кнопка "Добавить вручную"
+    window.addExecutor = async function() {
+      const name = document.getElementById('newName').value.trim();
+      const phone = document.getElementById('newPhone').value.trim();
+      const serviceId = document.getElementById('newCategory').value;
+      
+      if (!name || !phone) return alert("Введите имя и телефон");
+
+      const isSpec = ['Грузоперевозки', 'Эвакуатор', 'Манипулятор'].includes(serviceId);
+      const hunter = isSpec ? 'HUNTER_01' : 'HUNTER_02';
+
+      const { error } = await supabase.from('executors').insert([{
+        name: name, phone: phone, service_id: serviceId, hunter: hunter, is_approved: false, rating: 15
+      }]);
+
+      if (error) alert('Ошибка базы: ' + error.message);
+      else {
+        alert('Исполнитель добавлен в базу!');
+        document.getElementById('newName').value = '';
+        document.getElementById('newPhone').value = '';
+        loadRealExecutors();
+      }
+    };
+
+    loadRealExecutors();
+    setInterval(loadRealExecutors, 10000); // Автообновление каждые 10 сек
+  </script>
+</body>
+</html>
+</html>   <!-- ПОДКЛЮЧЕНИЕ АДМИНКИ К SUPABASE (v2) -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    
+    const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
+    const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function loadRealExecutors() {
+      const { data, error } = await supabase.from('executors').select('*');
+      if (error) { console.error(error); return; }
+
+      window.executors = data.map(x => ({
+        key: x.id, // Реальный UUID
+        name: x.name || 'Без имени',
+        phone: x.phone,
+        category: x.service_id, 
+        variant: '',
+        status: x.is_approved ? 'Одобрен' : 'Ожидает проверки',
+        presence: x.is_online ? 'На линии' : 'Не в сети',
+        id: x.id.substring(0, 8),
+        email: '',
+        history: []
+      }));
+
+      renderExecutors();
+      refresh();
+    }
+
+    // 1. Кнопка "Одобрить"
+    window.approve = async function(key) {
+      if (!confirm("Одобрить профиль?")) return;
+      const { error } = await supabase.from('executors').update({ is_approved: true }).eq('id', key);
+      if (error) alert('Ошибка: ' + error.message);
+      else { alert('Исполнитель одобрен!'); loadRealExecutors(); }
+    };
+
+    // 2. Кнопка "Заблокировать"
+    window.toggleBlock = async function(key) {
+      const user = window.executors.find(x => x.key === key);
+      if (!user) return;
+      const newApproved = user.status === 'Заблокирован'; 
+      const { error } = await supabase.from('executors').update({ is_approved: newApproved }).eq('id', key);
+      if (error) alert('Ошибка: ' + error.message);
+      else loadRealExecutors();
+    };
+
+    // 3. Кнопка "Добавить вручную"
+    window.addExecutor = async function() {
+      const name = document.getElementById('newName').value.trim();
+      const phone = document.getElementById('newPhone').value.trim();
+      const serviceId = document.getElementById('newCategory').value;
+      
+      if (!name || !phone) return alert("Введите имя и телефон");
+
+      const isSpec = ['Грузоперевозки', 'Эвакуатор', 'Манипулятор'].includes(serviceId);
+      const hunter = isSpec ? 'HUNTER_01' : 'HUNTER_02';
+
+      const { error } = await supabase.from('executors').insert([{
+        name: name, phone: phone, service_id: serviceId, hunter: hunter, is_approved: false, rating: 15
+      }]);
+
+      if (error) alert('Ошибка базы: ' + error.message);
+      else {
+        alert('Исполнитель добавлен в базу!');
+        document.getElementById('newName').value = '';
+        document.getElementById('newPhone').value = '';
+        loadRealExecutors();
+      }
+    };
+
+    loadRealExecutors();
+    setInterval(loadRealExecutors, 10000); // Автообновление каждые 10 сек
+  </script>
 </body>
 </html>
