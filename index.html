@@ -76,7 +76,25 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <h1>Заказы</h1><div class="muted">Контроль текущих заказов и статусов</div>
 <div class="card"><div class="tablewrap"><table><thead><tr><th>Номер</th><th>Категория</th><th>Клиент</th><th>Статус</th></tr></thead><tbody id="orderRows"><tr><td colspan="4" class="muted">Загрузка...</td></tr></tbody></table></div></div>
 </section>
-</main></div>
+</main></div>  <section class="page" id="qr">
+<h1>QR-коды KYRAAN</h1><div class="muted">Вставьте ссылку на картинку QR-кода. Она сохранится в базе и появится у исполнителей.</div>
+<div class="formgrid">
+  <div class="card">
+    <h2>QR №1 — транспорт (Спецтехника)</h2>
+    <div class="qrbox" id="qrPreview1" style="display:flex; align-items:center; justify-content:center; min-height:150px; border:1px dashed #555; border-radius:10px; color:#777;">QR №1 не загружен</div>
+    <label>Ссылка на картинку QR №1</label>
+    <input id="qrInput1" placeholder="https://...">
+    <button class="primary full" onclick="saveQR(1)">Сохранить QR №1</button>
+  </div>
+  <div class="card">
+    <h2>QR №2 — бытовые услуги и объявления</h2>
+    <div class="qrbox" id="qrPreview2" style="display:flex; align-items:center; justify-content:center; min-height:150px; border:1px dashed #555; border-radius:10px; color:#777;">QR №2 не загружен</div>
+    <label>Ссылка на картинку QR №2</label>
+    <input id="qrInput2" placeholder="https://...">
+    <button class="primary full" onclick="saveQR(2)">Сохранить QR №2</button>
+  </div>
+</div>
+</section>
 
 <script>
 const categories=["Эвакуатор","Манипулятор","Грузоперевозки","Сантехник","Клининг","Сварщик","Электрик","Ремонт холодильников","Ремонт стиральных машин","Телемастер","Мастер на час","Межгород такси","Разнорабочие"];
