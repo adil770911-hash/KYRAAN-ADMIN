@@ -236,7 +236,38 @@ refresh();
 
   window.approve = async function(key) {
     await supabase.from('executors').update({ is_approved: true }).eq('id', key);
-    loadRealExecutors();
+    loadRealExecutors(); // Функция для сохранения ссылок на QR
+window.saveQR = async function(type) {
+  const url = document.getElementById('qrInput' + type).value.trim();
+  const key = type === 1 ? 'qr_spec' : 'qr_home';
+  
+  const { error } = await supabase.from('settings').upsert({ key: key, value: url });
+  
+  if (error) {
+    alert('Ошибка сохранения: ' + error.message);
+  } else {
+    alert('QR-код сохранен!');
+    document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+  }
+};
+
+// Загрузка QR при открытии страницы
+async function loadQR() {
+  const { data } = await supabase.from('settings').select('*');
+  data.forEach(item => {
+    if (item.key === 'qr_spec' && item.value && item.value !== 'НЕТ_ССЫЛКИ') {
+      document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+      document.getElementById('qrInput1').value = item.value;
+    }
+    if (item.key === 'qr_home' && item.value && item.value !== 'НЕТ_ССЫЛКИ') {
+      document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+      document.getElementById('qrInput2').value = item.value;
+    }
+  });
+}
+
+// Вызываем загрузку QR
+loadQR();
   };
 
   loadRealExecutors();
