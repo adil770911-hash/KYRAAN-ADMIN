@@ -4,164 +4,204 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101010">
-<title>KYRAAN — Администратор</title>
+<title>KYRAAN — Mission Control</title>
 <style>
-:root{--bg:#101010;--panel:#1b1b1b;--panel2:#222;--line:#333;--text:#f4f4f4;--muted:#aaa;--gold:#f5a623;--green:#20b477;--red:#e45d5d;--blue:#6aa8ff}
+:root{--bg:#101010;--panel:#1b1b1b;--line:#333;--text:#f4f4f4;--muted:#aaa;--gold:#f5a623;--green:#20b477;--red:#e45d5d;--blue:#6aa8ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
-header{position:sticky;top:0;z-index:5;background:#151515;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{position:sticky;top:0;z-index:10;background:#151515;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{font-weight:800;letter-spacing:.5px}.brand span{color:var(--gold)}.sub{font-size:12px;color:var(--muted);margin-top:4px}
 .status{font-size:11px;border:1px solid #795b27;color:#ffd27a;padding:6px 9px;border-radius:20px;white-space:nowrap}
 .layout{display:flex;max-width:1400px;margin:auto;min-height:calc(100vh - 65px)}
-nav{width:230px;flex-shrink:0;padding:16px 10px;border-right:1px solid var(--line);background:#141414}
-nav button{display:block;width:100%;text-align:left;background:transparent;color:#ccc;border:0;padding:12px;border-radius:9px;margin:3px 0;font-size:14px}
+nav{width:230px;flex-shrink:0;padding:16px 10px;border-right:1px solid var(--line);background:#141414;transition:transform 0.3s ease;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto}
+nav button{display:block;width:100%;text-align:left;background:transparent;color:#ccc;border:0;padding:12px;border-radius:9px;margin:3px 0;font-size:14px;cursor:pointer}
 nav button.active,nav button:hover{background:#2a2419;color:#ffd27a}
 main{padding:20px;width:100%;min-width:0}.page{display:none}.page.active{display:block}
 h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 10px}
 .muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:14px}
-.metric{font-size:27px;font-weight:800;margin-top:8px}.metric.gold{color:var(--gold)}
+.metric{font-size:27px;font-weight:800;margin-top:8px}.metric.gold{color:var(--gold)}.metric.green{color:var(--green)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 button,.btn{cursor:pointer}.primary,.secondary,.danger{border:0;border-radius:8px;padding:10px 13px;font-weight:700}
 .primary{background:var(--gold);color:#171717}.secondary{background:#333;color:#eee;border:1px solid #484848}.danger{background:#492727;color:#ffb0b0;border:1px solid #743b3b}
 input,select,textarea{width:100%;background:#111;color:#eee;border:1px solid #444;border-radius:8px;padding:11px;margin:6px 0 12px;font:inherit}
-label{font-size:13px;color:#ccc;display:block}textarea{min-height:75px;resize:vertical}
+label{font-size:13px;color:#ccc;display:block}
 .formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:#aaa;font-weight:600}
-.tablewrap{overflow-x:auto}.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;background:#333;color:#ddd}.pill.wait{background:#49391c;color:#ffd27a}.pill.ok{background:#173d30;color:#8be0bb}.pill.block{background:#482727;color:#ffaaaa}
+.tablewrap{overflow-x:auto}
+.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;background:#333;color:#ddd}
+.pill.wait{background:#49391c;color:#ffd27a}.pill.ok{background:#173d30;color:#8be0bb}.pill.block{background:#482727;color:#ffaaaa}
 .actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 9px;font-size:12px}
 .notice{border-left:3px solid var(--gold);padding:10px 12px;background:#282216;border-radius:5px;color:#e8d4ad;font-size:13px;margin:12px 0}
 .qrbox{border:1px dashed #666;border-radius:10px;min-height:135px;display:flex;align-items:center;justify-content:center;color:#999;background:#151515;text-align:center;padding:12px}
 .small{font-size:12px;color:var(--muted)}.hidden{display:none!important}
-.mobilebar{display:none}
-@media(max-width:800px){.layout{display:block}nav{width:100%;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:7px}nav button{white-space:nowrap;width:auto;margin:0 3px;padding:10px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:14px}.formgrid{grid-template-columns:1fr}header{padding:12px}.status{font-size:10px}}
+.menu-toggle{display:none;background:transparent;border:none;color:white;font-size:24px;cursor:pointer}
+@media(max-width:800px){
+  .layout{display:block}
+  nav{position:fixed;left:-250px;top:65px;width:250px;z-index:100;background:#141414;height:calc(100vh - 65px);box-shadow:2px 0 10px rgba(0,0,0,0.5)}
+  nav.open{transform:translateX(250px)}
+  .menu-toggle{display:block}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:14px}.formgrid{grid-template-columns:1fr}header{padding:12px}
+}
 </style>
 </head>
 <body>
-<header><div><div class="brand">KYRAAN <span>ADMIN</span></div><div class="sub">Панель управления платформой</div></div><div class="status" id="globalStatus">ОНЛАЙН · БАЗА ПОДКЛЮЧЕНА</div></header>
+<header>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="menu-toggle" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+    <div><div class="brand">KYRAAN <span>ADMIN</span></div><div class="sub">Mission Control</div></div>
+  </div>
+  <div class="status" id="globalStatus">ОНЛАЙН · БАЗА ПОДКЛЮЧЕНА</div>
+</header>
 <div class="layout">
 <nav id="nav">
-<button class="active" data-page="overview">▦ Обзор</button>
-<button data-page="executors">♙ Исполнители</button>
-<button data-page="orders">▣ Заказы</button>
-<button data-page="ads">▤ Объявления</button>
-<button data-page="payments">₸ Оплаты и чеки</button>
-<button data-page="qr">▦ QR-коды</button>
-<button data-page="dispatch">◎ Диспетчеризация</button>
+  <button class="active" data-page="overview">📊 Дашборд</button>
+  <button data-page="orders">📦 Заказы</button>
+  <button data-page="executors">👷 Исполнители</button>
+  <button data-page="blacklist">🚫 Чёрный список</button>
+  <button data-page="finances">💰 Финансы и Чеки</button>
+  <button data-page="waves">🌊 Волны (Радиусы)</button>
+  <button data-page="boards">📋 Доски</button>
+  <button data-page="qr">📱 QR-коды</button>
 </nav>
 <main>
 <section class="page active" id="overview">
-<h1>Обзор</h1><div class="muted">Сводка панели KYRAAN</div>
-<div class="grid">
-<div class="card"><div class="muted">Всего исполнителей</div><div class="metric" id="mTotal">0</div></div>
-<div class="card"><div class="muted">Ожидают проверки</div><div class="metric gold" id="mPending">0</div></div>
-<div class="card"><div class="muted">Активные заказы</div><div class="metric" id="mOrders">0</div></div>
-</div>
-</section>
-
-<section class="page" id="executors">
-<div class="row"><div><h1>Исполнители</h1><div class="muted">Ручная проверка, допуск и управление профилями</div></div><button class="primary" onclick="document.getElementById('addForm').classList.toggle('hidden')">＋ Добавить исполнителя вручную</button></div>
-<div class="card hidden" id="addForm"><h2>Добавить исполнителя вручную</h2><div class="formgrid"><div><label>Имя / название</label><input id="newName" placeholder="Имя исполнителя"></div><div><label>Телефон / WhatsApp</label><input id="newPhone" placeholder="+996..."></div><div><label>Направление</label><select id="newCategory" onchange="updateTransportOptions()"></select></div><div id="transportVariantWrap" class="hidden"><label>Подкатегория</label><select id="newVariant"></select></div></div><button class="primary" onclick="addExecutor()">Добавить в список</button></div>
-
-<div class="card">
-  <h2>Мониторинг по категориям (с подкатегориями)</h2>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>Направление</th><th>Всего</th><th>На линии</th><th>На задании</th></tr></thead>
-      <tbody id="monitorCategoryRows"><tr><td colspan="4" class="muted">Загрузка...</td></tr></tbody>
-    </table>
+  <h1>Дашборд</h1><div class="muted">Сводка по потокам</div>
+  <div class="grid">
+    <div class="card"><div class="muted">Выручка сегодня</div><div class="metric gold" id="statRevenueToday">0 сом</div></div>
+    <div class="card"><div class="muted">Выручка за неделю</div><div class="metric green" id="statRevenueWeek">0 сом</div></div>
+    <div class="card"><div class="muted">Заказов в поиске</div><div class="metric" id="statSearching">0</div></div>
+    <div class="card"><div class="muted">Всего исполнителей</div><div class="metric" id="statTotalExecutors">0</div></div>
   </div>
-</div>
 
-<div class="card"><div class="row"><h2>Список исполнителей</h2><select id="execFilter" style="max-width:210px;margin:0" onchange="renderExecutors()"><option value="">Все статусы</option><option value="Ожидает проверки">Ожидают проверки</option><option value="Одобрен">Одобрены</option><option value="Заблокирован">Заблокированы</option></select></div><div class="tablewrap"><table><thead><tr><th>Профиль</th><th>Направление</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="execRows"></tbody></table></div></div>
+  <div class="card">
+    <h2>Мониторинг по категориям (все подкатегории)</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Направление (Подкатегория)</th><th>Всего</th><th>На линии</th><th>На заказе</th><th>Заработано</th></tr></thead>
+        <tbody id="monitorRows"><tr><td colspan="5" class="muted">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </section>
 
 <section class="page" id="orders">
-<h1>Заказы</h1><div class="muted">Контроль текущих заказов и статусов</div>
-<div class="card"><div class="tablewrap"><table><thead><tr><th>Номер</th><th>Категория</th><th>Клиент</th><th>Статус</th></tr></thead><tbody id="orderRows"><tr><td colspan="4" class="muted">Загрузка...</td></tr></tbody></table></div></div>
+  <h1>Заказы</h1><div class="muted">Управление потоками</div>
+  <div class="card">
+    <div class="row" style="margin-bottom:12px">
+      <select id="orderFilter" style="max-width:200px;margin:0" onchange="renderOrders()">
+        <option value="">Все заказы</option>
+        <option value="NEW">Новые (в поиске)</option>
+        <option value="ASSIGNED">Назначенные</option>
+        <option value="COMPLETED">Завершённые</option>
+      </select>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>ID</th><th>Услуга</th><th>Клиент</th><th>Источник</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody id="orderRows"><tr><td colspan="6" class="muted">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </section>
 
-<section class="page" id="ads"><h1>Объявления</h1><div class="card"><div class="notice">Модерация объявлений (межгород такси и разнорабочие).</div></div></section>
-<section class="page" id="payments"><h1>Оплаты и чеки</h1><div class="card"><div class="notice">Проверка чеков и блокировка исполнителей.</div></div></section>
+<section class="page" id="executors">
+  <div class="row" style="margin-bottom:16px">
+    <div><h1 style="margin:0">Исполнители</h1><div class="muted">Синхронизация с базой</div></div>
+    <button class="secondary" onclick="loadData(true)">🔄 Обновить</button>
+  </div>
+  <div class="card">
+    <div class="row" style="margin-bottom:12px">
+      <select id="execFilter" style="max-width:200px;margin:0" onchange="renderExecutors()">
+        <option value="">Все статусы</option>
+        <option value="Ожидает проверки">Ожидают проверки</option>
+        <option value="Одобрен">Одобрены</option>
+      </select>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Профиль</th><th>Направление</th><th>Telegram ID</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody id="execRows"><tr><td colspan="5" class="muted">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="blacklist">
+  <h1>Чёрный список</h1><div class="muted">Заблокированные исполнители</div>
+  <div class="card">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Профиль</th><th>Направление</th><th>Телефон</th><th>Действия</th></tr></thead>
+        <tbody id="blacklistRows"><tr><td colspan="4" class="muted">Пусто</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="finances">
+  <h1>💰 Финансы и Чеки</h1><div class="muted">Должники. Если нажали «Отправил чек» — проверь и подтверди.</div>
+  <div class="card">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Профиль</th><th>Телефон</th><th>Долг (сом)</th><th>Чек</th><th>Действия</th></tr></thead>
+        <tbody id="financeRows"><tr><td colspan="5" class="muted">Нет должников</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="waves">
+  <h1>🌊 Волны (Радиусы)</h1><div class="muted">Настройка времени ожидания и радиуса для каждой услуги</div>
+  
+  <div class="card">
+    <label>Выберите категорию:</label>
+    <select id="waveCategory" onchange="loadWaveSettings()"></select>
+    
+    <div class="formgrid" style="margin-top:16px">
+      <div><label>Радиус 1-й волны (км)</label><input id="w1r" type="number" step="0.5" value="2.0"></div>
+      <div><label>Ожидание 1-й волны (сек)</label><input id="w1t" type="number" value="11"></div>
+      <div><label>Радиус 2-й волны (км)</label><input id="w2r" type="number" step="0.5" value="5.0"></div>
+    </div>
+    <button class="primary full" onclick="saveWaveSettings()">Сохранить настройки</button>
+    <div class="notice" style="margin-top:14px">Пример: 1-я волна — 2 км, ждем 11 сек. Если никто не взял — расширяем до 5 км. Настройки сохраняются в базе.</div>
+  </div>
+</section>
+
+<section class="page" id="boards">
+  <h1>Доски объявлений</h1><div class="muted">Межгород такси и Разнорабочие</div>
+  <div class="card">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Профиль</th><th>Категория</th><th>Телефон</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody id="boardRows"><tr><td colspan="5" class="muted">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
 <section class="page" id="qr">
-<h1>QR-коды KYRAAN</h1><div class="muted">Вставьте ссылку на картинку QR-кода. Она сохранится в базе и появится у исполнителей.</div>
-<div class="formgrid">
-  <div class="card">
-    <h2>QR №1 — транспорт (Спецтехника)</h2>
-    <div class="qrbox" id="qrPreview1" style="display:flex; align-items:center; justify-content:center; min-height:150px; border:1px dashed #555; border-radius:10px; color:#777;">QR №1 не загружен</div>
-    <label>Ссылка на картинку QR №1</label>
-    <input id="qrInput1" placeholder="https://...">
-    <button class="primary full" onclick="saveQR(1)">Сохранить QR №1</button>
+  <h1>QR-коды</h1><div class="muted">Ссылки для оплаты</div>
+  <div class="formgrid">
+    <div class="card"><h3>QR №1 — Спецтехника</h3><div class="qrbox" id="qrPreview1">Не загружен</div><input id="qrInput1" placeholder="https://..."><button class="primary full" onclick="saveQR(1)">Сохранить</button></div>
+    <div class="card"><h3>QR №2 — Бытовуха</h3><div class="qrbox" id="qrPreview2">Не загружен</div><input id="qrInput2" placeholder="https://..."><button class="primary full" onclick="saveQR(2)">Сохранить</button></div>
   </div>
-  <div class="card">
-    <h2>QR №2 — бытовые услуги и объявления</h2>
-    <div class="qrbox" id="qrPreview2" style="display:flex; align-items:center; justify-content:center; min-height:150px; border:1px dashed #555; border-radius:10px; color:#777;">QR №2 не загружен</div>
-    <label>Ссылка на картинку QR №2</label>
-    <input id="qrInput2" placeholder="https://...">
-    <button class="primary full" onclick="saveQR(2)">Сохранить QR №2</button>
-  </div>
-</div>
 </section>
-<section class="page" id="dispatch"><h1>Диспетчеризация</h1><div class="card"><div class="notice">Настройки волн для Хищников.</div></div></section>
 </main></div>
 
 <script>
-const categories=["Эвакуатор","Манипулятор","Грузоперевозки","Сантехник","Клининг","Сварщик","Электрик","Ремонт холодильников","Ремонт стиральных машин","Телемастер","Мастер на час","Межгород такси","Разнорабочие"];
-let executors=[]; 
-const transportVariants={
-  "Грузоперевозки":["Porter","Sprinter 1-скат","1-скатная будка (рефрижератор)","1-скатный бортовой","Sprinter 2-скат","2-скатная будка (рефрижератор)","2-скатный бортовой","Гигант бортовой","Гигант будка (рефрижератор)"],
-  "Эвакуатор":["Sprinter","Sprinter + прицеп","Atego","Atego + прицеп"],
-  "Манипулятор":["3 тонны — стрела 3 м","5 тонн — стрела 4 м","8 тонн — стрела 7 м","10 тонн — стрела 7 м"]
-};
-const $=id=>document.getElementById(id);
-function showPage(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));}
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+const categories = {"Эвакуатор":"evacuator","Манипулятор":"manipulator","Грузоперевозки":"cargo","Сантехник":"plumber","Клининг":"cleaning","Сварщик":"welder","Электрик":"electrician","Ремонт холодильников":"fridge","Ремонт стиральных машин":"washer","Телемастер":"tv","Мастер на час":"hour","Межгород такси":"taxi","Разнорабочие":"workers"};
+const codeToName = Object.fromEntries(Object.entries(categories).map(([k, v]) => [v, k]));
+
+let executorsData = [];
+let ordersData = [];
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(x => x.classList.toggle("active", x.id === id));
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x.dataset.page === id));
+  document.getElementById('nav').classList.remove('open');
+}
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => showPage(b.dataset.page)));
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
-function updateTransportOptions(){
-  const cat=$("newCategory").value, variants=transportVariants[cat]||[], wrap=$("transportVariantWrap"), sel=$("newVariant");
-  sel.innerHTML="";
-  if(variants.length){ wrap.classList.remove("hidden"); variants.forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o)}) }
-  else{ wrap.classList.add("hidden") }
-}
-function refresh(){
-  $("mTotal").textContent = executors.length;
-  $("mPending").textContent = executors.filter(x=>x.status==="Ожидает проверки").length;
-  renderExecutors();
-  renderMonitor();
-}
-function renderMonitor(){
-  // Группируем по категории + подкатегории
-  const grouped = {};
-  executors.forEach(x => {
-    const key = x.variant ? `${x.category} (${x.variant})` : x.category;
-    if (!grouped[key]) grouped[key] = { total: 0, online: 0, busy: 0 };
-    grouped[key].total++;
-    if (x.presence === 'На линии') grouped[key].online++;
-    if (x.presence === 'На заказе') grouped[key].busy++;
-  });
-
-  const rows = Object.keys(grouped).map(key => {
-    const g = grouped[key];
-    return `<tr><td>${escapeHtml(key)}</td><td>${g.total}</td><td style="color:var(--green)">${g.online}</td><td style="color:var(--gold)">${g.busy}</td></tr>`;
-  }).join("");
-
-  $("monitorCategoryRows").innerHTML = rows || '<tr><td colspan="4" class="muted">Нет исполнителей</td></tr>';
-}
-function renderExecutors(){
-  let f=$("execFilter").value;
-  let arr=executors.filter(x=>!f||x.status===f);
-  $("execRows").innerHTML = arr.length ? arr.map(x=>`
-    <tr>
-      <td><b>${escapeHtml(x.name)}</b><br><span class="small">${escapeHtml(x.phone)}</span></td>
-      <td>${escapeHtml(x.category)}${x.variant?'<br><span class="small">'+escapeHtml(x.variant)+'</span>':""}</td>
-      <td><span class="pill ${x.status==="Одобрен"?"ok":x.status==="Заблокирован"?"block":"wait"}">${x.status}</span></td>
-      <td><div class="actions">${x.status==="Ожидает проверки"?`<button class="primary" onclick="approve('${x.key}')">Одобрить</button>`:""}</div></td>
-    </tr>`).join("") : '<tr><td colspan="4" class="muted">Список пуст.</td></tr>';
-}
-categories.forEach((c)=>{ let o=document.createElement("option"); o.value=o.textContent=c; $("newCategory").appendChild(o); });
-updateTransportOptions();
-refresh();
 </script>
 
 <script type="module">
@@ -170,84 +210,262 @@ refresh();
   const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const serviceCodes = {"Эвакуатор":"evacuator","Манипулятор":"manipulator","Грузоперевозки":"cargo","Сантехник":"plumber","Клининг":"cleaning","Сварщик":"welder","Электрик":"electrician","Ремонт холодильников":"fridge","Ремонт стиральных машин":"washer","Телемастер":"tv","Мастер на час":"hour","Межгород такси":"taxi","Разнорабочие":"workers"};
-  const codeToName = Object.fromEntries(Object.entries(serviceCodes).map(([k, v]) => [v, k]));
+  const waveSelect = document.getElementById('waveCategory');
+  Object.keys(categories).forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = categories[name];
+    opt.textContent = name;
+    waveSelect.appendChild(opt);
+  });
 
-  async function loadRealExecutors() {
-    const { data, error } = await supabase.from('executors').select('*');
-    if (error) { console.error(error); return; }
-    window.executors = data.map(x => ({
-      key: x.id, name: x.name || 'Без имени', phone: x.phone,
-      category: codeToName[x.service_id] || x.service_id, variant: x.variant_id || '',
-      status: x.is_approved ? 'Одобрен' : 'Ожидает проверки', 
-      presence: x.is_online ? 'На линии' : (x.is_busy ? 'На заказе' : 'Не в сети'),
-      id: x.id.substring(0, 8),
-    }));
+  async function loadData(showAlert = false) {
+    document.getElementById('globalStatus').textContent = "ОБНОВЛЕНИЕ...";
+    
+    const { data: execs, error: execErr } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
+    if (execErr) console.error(execErr);
+    if (execs) executorsData = execs;
+
+    const { data: ords, error: ordErr } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    if (ordErr) console.error(ordErr);
+    if (ords) ordersData = ords;
+
     renderExecutors();
-    refresh();
+    renderOrders();
+    renderBoards();
+    renderBlacklist();
+    renderFinances();
+    calculateStats();
+    renderMonitor();
+    loadQR();
+
+    document.getElementById('globalStatus').textContent = "ОНЛАЙН · БАЗА ПОДКЛЮЧЕНА";
+    if (showAlert) alert("Обновлено. Исполнителей: " + executorsData.length);
   }
 
-  async function loadOrders() {
-    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(50);
-    if (error) return;
-    document.getElementById('orderRows').innerHTML = data.length ? data.map(x => `<tr><td>${x.id.substring(0,8)}</td><td>${x.service_id}</td><td>${x.client_phone}</td><td><span class="pill wait">${x.status}</span></td></tr>`).join("") : '<tr><td colspan="4" class="muted">Нет заказов</td></tr>';
-    document.getElementById('mOrders').textContent = data.filter(x => x.status === 'NEW' || x.status === 'SEARCHING').length;
-  }
-
-  window.addExecutor = async function() {
-    const name = document.getElementById('newName').value.trim();
-    const phone = document.getElementById('newPhone').value.trim();
-    const catName = document.getElementById('newCategory').value;
-    const variant = document.getElementById('newVariant') ? document.getElementById('newVariant').value : '';
-    if (!name || !phone) return alert("Введите имя и телефон");
-    const serviceId = serviceCodes[catName];
-    let hunter = 'HUNTER_02';
-    if (['cargo', 'evacuator', 'manipulator'].includes(serviceId)) hunter = 'HUNTER_01';
-    else if (['taxi', 'workers'].includes(serviceId)) hunter = 'BOARD';
-    const { error } = await supabase.from('executors').insert([{ name, phone, service_id: serviceId, hunter, variant_id: variant, is_approved: false, rating: 15, is_online: false, is_busy: false }]);
-    if (error) alert('Ошибка: ' + error.message);
-    else { alert('Добавлен!'); document.getElementById('newName').value = ''; document.getElementById('newPhone').value = ''; loadRealExecutors(); }
-  };
-
-  window.approve = async function(key) {
-    await supabase.from('executors').update({ is_approved: true }).eq('id', key);
-    loadRealExecutors();
-  };
-
-  // ФУНКЦИЯ СОХРАНЕНИЯ QR ССЫЛОК
-  window.saveQR = async function(type) {
-    const url = document.getElementById('qrInput' + type).value.trim();
-    if (!url) return alert("Вставьте ссылку на картинку");
-    
-    const key = type === 1 ? 'qr_spec' : 'qr_home';
-    const { error } = await supabase.from('settings').upsert({ key: key, value: url });
-    
-    if (error) {
-      alert('Ошибка сохранения: ' + error.message);
+  async function loadWaveSettings() {
+    const serviceId = document.getElementById('waveCategory').value;
+    const { data } = await supabase.from('dispatch_settings').select('*').eq('service_id', serviceId).single();
+    if (data) {
+      document.getElementById('w1r').value = data.wave1_radius || 2.0;
+      document.getElementById('w1t').value = data.wave1_timeout || 11;
+      document.getElementById('w2r').value = data.wave2_radius || 5.0;
     } else {
-      alert('QR-код сохранен!');
-      document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+      document.getElementById('w1r').value = 2.0;
+      document.getElementById('w1t').value = 11;
+      document.getElementById('w2r').value = 5.0;
     }
+  }
+
+  window.saveWaveSettings = async function() {
+    const serviceId = document.getElementById('waveCategory').value;
+    const w1r = parseFloat(document.getElementById('w1r').value);
+    const w1t = parseInt(document.getElementById('w1t').value);
+    const w2r = parseFloat(document.getElementById('w2r').value);
+
+    const { error } = await supabase.from('dispatch_settings').upsert({
+      service_id: serviceId,
+      wave1_radius: w1r,
+      wave1_timeout: w1t,
+      wave2_radius: w2r
+    });
+
+    if (error) alert('Ошибка: ' + error.message);
+    else alert('Настройки для ' + codeToName[serviceId] + ' сохранены!');
   };
+
+  function renderExecutors() {
+    const f = document.getElementById('execFilter').value;
+    let arr = executorsData.filter(x => x.service_id !== 'taxi' && x.service_id !== 'workers')
+                           .filter(x => !f || (f === 'Одобрен' ? x.is_approved : !x.is_approved))
+                           .filter(x => !x.is_blocked);
+    
+    document.getElementById('execRows').innerHTML = arr.length ? arr.map(x => `
+      <tr>
+        <td><b>${escapeHtml(x.name || 'Без имени')}</b><br><span class="small">${escapeHtml(x.phone)}</span></td>
+        <td>${escapeHtml(codeToName[x.service_id] || x.service_id)}<br><span class="small">${escapeHtml(x.variant_id || '')}</span></td>
+        <td class="mono">${x.telegram_id || '—'}</td>
+        <td><span class="pill ${x.is_approved ? 'ok' : 'wait'}">${x.is_approved ? 'Одобрен' : 'Ожидает'}</span></td>
+        <td>
+          <div class="actions">
+            ${!x.is_approved ? `<button class="primary" onclick="approveExecutor('${x.id}')">Одобрить</button>` : ''}
+            <button class="danger" onclick="blockExecutor('${x.id}')">В ЧС</button>
+          </div>
+        </td>
+      </tr>
+    `).join("") : '<tr><td colspan="5" class="muted">Нет исполнителей</td></tr>';
+  }
+
+  function renderBlacklist() {
+    let arr = executorsData.filter(x => x.is_blocked);
+    document.getElementById('blacklistRows').innerHTML = arr.length ? arr.map(x => `
+      <tr>
+        <td><b>${escapeHtml(x.name || 'Без имени')}</b></td>
+        <td>${codeToName[x.service_id]}</td>
+        <td>${escapeHtml(x.phone)}</td>
+        <td><button class="secondary" onclick="unblockExecutor('${x.id}')">Разблокировать</button></td>
+      </tr>
+    `).join("") : '<tr><td colspan="4" class="muted">Чёрный список пуст</td></tr>';
+  }
+
+  function renderFinances() {
+    let arr = executorsData.filter(x => x.debt && x.debt > 0);
+    document.getElementById('financeRows').innerHTML = arr.length ? arr.map(x => `
+      <tr>
+        <td><b>${escapeHtml(x.name || 'Без имени')}</b></td>
+        <td>${escapeHtml(x.phone)}</td>
+        <td style="color:var(--red); font-weight:bold;">${x.debt} сом</td>
+        <td>${x.payment_sent ? '<span class="pill ok">Чек отправлен</span>' : '<span class="pill wait">Ждем оплаты</span>'}</td>
+        <td><button class="primary" onclick="confirmPayment('${x.id}')">Подтвердить чек</button></td>
+      </tr>
+    `).join("") : '<tr><td colspan="5" class="muted">Нет должников.</td></tr>';
+  }
+
+  function renderBoards() {
+    let arr = executorsData.filter(x => x.service_id === 'taxi' || x.service_id === 'workers');
+    document.getElementById('boardRows').innerHTML = arr.length ? arr.map(x => `
+      <tr>
+        <td><b>${escapeHtml(x.name || 'Без имени')}</b></td>
+        <td>${codeToName[x.service_id]}</td>
+        <td>${escapeHtml(x.phone)}</td>
+        <td><span class="pill ${x.is_approved ? 'ok' : 'wait'}">${x.is_approved ? 'Активно' : 'Ожидает'}</span></td>
+        <td>${!x.is_approved ? `<button class="primary" onclick="approveExecutor('${x.id}')">Одобрить</button>` : ''}</td>
+      </tr>
+    `).join("") : '<tr><td colspan="5" class="muted">Нет объявлений</td></tr>';
+  }
+
+  function renderOrders() {
+    const f = document.getElementById('orderFilter').value;
+    let arr = ordersData.filter(x => !f || x.status === f);
+    document.getElementById('orderRows').innerHTML = arr.length ? arr.map(x => `
+      <tr>
+        <td class="mono">${x.id.substring(0, 6)}</td>
+        <td><b>${escapeHtml(codeToName[x.service_id] || x.service_id)}</b><br><span class="small">${escapeHtml(x.variant_id || '')}</span></td>
+        <td>${escapeHtml(x.client_phone)}</td>
+        <td>${x.source === 'site' ? '🌐 Сайт' : '🤖 Бот'}</td>
+        <td><span class="pill ${x.status === 'ASSIGNED' ? 'ok' : 'wait'}">${x.status}</span></td>
+        <td>${x.status === 'ASSIGNED' ? `<button class="primary" onclick="completeOrder('${x.id}')">Завершить</button>` : ''}</td>
+      </tr>
+    `).join("") : '<tr><td colspan="6" class="muted">Нет заказов</td></tr>';
+  }
+
+  function calculateStats() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const weekAgo = today - (7 * 24 * 60 * 60 * 1000);
+    let todayRevenue = 0, weekRevenue = 0, searching = 0;
+
+    ordersData.forEach(o => {
+      const oDate = new Date(o.created_at).getTime();
+      if (o.status === 'COMPLETED') {
+        if (oDate >= today) todayRevenue += 100;
+        if (oDate >= weekAgo) weekRevenue += 100;
+      }
+      if (o.status === 'NEW' || o.status === 'SEARCHING') searching++;
+    });
+
+    document.getElementById('statRevenueToday').textContent = todayRevenue + ' сом';
+    document.getElementById('statRevenueWeek').textContent = weekRevenue + ' сом';
+    document.getElementById('statSearching').textContent = searching;
+    document.getElementById('statTotalExecutors').textContent = executorsData.length;
+  }
+
+  function renderMonitor() {
+    const specIds = ['evacuator', 'manipulator', 'cargo'];
+    const homeIds = ['plumber', 'cleaning', 'welder', 'electrician', 'fridge', 'washer', 'tv', 'hour'];
+
+    function buildRows(ids) {
+      const grouped = {};
+      executorsData.filter(e => ids.includes(e.service_id)).forEach(x => {
+        const key = x.variant_id ? `${codeToName[x.service_id]} (${x.variant_id})` : codeToName[x.service_id];
+        if (!grouped[key]) grouped[key] = { total: 0, online: 0, busy: 0, earned: 0 };
+        grouped[key].total++;
+        if (x.is_online && !x.is_busy) grouped[key].online++;
+        if (x.is_busy) grouped[key].busy++;
+      });
+      
+      ordersData.filter(o => ids.includes(o.service_id) && o.status === 'COMPLETED').forEach(o => {
+        const key = o.variant_id ? `${codeToName[o.service_id]} (${o.variant_id})` : codeToName[o.service_id];
+        if (grouped[key]) grouped[key].earned += 100;
+      });
+
+      return Object.keys(grouped).map(key => {
+        const g = grouped[key];
+        return `<tr><td>${escapeHtml(key)}</td><td>${g.total}</td><td style="color:var(--green)">${g.online}</td><td style="color:var(--gold)">${g.busy}</td><td style="color:var(--green)">${g.earned}</td></tr>`;
+      }).join("");
+    }
+
+    document.getElementById('monitorRows').innerHTML = `
+      <tr><td colspan="5" style="background:#222;font-weight:bold;color:var(--gold)">🚛 Спецтехника</td></tr>
+      ${buildRows(specIds)}
+      <tr><td colspan="5" style="background:#222;font-weight:bold;color:var(--gold)">🔧 Бытовуха</td></tr>
+      ${buildRows(homeIds)}
+    `;
+  }
 
   async function loadQR() {
     const { data } = await supabase.from('settings').select('*');
+    if (!data) return;
     data.forEach(item => {
       if (item.key === 'qr_spec' && item.value) {
-        document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+        document.getElementById('qrPreview1').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
         document.getElementById('qrInput1').value = item.value;
       }
       if (item.key === 'qr_home' && item.value) {
-        document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px; border-radius:10px;">`;
+        document.getElementById('qrPreview2').innerHTML = `<img src="${item.value}" style="max-width:100%; max-height:150px;">`;
         document.getElementById('qrInput2').value = item.value;
       }
     });
   }
 
-  loadRealExecutors();
-  loadOrders();
-  loadQR();
-  setInterval(loadRealExecutors, 5000);
+  window.approveExecutor = async function(id) {
+    await supabase.from('executors').update({ is_approved: true }).eq('id', id);
+    loadData();
+  };
+
+  window.blockExecutor = async function(id) {
+    if (!confirm("Отправить в ЧС?")) return;
+    await supabase.from('executors').update({ is_blocked: true, is_approved: false }).eq('id', id);
+    loadData();
+  };
+
+  window.unblockExecutor = async function(id) {
+    await supabase.from('executors').update({ is_blocked: false }).eq('id', id);
+    loadData();
+  };
+
+  window.confirmPayment = async function(id) {
+    if (!confirm("Подтверждаете оплату? Долг спишется, доступ откроется.")) return;
+    await supabase.from('executors').update({ debt: 0, payment_sent: false }).eq('id', id);
+    alert("Оплата подтверждена. Шлюз открыт.");
+    loadData();
+  };
+
+  window.completeOrder = async function(id) {
+    const order = ordersData.find(o => o.id === id);
+    if (order && order.assigned_executor_id) {
+      const { data: ex } = await supabase.from('executors').select('debt').eq('id', order.assigned_executor_id).single();
+      const currentDebt = ex ? (ex.debt || 0) : 0;
+      await supabase.from('executors').update({ debt: currentDebt + 100, is_busy: false }).eq('id', order.assigned_executor_id);
+    }
+    await supabase.from('orders').update({ status: 'COMPLETED' }).eq('id', id);
+    loadData();
+  };
+
+  window.saveQR = async function(type) {
+    const url = document.getElementById('qrInput' + type).value.trim();
+    if (!url) return alert("Вставьте ссылку");
+    const key = type === 1 ? 'qr_spec' : 'qr_home';
+    const { error } = await supabase.from('settings').upsert({ key, value: url });
+    if (error) alert('Ошибка: ' + error.message);
+    else {
+      alert('Сохранено!');
+      document.getElementById('qrPreview' + type).innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px;">`;
+    }
+  };
+
+  loadData();
+  loadWaveSettings();
+  setInterval(() => loadData(false), 5000);
 </script>
 </body>
-  </html>
+      </html>
