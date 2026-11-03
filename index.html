@@ -1,142 +1,95 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101827">
-<title>KYRAAN ADMIN HUB</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>KYRAAN ADMIN HUB</title>
 <style>
-:root{--bg:#0b1220;--panel:#111c2e;--panel2:#17243a;--line:#263650;--text:#edf3fb;--muted:#9aabc2;--blue:#4c8dff;--green:#2ac48a;--orange:#f5a94b;--red:#f16b76}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-button,input{font:inherit}button{cursor:pointer}.app{max-width:1100px;margin:auto;min-height:100vh;padding-bottom:28px}
-.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:13px 16px;background:#101a2b;border-bottom:1px solid var(--line)}
-.icon{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:9px 12px;font-size:20px}
-.brand{font-weight:850;letter-spacing:.08em}.sub{color:var(--muted);font-size:11px}.spacer{flex:1}
-.tabs{display:flex;gap:8px;overflow:auto;padding:13px 14px 5px;scrollbar-width:none}.tabs button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:9px 14px;border-radius:20px}.tabs button.active{background:#203b63;color:white;border-color:#477bc0}
-main{padding:12px 14px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 12px}.section-head h2{font-size:18px;margin:0}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.metric,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.metric .value{font-size:27px;font-weight:800;margin-top:5px}.metric .label{font-size:12px;color:var(--muted)}.metric.green .value{color:var(--green)}.metric.orange .value{color:var(--orange)}
-.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.card h3{font-size:16px;margin:0 0 8px}.service-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.service{padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;display:flex;justify-content:space-between;gap:8px}.count{font-weight:750;color:#b9d4ff}.tag{font-size:11px;border-radius:20px;padding:3px 8px;background:#203b32;color:#8de5bd}
-.board{margin-top:14px}.board-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line)}
-.btn{border:0;border-radius:10px;padding:10px 13px;background:var(--blue);color:white;font-weight:650}.btn.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}.btn.danger{background:#552a36}.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text);margin:8px 0 12px}
-.drawer-bg{position:fixed;inset:0;background:#0009;z-index:10;display:none}.drawer{position:absolute;left:0;top:0;bottom:0;width:min(340px,88vw);background:#101a2b;border-right:1px solid var(--line);padding:18px;overflow:auto}.drawer-bg.open{display:block}.drawer h3{margin:12px 0}.menu-item{display:block;width:100%;text-align:left;padding:12px;margin:5px 0;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text)}
-.qr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.qr-preview{height:155px;display:grid;place-items:center;background:#f6f7f9;border-radius:12px;margin:10px 0;color:#273246;overflow:hidden}.qr-preview img{max-width:100%;max-height:100%;object-fit:contain}.qr-placeholder{text-align:center;font-size:13px;color:#596579}.hidden{display:none!important}.notice{padding:12px;border:1px solid #6a512b;background:#302719;color:#f6d7a2;border-radius:12px;margin:12px 0}.table{width:100%;border-collapse:collapse}.table td,.table th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-size:12px}.pill{font-size:11px;padding:4px 8px;border-radius:20px;background:#203b63;color:#c5dcff}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.qr-grid{grid-template-columns:1fr}.service-list{grid-template-columns:1fr}.metric .value{font-size:24px}main{padding:10px}.top{padding:11px 12px}}
-</style>
-</head>
-<body>
-<div class="app">
-<header class="top">
- <button class="icon" aria-label="Открыть меню" onclick="toggleMenu()">☰</button>
- <div><div class="brand">KYRAAN</div><div class="sub">ADMIN HUB · ПАНЕЛЬ УПРАВЛЕНИЯ</div></div>
- <div class="spacer"></div><span class="pill">ДЕМО-МАКЕТ</span>
-</header>
-<nav class="tabs" aria-label="Основные разделы">
- <button class="active" onclick="showPage('market',this)">Рынок</button>
- <button onclick="showPage('hub',this)">Альфа · HUB</button>
- <button onclick="showPage('search',this)">⌕ Поиск</button>
- <button onclick="showPage('portfolio',this)">Портфель</button>
- <button onclick="showPage('messages',this)">Сообщения</button>
+:root{--bg:#0b1220;--p:#111c2e;--p2:#19263b;--line:#293951;--txt:#eef3fb;--muted:#9aabc0;--blue:#568cff;--green:#36c995;--amber:#f2b65d;--red:#ed727c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,Arial,sans-serif}.app{max-width:1000px;margin:auto;min-height:100vh;padding-bottom:25px}
+header{position:sticky;top:0;z-index:4;background:#101a2b;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 15px}.icon{background:var(--p2);border:1px solid var(--line);border-radius:11px;color:white;padding:9px 13px;font-size:20px}.brand{font-weight:850;letter-spacing:1px}.muted,.small{color:var(--muted)}.small{font-size:12px}.grow{flex:1}
+.tabs{display:flex;gap:8px;overflow:auto;padding:13px 12px}.tabs button{white-space:nowrap;border:1px solid var(--line);border-radius:22px;background:var(--p);color:var(--muted);padding:10px 15px}.tabs button.active{background:#244878;color:white;border-color:#548bd1}
+main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22px;margin:5px 0 15px}h2{font-size:18px;margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.card{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:14px}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .empty{font-size:16px;color:var(--muted)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.service-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}.service{background:var(--p2);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:13px;display:flex;justify-content:space-between;gap:8px}.status{display:inline-block;padding:4px 9px;border-radius:20px;background:#392d22;color:#f5c887;font-size:11px}.status.off{background:#3a2630;color:#f3a0a8}.status.ok{background:#203a33;color:#9ce6c7}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700}.btn.secondary{background:var(--p2);border:1px solid var(--line)}.btn.red{background:#60313b}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#c4d0e1;margin-bottom:6px}input,select{width:100%;background:#0c1524;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font:inherit}.phone{display:flex;gap:7px}.phone b{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:10px;white-space:nowrap}.phone input{min-width:0}.notice{background:#30291e;border:1px solid #66502d;color:#f2d5a2;padding:12px;border-radius:11px;margin:12px 0}.success{background:#1e382f;border:1px solid #32664f;color:#a9ebce;padding:12px;border-radius:11px;margin:12px 0}.hidden{display:none!important}.drawer-bg{display:none;position:fixed;inset:0;background:#000a;z-index:8}.drawer-bg.open{display:block}.drawer{height:100%;overflow:auto;width:min(340px,88vw);background:#101a2b;padding:16px}.menuitem{width:100%;text-align:left;background:var(--p);border:1px solid var(--line);color:white;padding:12px;border-radius:10px;margin:4px 0}.menuhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.qrpreview{height:150px;background:#f4f5f7;color:#4b5668;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:10px 0}.qrpreview img{max-width:100%;max-height:100%;object-fit:contain}.boardrow{padding:12px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.service-list{grid-template-columns:1fr}.metric strong{font-size:22px}}
+</style></head>
+<body><div class="app">
+<header><button class="icon" onclick="menu(true)">☰</button><div><div class="brand">KYRAAN ADMIN</div><div class="small">ПАНЕЛЬ УПРАВЛЕНИЯ</div></div><div class="grow"></div><span class="status off">Хищники не активны</span></header>
+<nav class="tabs">
+<button class="active" onclick="page('market',this)">Рынок</button><button onclick="page('hub',this)">Альфа · HUB</button><button onclick="page('search',this)">⌕ Поиск</button><button onclick="page('portfolio',this)">Портфель</button><button onclick="page('messages',this)">Сообщения</button>
 </nav>
 <main>
-<section id="market" class="page">
- <div class="section-head"><div><h2>Общий мониторинг</h2><div class="small">Текущее состояние системы</div></div><span class="tag">● Онлайн-макет</span></div>
- <div class="grid">
-  <div class="metric"><div class="label">Всего исполнителей</div><div class="value" id="total">248</div></div>
-  <div class="metric green"><div class="label">На линии</div><div class="value">86</div></div>
-  <div class="metric orange"><div class="label">На заказе</div><div class="value">23</div></div>
-  <div class="metric"><div class="label">Добавлено сегодня</div><div class="value">7</div></div>
-  <div class="metric"><div class="label">Удалено сегодня</div><div class="value">2</div></div>
-  <div class="metric"><div class="label">Заказов сегодня</div><div class="value">41</div></div>
-  <div class="metric"><div class="label">Выполнено сегодня</div><div class="value">29</div></div>
-  <div class="metric"><div class="label">Ожидают распределения</div><div class="value">5</div></div>
- </div>
- <div class="two">
-  <div class="card"><h3>HUNTER_01 · Спецтехника</h3><div class="small">Зарегистрировано: <b>96</b> · На линии: <b>34</b> · На заказе: <b>11</b></div>
-   <div class="service-list">
-    <div class="service">Грузоперевозки <b class="count">42</b></div><div class="service">Манипулятор <b class="count">28</b></div><div class="service">Эвакуатор <b class="count">26</b></div>
-   </div>
-  </div>
-  <div class="card"><h3>HUNTER_02 · Бытовые услуги</h3><div class="small">Зарегистрировано: <b>152</b> · На линии: <b>52</b> · На заказе: <b>12</b></div>
-   <div class="service-list">
-    <div class="service">Сантехник <b class="count">31</b></div><div class="service">Электрик <b class="count">24</b></div>
-    <div class="service">Клининг <b class="count">19</b></div><div class="service">Сварщик <b class="count">17</b></div>
-    <div class="service">Ремонт холодильников <b class="count">16</b></div><div class="service">Ремонт стиральных машин <b class="count">15</b></div>
-    <div class="service">Телемастер <b class="count">14</b></div><div class="service">Мастер на час <b class="count">16</b></div>
-   </div>
-  </div>
- </div>
- <div class="card board"><h3>Доски объявлений</h3><div class="small">Отдельно от контуров HUNTER</div>
-  <div class="board-row"><div><b>Междугороднее такси</b><div class="small">Активные объявления: 18</div></div><span class="pill">QR №2</span></div>
-  <div class="board-row"><div><b>Разнорабочие</b><div class="small">Активные объявления: 12</div></div><span class="pill">QR №2</span></div>
- </div>
- <p class="small">Все цифры на этом экране демонстрационные. Реальные данные появятся только после отдельного подключения к базе.</p>
-</section>
-
-<section id="hub" class="page hidden"><div class="section-head"><h2>KYRAAN HUB · Журналы</h2></div>
- <div class="two"><div class="card"><h3>HUNTER_01</h3><p class="muted">Спецтехника · активные заявки и события</p><button class="btn" onclick="alert('Демо: журнал HUNTER_01')">Открыть журнал</button></div>
- <div class="card"><h3>HUNTER_02</h3><p class="muted">Бытовые услуги · активные заявки и события</p><button class="btn" onclick="alert('Демо: журнал HUNTER_02')">Открыть журнал</button></div></div>
- <div class="notice">Активные заявки: предполагаемое отображение 30 минут; затем архив 48 часов. Это визуальная настройка макета, не действующее правило базы.</div>
-</section>
-
-<section id="search" class="page hidden"><h2>Поиск исполнителей</h2><input class="search" id="searchInput" placeholder="Имя, телефон или услуга…" oninput="filterRows()">
- <div class="card"><table class="table" id="people"><thead><tr><th>Исполнитель</th><th>Направление</th><th>Статус</th></tr></thead><tbody>
- <tr><td>Азамат</td><td>Сварщик</td><td>На линии</td></tr><tr><td>Павел</td><td>Сантехник</td><td>На заказе</td></tr><tr><td>Нурбек</td><td>Эвакуатор</td><td>На линии</td></tr><tr><td>Бакыт</td><td>Манипулятор</td><td>Не в сети</td></tr>
- </tbody></table></div>
- <div class="small">Демо-записи, не реальные данные исполнителей.</div>
-</section>
-
-<section id="portfolio" class="page hidden"><h2>Портфель · Статистика за сегодня</h2>
- <div class="grid">
-  <div class="metric"><div class="label">Транзакции</div><div class="value">34</div></div><div class="metric"><div class="label">Заказы</div><div class="value">41</div></div>
-  <div class="metric"><div class="label">Выполнено</div><div class="value">29</div></div><div class="metric"><div class="label">Чеки отправлены</div><div class="value">22</div></div>
-  <div class="metric orange"><div class="label">Чеки ожидаются</div><div class="value">6</div></div><div class="metric"><div class="label">Эвакуатор · заказы</div><div class="value">13</div></div>
-  <div class="metric"><div class="label">Манипулятор · заказы</div><div class="value">8</div></div><div class="metric"><div class="label">Грузоперевозки · заказы</div><div class="value">9</div></div>
- </div><p class="small">Показатели демонстрационные.</p>
-</section>
-
-<section id="messages" class="page hidden"><h2>Системные предупреждения</h2>
- <div class="card"><div class="board-row"><div><b>⚠ HUNTER_01 не успевает обработать очередь</b><div class="small">Пример системного предупреждения · 12:40</div></div><span class="pill">Тревога</span></div>
- <div class="board-row"><div><b>Ожидается проверка чеков</b><div class="small">6 чеков ожидают проверки администратором</div></div><span class="pill">Внимание</span></div>
- <div class="board-row"><div><b>HUNTER_02 работает штатно</b><div class="small">Пример системного события · 12:15</div></div><span class="tag">Информация</span></div></div>
- <p class="small">Это лента системных событий, не чат. Связь с исполнителями остаётся через WhatsApp.</p>
-</section>
-</main>
+<section id="market" class="page active">
+<h1>Общий мониторинг</h1><p class="small">Реальные показатели появятся после подключения источника данных. Сейчас база не подключена.</p>
+<div class="grid">
+<div class="metric"><div class="label">Всего исполнителей</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">На линии</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">На заказе</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Добавлено сегодня</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Удалено сегодня</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Заказов сегодня</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Выполнено сегодня</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Ожидают распределения</div><strong class="empty">Нет данных</strong></div>
 </div>
-
-<div class="drawer-bg" id="drawer" onclick="if(event.target===this)toggleMenu()"><aside class="drawer">
- <div class="section-head"><div><b>KYRAAN ADMIN</b><div class="small">Левое меню</div></div><button class="icon" onclick="toggleMenu()">×</button></div>
- <h3>Управление</h3>
- <button class="menu-item" onclick="menuPage('market')">Общий мониторинг · Рынок</button>
- <button class="menu-item" onclick="menuPage('hub')">KYRAAN HUB · Журналы хищников</button>
- <button class="menu-item" onclick="menuPage('search')">Исполнители · Поиск</button>
- <button class="menu-item" onclick="menuPage('portfolio')">Статистика · Портфель</button>
- <button class="menu-item" onclick="menuPage('messages')">Системные предупреждения</button>
- <h3>Категории исполнителей</h3>
- <button class="menu-item" onclick="alert('HUNTER_01: грузоперевозки, манипулятор, эвакуатор')">HUNTER_01 · 3 направления</button>
- <button class="menu-item" onclick="alert('HUNTER_02: 8 бытовых услуг')">HUNTER_02 · 8 направлений</button>
- <h3>Добавление исполнителя</h3>
- <button class="menu-item" onclick="addExecutor()">＋ Добавить исполнителя</button>
- <div class="small">Спецтехника: ввод телефона → администратор подтверждает, что проверил документы в Telegram (Да / Отмена). Документы в админку не загружаются. Для бытовых услуг — добавление контакта по номеру.</div>
- <h3>QR-коды оплаты</h3>
- <div class="card">
-  <b>QR №1 · HUNTER_01</b><div class="small">Грузоперевозки, манипулятор, эвакуатор</div>
-  <div class="qr-preview" id="qr1preview"><span class="qr-placeholder">QR №1 ещё не загружен</span></div>
-  <input type="file" accept="image/*" onchange="loadQR(this,'qr1preview')">
- </div>
- <div class="card" style="margin-top:10px">
-  <b>QR №2 · HUNTER_02 + доски</b><div class="small">8 бытовых услуг, «Разнорабочие», «Междугороднее такси»</div>
-  <div class="qr-preview" id="qr2preview"><span class="qr-placeholder">QR №2 ещё не загружен</span></div>
-  <input type="file" accept="image/*" onchange="loadQR(this,'qr2preview')">
- </div>
- <div class="notice">QR №1 и QR №2 независимы. В этом прототипе изображения показываются только в текущей открытой странице; постоянное сохранение и реальные платежи не подключены.</div>
- <h3>Состояние проекта</h3><div class="small">Только HTML-макет. CORE, Supabase, боты и GitHub-интеграции не подключены и не изменяются этим файлом.</div>
-</aside></div>
+<div class="two">
+<div class="card"><h2>HUNTER_01 · Спецтехника</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Грузоперевозки · Манипулятор · Эвакуатор</p><div class="service-list"><div class="service">Грузоперевозки <b>—</b></div><div class="service">Манипулятор <b>—</b></div><div class="service">Эвакуатор <b>—</b></div></div></div>
+<div class="card"><h2>HUNTER_02 · Бытовые услуги</h2><span class="status off">НЕ АКТИВЕН</span><div class="service-list"><div class="service">Сантехник <b>—</b></div><div class="service">Электрик <b>—</b></div><div class="service">Клининг <b>—</b></div><div class="service">Сварщик <b>—</b></div><div class="service">Ремонт холодильников <b>—</b></div><div class="service">Ремонт стиральных машин <b>—</b></div><div class="service">Телемастер <b>—</b></div><div class="service">Мастер на час <b>—</b></div></div></div>
+</div>
+<div class="card" style="margin-top:13px"><h2>Доски объявлений</h2><div class="boardrow">Междугороднее такси <span class="muted">Отдельно от Хищников · QR №2</span></div><div class="boardrow">Разнорабочие <span class="muted">Отдельно от Хищников · QR №2</span></div></div>
+</section>
+<section id="hub" class="page"><h1>KYRAAN HUB</h1><div class="notice">Хищники пока не включены. Обработка и распределение заявок не выполняются.</div><div class="two"><div class="card"><h2>HUNTER_01</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Отдельный журнал будет доступен после запуска.</p></div><div class="card"><h2>HUNTER_02</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Отдельный журнал будет доступен после запуска.</p></div></div></section>
+<section id="search" class="page"><h1>Поиск исполнителя</h1><input placeholder="Имя или телефон" disabled><p class="small">Поиск станет доступен после подключения реестра исполнителей.</p></section>
+<section id="portfolio" class="page"><h1>Портфель · Статистика</h1><div class="grid"><div class="metric"><div class="label">Транзакции сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Заказы сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Выполнено</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Чеки отправлены</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Чеки ожидаются</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Эвакуатор</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Манипулятор</div><strong class="empty">Нет данных</strong></div></div></section>
+<section id="messages" class="page"><h1>Системные предупреждения</h1><div class="card"><p class="small">Системные события появятся после подключения и запуска соответствующих модулей. Это не чат.</p></div></section>
+<section id="add" class="page"><h1>Добавить исполнителя</h1><div class="card">
+<div class="field"><label>Категория услуги</label><select id="service" onchange="variants()">
+<option value="">Выберите услугу</option><optgroup label="HUNTER_01 · Спецтехника"><option>Грузоперевозки</option><option>Эвакуатор</option><option>Манипулятор</option></optgroup><optgroup label="HUNTER_02 · Бытовые услуги"><option>Сантехник</option><option>Электрик</option><option>Клининг</option><option>Сварщик</option><option>Ремонт холодильников</option><option>Ремонт стиральных машин</option><option>Телемастер</option><option>Мастер на час</option></optgroup></select></div>
+<div class="field" id="variantField"><label>Подкатегория / вариант</label><select id="variant"><option value="">Сначала выберите услугу</option></select></div>
+<div class="field"><label>Имя исполнителя</label><input id="personName" type="text" placeholder="Например, Азамат"></div>
+<div class="field"><label>Телефон исполнителя</label><div class="phone"><b>+996</b><input id="phone" type="tel" inputmode="numeric" placeholder="700 700 500"></div></div>
+<div class="row"><button class="btn secondary" type="button" onclick="pickContact()">☷ Выбрать из телефонной книги</button></div>
+<div id="contactHelp" class="small">Можно выбрать сохранённый контакт в телефоне или ввести номер вручную.</div>
+<div id="docQuestion" class="notice hidden">Ты посмотрел документы этого исполнителя в личном Telegram?</div>
+<div id="docButtons" class="row hidden"><button class="btn" onclick="confirmDocs(true)">Да, проверил</button><button class="btn secondary" onclick="confirmDocs(false)">Отмена</button></div>
+<div id="addButtons" class="row"><button class="btn" onclick="beginAdd()">Добавить исполнителя</button><button class="btn secondary" onclick="clearForm()">Очистить</button></div>
+<div id="result"></div>
+<p class="small">Документы и фотографии сюда не передаются и не загружаются. Для спецтехники администратор только подтверждает, что уже проверил документы в личном Telegram. Для бытовых услуг достаточно номера телефона.</p>
+</div></section>
+<section id="qr" class="page"><h1>QR-коды оплаты исполнителей</h1><div class="two"><div class="card"><h2>QR №1 · HUNTER_01</h2><p class="small">Грузоперевозки, манипулятор, эвакуатор</p><div class="qrpreview" id="qr1">QR №1 не загружен</div><input type="file" accept="image/*" onchange="showQR(this,'qr1')"></div><div class="card"><h2>QR №2 · HUNTER_02 и доски</h2><p class="small">8 бытовых услуг, междугороднее такси, разнорабочие</p><div class="qrpreview" id="qr2">QR №2 не загружен</div><input type="file" accept="image/*" onchange="showQR(this,'qr2')"></div></div><div class="notice">QR предназначены для платежей исполнителей. Заказчики QR не видят; стоимость услуги заказчик и исполнитель согласуют напрямую. Выбранные изображения пока только отображаются в этом браузере — постоянное сохранение не подключено.</div></section>
+</main></div>
+<div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)"><aside class="drawer"><div class="menuhead"><b>KYRAAN ADMIN · МЕНЮ</b><button class="icon" onclick="menu(false)">×</button></div>
+<button class="menuitem" onclick="go('market')">Рынок · общий мониторинг</button><button class="menuitem" onclick="go('hub')">Альфа · KYRAAN HUB</button><button class="menuitem" onclick="go('search')">Поиск исполнителей</button><button class="menuitem" onclick="go('portfolio')">Портфель · статистика</button><button class="menuitem" onclick="go('messages')">Системные предупреждения</button>
+<h3>Добавление исполнителей</h3><button class="menuitem" onclick="go('add')">＋ Добавить исполнителя</button>
+<h3>QR-коды</h3><button class="menuitem" onclick="go('qr')">QR №1 и QR №2 · загрузить / заменить</button>
+<p class="small">Хищники не активны. CORE, Supabase и боты этим макетом не изменяются.</p></aside></div>
 <script>
-function toggleMenu(){document.getElementById('drawer').classList.toggle('open')}
-function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');}
-function menuPage(id){showPage(id);toggleMenu()}
-function loadQR(input,target){const file=input.files&&input.files[0];if(!file)return;const url=URL.createObjectURL(file);const box=document.getElementById(target);box.innerHTML='';const img=document.createElement('img');img.src=url;img.alt='Загруженный QR-код';box.appendChild(img)}
-function filterRows(){const q=document.getElementById('searchInput').value.toLowerCase();document.querySelectorAll('#people tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')}
-function addExecutor(){const phone=prompt('Введите номер телефона исполнителя:');if(!phone)return;const special=confirm('Это исполнитель спецтехники? Нажмите OK для спецтехники, Отмена — для бытовой услуги.');if(special){if(!confirm('Ты проверил документы исполнителя в Telegram?')){alert('Добавление отменено.');return}}alert('Демо: контакт '+phone+' принят в макет. Реальная запись в базу не выполняется.')}
-</script>
-</body></html>
+let pending=null;
+function page(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo(0,0)}
+function menu(open){document.getElementById('drawer').classList.toggle('open',open)}
+function go(id){menu(false);page(id)}
+const vmap={
+'Грузоперевозки':['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],
+'Эвакуатор':['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],
+'Манипулятор':['3 тонны — стрела 3 м','5 тонн — стрела 4 м','8 тонн — стрела 7 м','10 тонн — стрела 7 м']};
+function variants(){let s=document.getElementById('service').value,sel=document.getElementById('variant'),field=document.getElementById('variantField');sel.innerHTML='';let arr=vmap[s]||[];field.classList.toggle('hidden',!arr.length);arr.forEach(x=>{let o=document.createElement('option');o.textContent=x;sel.appendChild(o)});}
+async function pickContact(){
+ const help=document.getElementById('contactHelp');
+ if(!('contacts' in navigator) || !('ContactsManager' in window)){
+   help.textContent='Выбор контакта не поддерживается этим браузером. Введи имя и номер вручную либо открой страницу в Chrome на Android.';
+   return;
+ }
+ try{
+   const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});
+   if(!contacts || !contacts.length)return;
+   const c=contacts[0];
+   document.getElementById('personName').value=(c.name&&c.name[0])||'';
+   let raw=(c.tel&&c.tel[0])||'';
+   raw=raw.replace(/[^0-9+]/g,'').replace(/^\+996/,'').replace(/^996/,'').replace(/^0/,'');
+   document.getElementById('phone').value=raw;
+   help.textContent='Контакт выбран. Проверь имя и номер перед добавлением.';
+ }catch(e){help.textContent='Контакт не выбран. Можно ввести данные вручную.';}
+}
+function beginAdd(){let s=document.getElementById('service').value,phone=document.getElementById('phone').value.replace(/\D/g,'');let personName=document.getElementById('personName').value.trim();let result=document.getElementById('result');result.innerHTML='';if(!s){result.textContent='Выбери услугу.';return}if(phone.length!==9){result.textContent='Введи номер телефона: ровно 9 цифр после +996.';return}let special=Object.keys(vmap).includes(s);if(special){pending={s,variant:document.getElementById('variant').value,phone,personName};document.getElementById('docQuestion').classList.remove('hidden');document.getElementById('docButtons').classList.remove('hidden');document.getElementById('addButtons').classList.add('hidden')}else saveContact({s,variant:'',phone,personName})}
+function confirmDocs(yes){document.getElementById('docQuestion').classList.add('hidden');document.getElementById('docButtons').classList.add('hidden');document.getElementById('addButtons').classList.remove('hidden');if(yes&&pending)saveContact(pending);else{document.getElementById('result').textContent='Добавление отменено. Исполнитель не добавлен.';pending=null}}
+function saveContact(x){let list=JSON.parse(sessionStorage.getItem('kyraan_admin_added')||'[]');list.push({...x,phone:'+996 '+x.phone});sessionStorage.setItem('kyraan_admin_added',JSON.stringify(list));let safeName=(x.personName||'Имя не указано').replace(/[&<>"]/g,'');document.getElementById('result').innerHTML='<div class="success">Контакт добавлен в список этой открытой страницы: '+safeName+' · '+x.s+' · +996 '+x.phone+'.</div><div class="small">Важно: запись хранится только временно в этой вкладке браузера. В Supabase или другой базе она не отправлена.</div>';pending=null}
+function clearForm(){document.getElementById('service').value='';document.getElementById('phone').value='';document.getElementById('personName').value='';document.getElementById('result').innerHTML='';document.getElementById('docQuestion').classList.add('hidden');document.getElementById('docButtons').classList.add('hidden');document.getElementById('addButtons').classList.remove('hidden');variants()}
+function showQR(input,id){if(!input.files||!input.files[0])return;let url=URL.createObjectURL(input.files[0]);let box=document.getElementById(id);box.innerHTML='';let img=document.createElement('img');img.src=url;img.alt='QR-код';box.appendChild(img)}
+</script></body></html>
