@@ -9,78 +9,185 @@
 header{position:sticky;top:0;z-index:4;background:#101a2b;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 15px}.icon{background:var(--p2);border:1px solid var(--line);border-radius:11px;color:white;padding:9px 13px;font-size:20px}.brand{font-weight:850;letter-spacing:1px}.muted,.small{color:var(--muted)}.small{font-size:12px}.grow{flex:1}
 .tabs{display:flex;gap:8px;overflow:auto;padding:13px 12px}.tabs button{white-space:nowrap;border:1px solid var(--line);border-radius:22px;background:var(--p);color:var(--muted);padding:10px 15px}.tabs button.active{background:#244878;color:white;border-color:#548bd1}
 main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22px;margin:5px 0 15px}h2{font-size:18px;margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.card{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:14px}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .empty{font-size:16px;color:var(--muted)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.service-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}.service{background:var(--p2);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:13px;display:flex;justify-content:space-between;gap:8px}.status{display:inline-block;padding:4px 9px;border-radius:20px;background:#392d22;color:#f5c887;font-size:11px}.status.off{background:#3a2630;color:#f3a0a8}.status.ok{background:#203a33;color:#9ce6c7}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700}.btn.secondary{background:var(--p2);border:1px solid var(--line)}.btn.red{background:#60313b}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#c4d0e1;margin-bottom:6px}input,select{width:100%;background:#0c1524;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font:inherit}.phone{display:flex;gap:7px}.phone b{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:10px;white-space:nowrap}.phone input{min-width:0}.notice{background:#30291e;border:1px solid #66502d;color:#f2d5a2;padding:12px;border-radius:11px;margin:12px 0}.success{background:#1e382f;border:1px solid #32664f;color:#a9ebce;padding:12px;border-radius:11px;margin:12px 0}.hidden{display:none!important}.drawer-bg{display:none;position:fixed;inset:0;background:#000a;z-index:8}.drawer-bg.open{display:block}.drawer{height:100%;overflow:auto;width:min(340px,88vw);background:#101a2b;padding:16px}.menuitem{width:100%;text-align:left;background:var(--p);border:1px solid var(--line);color:white;padding:12px;border-radius:10px;margin:4px 0}.menuhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.qrpreview{height:150px;background:#f4f5f7;color:#4b5668;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:10px 0}.qrpreview img{max-width:100%;max-height:100%;object-fit:contain}.boardrow{padding:12px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+.order-item{border-bottom:1px solid var(--line);padding:10px 0;}
+.order-item:last-child{border-bottom:none;}
 @media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.service-list{grid-template-columns:1fr}.metric strong{font-size:22px}}
-</style></head>
+</style>
+<!-- Подключаем библиотеку Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 <body><div class="app">
-<header><button class="icon" onclick="menu(true)">☰</button><div><div class="brand">KYRAAN ADMIN</div><div class="small">ПАНЕЛЬ УПРАВЛЕНИЯ</div></div><div class="grow"></div><span class="status off">Хищники не активны</span></header>
+<header><button class="icon" onclick="menu(true)">☰</button><div><div class="brand">KYRAAN ADMIN</div><div class="small">ПАНЕЛЬ УПРАВЛЕНИЯ</div></div><div class="grow"></div><span id="sys-status" class="status off">Подключение...</span></header>
 <nav class="tabs">
-<button class="active" onclick="page('market',this)">Рынок</button><button onclick="page('hub',this)">Альфа · HUB</button><button onclick="page('search',this)">⌕ Поиск</button><button onclick="page('portfolio',this)">Портфель</button><button onclick="page('messages',this)">Сообщения</button>
+<button class="active" onclick="page('market',this)">Рынок</button><button onclick="page('orders',this)">Заказы</button><button onclick="page('search',this)">⌕ Поиск</button><button onclick="page('add',this)">＋ Добавить</button>
 </nav>
 <main>
 <section id="market" class="page active">
-<h1>Общий мониторинг</h1><p class="small">Реальные показатели появятся после подключения источника данных. Сейчас база не подключена.</p>
+<h1>Общий мониторинг</h1>
 <div class="grid">
-<div class="metric"><div class="label">Всего исполнителей</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">На линии</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">На заказе</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Добавлено сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Удалено сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Заказов сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Выполнено сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Ожидают распределения</div><strong class="empty">Нет данных</strong></div>
+<div class="metric"><div class="label">Всего исполнителей</div><strong id="stat-executors">-</strong></div>
+<div class="metric"><div class="label">Заказов всего</div><strong id="stat-orders">-</strong></div>
+<div class="metric"><div class="label">Новых заказов</div><strong id="stat-new-orders">-</strong></div>
+<div class="metric"><div class="label">На линии</div><strong id="stat-online">-</strong></div>
 </div>
-<div class="two"><div class="card"><h2>HUNTER_01 · Спецтехника</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Грузоперевозки · Манипулятор · Эвакуатор</p><div class="service-list"><div class="service">Грузоперевозки <b>—</b></div><div class="service">Манипулятор <b>—</b></div><div class="service">Эвакуатор <b>—</b></div></div></div><div class="card"><h2>HUNTER_02 · Бытовые услуги</h2><span class="status off">НЕ АКТИВЕН</span><div class="service-list"><div class="service">Сантехник <b>—</b></div><div class="service">Электрик <b>—</b></div><div class="service">Клининг <b>—</b></div><div class="service">Сварщик <b>—</b></div><div class="service">Ремонт холодильников <b>—</b></div><div class="service">Ремонт стиральных машин <b>—</b></div><div class="service">Телемастер <b>—</b></div><div class="service">Мастер на час <b>—</b></div></div></div></div>
-<div class="card" style="margin-top:13px"><h2>Доски объявлений</h2><div class="boardrow">Междугороднее такси <span class="muted">Отдельно от Хищников · QR №2</span></div><div class="boardrow">Разнорабочие <span class="muted">Отдельно от Хищников · QR №2</span></div></div>
+<div class="two">
+<div class="card"><h2>HUNTER_01 · Спецтехника</h2><span class="status ok">АКТИВЕН</span><p class="small">Грузоперевозки · Манипулятор · Эвакуатор</p></div>
+<div class="card"><h2>HUNTER_02 · Бытовые услуги</h2><span class="status ok">АКТИВЕН</span><p class="small">Сантехник, Электрик и др.</p></div>
+</div>
 </section>
-<section id="hub" class="page"><h1>KYRAAN HUB</h1><div class="notice">Хищники пока не включены. Обработка и распределение заявок не выполняются.</div><div class="two"><div class="card"><h2>HUNTER_01</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Отдельный журнал будет доступен после запуска.</p></div><div class="card"><h2>HUNTER_02</h2><span class="status off">НЕ АКТИВЕН</span><p class="small">Отдельный журнал будет доступен после запуска.</p></div></div></section>
-<section id="search" class="page"><h1>Поиск исполнителя</h1><input placeholder="Имя или телефон" disabled><p class="small">Поиск станет доступен после подключения реестра исполнителей.</p></section>
-<section id="portfolio" class="page"><h1>Портфель · Статистика</h1><div class="grid"><div class="metric"><div class="label">Транзакции сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Заказы сегодня</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Выполнено</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Чеки отправлены</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Чеки ожидаются</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Эвакуатор</div><strong class="empty">Нет данных</strong></div><div class="metric"><div class="label">Манипулятор</div><strong class="empty">Нет данных</strong></div></div></section>
-<section id="messages" class="page"><h1>Системные предупреждения</h1><div class="card"><p class="small">Системные события появятся после подключения и запуска соответствующих модулей. Это не чат.</p></div></section>
+
+<section id="orders" class="page"><h1>Лента заказов</h1><div class="card" id="orders-list"><p class="small">Загрузка данных...</p></div></section>
+
+<section id="search" class="page">
+<h1>Поиск исполнителя</h1>
+<input id="search-input" placeholder="Имя или телефон" onkeyup="filterExecutors()">
+<div class="card" id="executors-list" style="margin-top:12px"><p class="small">Загрузка...</p></div>
+</section>
+
 <section id="add" class="page"><h1>Добавить исполнителя</h1><div class="card">
 <div class="field"><label>Категория услуги</label><select id="service" onchange="variants()"><option value="">Выберите услугу</option><optgroup label="HUNTER_01 · Спецтехника"><option>Грузоперевозки</option><option>Эвакуатор</option><option>Манипулятор</option></optgroup><optgroup label="HUNTER_02 · Бытовые услуги"><option>Сантехник</option><option>Электрик</option><option>Клининг</option><option>Сварщик</option><option>Ремонт холодильников</option><option>Ремонт стиральных машин</option><option>Телемастер</option><option>Мастер на час</option></optgroup></select></div>
 <div class="field" id="variantField"><label>Подкатегория / вариант</label><select id="variant"><option value="">Сначала выберите услугу</option></select></div>
 <div class="field"><label>Имя исполнителя</label><input id="personName" type="text" placeholder="Например, Азамат"></div>
 <div class="field"><label>Телефон исполнителя</label><div class="phone"><b>+996</b><input id="phone" type="tel" inputmode="numeric" placeholder="700 700 500"></div></div>
 <div class="field hidden" id="vehicleField"><label>Номер автомобиля</label><input id="vehicleNumber" type="text" placeholder="Например, 01 KG 123 ABC" autocomplete="off"></div>
-<div class="row"><button class="btn secondary" type="button" onclick="pickContact()">☷ Выбрать из телефонной книги</button></div>
-<div id="contactHelp" class="small">Можно выбрать сохранённый контакт в телефоне или ввести номер вручную.</div>
-<div id="docQuestion" class="notice hidden">Ты посмотрел документы этого исполнителя в личном Telegram?</div>
-<div id="docButtons" class="row hidden"><button class="btn" onclick="confirmDocs(true)">Да, проверил</button><button class="btn secondary" onclick="confirmDocs(false)">Отмена</button></div>
-<div id="addButtons" class="row"><button class="btn" onclick="beginAdd()">Добавить исполнителя</button><button class="btn secondary" onclick="clearForm()">Очистить</button></div>
+<div id="addButtons" class="row"><button class="btn" onclick="saveToSupabase()">Добавить в базу</button><button class="btn secondary" onclick="clearForm()">Очистить</button></div>
 <div id="result"></div>
-<p class="small">Документы и фотографии сюда не передаются и не загружаются. Для спецтехники администратор только подтверждает, что уже проверил документы в личном Telegram. Для бытовых услуг достаточно номера телефона.</p>
 </div></section>
-<section id="qr" class="page"><h1>QR-коды оплаты исполнителей</h1><div class="two"><div class="card"><h2>QR №1 · HUNTER_01</h2><p class="small">Грузоперевозки, манипулятор, эвакуатор</p><div class="qrpreview" id="qr1">QR №1 не загружен</div><input type="file" accept="image/*" onchange="showQR(this,'qr1')"></div><div class="card"><h2>QR №2 · HUNTER_02 и доски</h2><p class="small">8 бытовых услуг, междугороднее такси, разнорабочие</p><div class="qrpreview" id="qr2">QR №2 не загружен</div><input type="file" accept="image/*" onchange="showQR(this,'qr2')"></div></div><div class="notice">QR предназначены для платежей исполнителей. Заказчики QR не видят; стоимость услуги заказчик и исполнитель согласуют напрямую. Выбранные изображения пока только отображаются в этом браузере — постоянное сохранение не подключено.</div></section>
 </main></div>
+
 <div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)"><aside class="drawer"><div class="menuhead"><b>KYRAAN ADMIN · МЕНЮ</b><button class="icon" onclick="menu(false)">×</button></div>
-<button class="menuitem" onclick="go('market')">Рынок · общий мониторинг</button><button class="menuitem" onclick="go('hub')">Альфа · KYRAAN HUB</button><button class="menuitem" onclick="go('search')">Поиск исполнителей</button><button class="menuitem" onclick="go('portfolio')">Портфель · статистика</button><button class="menuitem" onclick="go('messages')">Системные предупреждения</button>
-<h3>Добавление исполнителей</h3><button class="menuitem" onclick="go('add')">＋ Добавить исполнителя</button>
-<h3>QR-коды</h3><button class="menuitem" onclick="go('qr')">QR №1 и QR №2 · загрузить / заменить</button>
-<p class="small">Хищники не активны. CORE, Supabase и боты этим макетом не изменяются.</p></aside></div>
+<button class="menuitem" onclick="go('market')">Рынок · общий мониторинг</button><button class="menuitem" onclick="go('orders')">Лента заказов</button><button class="menuitem" onclick="go('search')">Поиск исполнителей</button><button class="menuitem" onclick="go('add')">＋ Добавить исполнителя</button>
+</aside></div>
+
 <script>
-let pending=null;
+// ====== НАСТРОЙКИ SUPABASE ======
+const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
+const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+let allExecutors = [];
+let allOrders = [];
+
+// ====== ИНИЦИАЛИЗАЦИЯ И ЗАГРУЗКА ДАННЫХ ======
+async function loadData() {
+  // 1. Загружаем исполнителей
+  const { data: execs, error: err1 } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
+  if (!err1 && execs) {
+    allExecutors = execs;
+    renderExecutors(execs);
+    document.getElementById('stat-executors').innerText = execs.length;
+    document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
+  }
+
+  // 2. Загружаем заказы
+  const { data: orders, error: err2 } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+  if (!err2 && orders) {
+    allOrders = orders;
+    renderOrders(orders);
+    document.getElementById('stat-orders').innerText = orders.length;
+    document.getElementById('stat-new-orders').innerText = orders.filter(o => o.status === 'NEW').length;
+  }
+
+  document.getElementById('sys-status').className = 'status ok';
+  document.getElementById('sys-status').innerText = 'База подключена';
+}
+
+// ====== ОТРИСОВКА ЗАКАЗОВ ======
+function renderOrders(orders) {
+  const container = document.getElementById('orders-list');
+  if(orders.length === 0) { container.innerHTML = '<p class="small">Заказов пока нет.</p>'; return; }
+  container.innerHTML = orders.map(o => `
+    <div class="order-item">
+      <div style="display:flex; justify-content:space-between;">
+        <b>${o.service_id} ${o.variant_id ? '('+o.variant_id+')' : ''}</b>
+        <span class="status ${o.status === 'NEW' ? 'ok' : ''}">${o.status}</span>
+      </div>
+      <div class="small" style="margin-top:4px;">📍 ${o.address || 'Без адреса'} | 📞 ${o.client_phone}</div>
+    </div>
+  `).join('');
+}
+
+// ====== ОТРИСОВКА ИСПОЛНИТЕЛЕЙ ======
+function renderExecutors(execs) {
+  const container = document.getElementById('executors-list');
+  if(execs.length === 0) { container.innerHTML = '<p class="small">Исполнителей пока нет.</p>'; return; }
+  container.innerHTML = execs.map(e => `
+    <div class="order-item">
+      <div style="display:flex; justify-content:space-between;">
+        <b>${e.name}</b>
+        <span class="small">${e.plate_number || ''}</span>
+      </div>
+      <div class="small" style="margin-top:4px;">📞 ${e.phone} | ${e.service_id}</div>
+    </div>
+  `).join('');
+}
+
+function filterExecutors() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = allExecutors.filter(e => 
+    (e.name && e.name.toLowerCase().includes(q)) || 
+    (e.phone && e.phone.includes(q))
+  );
+  renderExecutors(filtered);
+}
+
+// ====== REALTIME (МГНОВЕННОЕ ОБНОВЛЕНИЕ) ======
+supabase.channel('custom-all-channel')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+    console.log('Новый заказ!', payload);
+    loadData(); // Перезагружаем данные при изменении таблицы orders
+  })
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'executors' }, payload => {
+    console.log('Новый исполнитель!', payload);
+    loadData(); // Перезагружаем данные при изменении таблицы executors
+  })
+  .subscribe();
+
+// ====== СОХРАНЕНИЕ НОВОГО ИСПОЛНИТЕЛЯ ======
+async function saveToSupabase() {
+  let s = document.getElementById('service').value;
+  let phone = document.getElementById('phone').value.replace(/\D/g,'');
+  let personName = document.getElementById('personName').value.trim();
+  let vehicleNumber = document.getElementById('vehicleNumber').value.trim();
+  let result = document.getElementById('result');
+
+  if(!s) { result.innerHTML = '<div class="notice">Выбери услугу.</div>'; return; }
+  if(phone.length !== 9) { result.innerHTML = '<div class="notice">Введи 9 цифр номера.</div>'; return; }
+  if(['Грузоперевозки','Эвакуатор','Манипулятор'].includes(s) && !vehicleNumber) {
+    result.innerHTML = '<div class="notice">Введи номер автомобиля.</div>'; return;
+  }
+
+  result.innerHTML = '<div class="small">Сохранение...</div>';
+
+  const { error } = await supabase.from('executors').insert([{
+    name: personName || 'Исполнитель',
+    phone: '+996 ' + phone,
+    service_id: s,
+    plate_number: vehicleNumber,
+    is_approved: true,
+    rating: 15,
+    is_online: false,
+    is_busy: false
+  }]);
+
+  if(error) {
+    result.innerHTML = '<div class="notice">Ошибка базы: ' + error.message + '</div>';
+  } else {
+    result.innerHTML = '<div class="success">Исполнитель успешно добавлен в базу!</div>';
+    clearForm();
+    loadData(); // Обновляем список
+  }
+}
+
+// ====== УТИЛИТЫ ИНТЕРФЕЙСА ======
 function page(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo(0,0)}
 function menu(open){document.getElementById('drawer').classList.toggle('open',open)}
 function go(id){menu(false);page(id)}
-const vmap={
-'Грузоперевозки':['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],
-'Эвакуатор':['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],
-'Манипулятор':['3 тонны — стрела 3 м','5 тонн — стрела 4 м','8 тонн — стрела 7 м','10 тонн — стрела 7 м']};
+const vmap={'Грузоперевозки':['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],'Эвакуатор':['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],'Манипулятор':['3 тонны — стрела 3 м','5 тонн — стрела 4 м','8 тонн — стрела 7 м','10 тонн — стрела 7 м']};
 const vehicleServices=['Грузоперевозки','Эвакуатор','Манипулятор','Межгород такси'];
 function variants(){let s=document.getElementById('service').value,sel=document.getElementById('variant'),field=document.getElementById('variantField');sel.innerHTML='';let arr=vmap[s]||[];field.classList.toggle('hidden',!arr.length);arr.forEach(x=>{let o=document.createElement('option');o.textContent=x;sel.appendChild(o)});document.getElementById('vehicleField').classList.toggle('hidden',!vehicleServices.includes(s));}
-async function pickContact(){
- const help=document.getElementById('contactHelp');
- if(!('contacts' in navigator) || !('ContactsManager' in window)){
-   help.textContent='Выбор контакта не поддерживается этим браузером. Введи имя и номер вручную либо открой страницу в Chrome на Android.';
-   return;
- }
- try{
-   const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});
-   if(!contacts || !contacts.length)return;
-   const c=contacts[0];
-   document.getElementById('personName').value=(c.name&&c.name[0])||'';
-   let raw=(c.tel&&c.tel[0])||'';
-   raw=raw.replace(/[^0-9+]/g,'').replace(/^\+996/,'').replace(/^996/,'').replace(/^0/,'');
-   document.getElementById('phone').value=raw;
-   help.textContent='Контакт выбран. Проверь имя и номер перед добавлением.';
- }catch(e){help.textContent='Контакт не выбран. Можно ввести данные вручную.';}
-}
-function beginAdd(){let s=document.getElementById('service').value,phone=document.getElementById('phone').value.replace(/\D/g,''),personName=document.getElementById('personName').value.trim(),vehicleNumber=document.getElementById('vehicleNumber').value.trim(),result=document.getElementById('result');result.innerHTML='';if(!s){result.textContent='Выбери услугу.';return}if(phone.length!==9){result.textContent='Введи номер телефона: ровно 9 цифр после +996.';return}if(vehicleServices.includes(s)&&!vehicleNumber){result.textContent='Введи номер автомобиля.';return}let special=Object.keys(vmap).includes(s);if(special){pending={s,variant:document.getElementById('variant').value,phone,personName,vehicleNumber};document.getElementById('docQuestion').classList.remove('hidden');document.getElementById('docButtons').classList.remove('hidden');document.getElementById('addButtons').classList.add('hidden')}else saveContact({s,variant:'',phone,personName,vehicleNumber})}
-function confirmDocs(yes){document.getElementById('docQuestion').classList.add('hidden');document.getElementById('docButtons').classList.add('hidden');document.getElementById('addButtons').classList.remove('hidden');if(yes&&pending)saveContact(pending);else{document.getElementById('result').textContent='Добавление отменено. Исполнитель не добавлен.';pending=null}}
-function saveContact(x){let list=JSON.parse(sessionStorage.getItem('kyraan_admin_added')||'[]');list.push({...x,phone:'+996 '+x.phone});sessionStorage.setItem('kyraan_admin_added',JSON.stringify(list));let safeName=(x.personName||'Имя не указано').replace(/[&<>"]/g,'');let car=x.vehicleNumber?(' · авто: '+x.vehicleNumber):'';document.getElementById('result').innerHTML='<div class="success">Контакт добавлен в список этой открытой страницы: '+safeName+' · '+x.s+' · +996 '+x.phone+car+'.</div><div class="small">Важно: запись хранится только временно в этой вкладке браузера. В Supabase или другой базе она не отправлена.</div>';pending=null}
-function clearForm(){document.getElementById('service').value='';document.getElementById('phone').value='';document.getElementById('personName').value='';document.getElementById('vehicleNumber').value='';document.getElementById('result').innerHTML='';document.getElementById('docQuestion').classList.add('hidden');document.getElementById('docButtons').classList.add('hidden');document.getElementById('addButtons').classList.remove('hidden');variants()}
-function showQR(input,id){if(!input.files||!input.files[0])return;let url=URL.createObjectURL(input.files[0]);let box=document.getElementById(id);box.innerHTML='';let img=document.createElement('img');img.src=url;img.alt='QR-код';box.appendChild(img)}
-</script></body></html>
+function clearForm(){document.getElementById('service').value='';document.getElementById('phone').value='';document.getElementById('personName').value='';document.getElementById('vehicleNumber').value='';document.getElementById('result').innerHTML='';variants()}
+
+// Запуск при загрузке страницы
+window.onload = loadData;
+</script></body></html>к, админку соединяю с супервайзером. Плотней сейчас, чтобы из админки поступали полные сигналы зарегистрированных Telegram-ботовские сигналы. Все стопроцентные сигналы, полная корректировка. Проходили через админ. Вот. Надо так вот это проверь.
