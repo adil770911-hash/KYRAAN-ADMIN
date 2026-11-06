@@ -1,76 +1,31 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101827"><title>KYRAAN ADMIN HUB</title>
-<style>
-:root{--bg:#0b1220;--p:#111c2e;--p2:#19263b;--line:#293951;--txt:#eef3fb;--muted:#9aabc0;--blue:#568cff;--green:#36c995;--amber:#f2b65d;--red:#ed727c}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,Arial,sans-serif}.app{max-width:1000px;margin:auto;min-height:100vh;padding-bottom:25px}
-header{position:sticky;top:0;z-index:4;background:#101a2b;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 15px}.icon{background:var(--p2);border:1px solid var(--line);border-radius:11px;color:white;padding:9px 13px;font-size:20px}.brand{font-weight:850;letter-spacing:1px}.muted,.small{color:var(--muted)}.small{font-size:12px}.grow{flex:1}
-.tabs{display:flex;gap:8px;overflow:auto;padding:13px 12px}.tabs button{white-space:nowrap;border:1px solid var(--line);border-radius:22px;background:var(--p);color:var(--muted);padding:10px 15px}.tabs button.active{background:#244878;color:white;border-color:#548bd1}
-main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22px;margin:5px 0 15px}h2{font-size:18px;margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.card{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:14px}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .empty{font-size:16px;color:var(--muted)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.service-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}.service{background:var(--p2);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:13px;display:flex;justify-content:space-between;gap:8px}.status{display:inline-block;padding:4px 9px;border-radius:20px;background:#392d22;color:#f5c887;font-size:11px}.status.off{background:#3a2630;color:#f3a0a8}.status.ok{background:#203a33;color:#9ce6c7}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700}.btn.secondary{background:var(--p2);border:1px solid var(--line)}.btn.red{background:#60313b}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#c4d0e1;margin-bottom:6px}input,select{width:100%;background:#0c1524;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font:inherit}.phone{display:flex;gap:7px}.phone b{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:10px;white-space:nowrap}.phone input{min-width:0}.notice{background:#30291e;border:1px solid #66502d;color:#f2d5a2;padding:12px;border-radius:11px;margin:12px 0}.success{background:#1e382f;border:1px solid #32664f;color:#a9ebce;padding:12px;border-radius:11px;margin:12px 0}.hidden{display:none!important}.drawer-bg{display:none;position:fixed;inset:0;background:#000a;z-index:8}.drawer-bg.open{display:block}.drawer{height:100%;overflow:auto;width:min(340px,88vw);background:#101a2b;padding:16px}.menuitem{width:100%;text-align:left;background:var(--p);border:1px solid var(--line);color:white;padding:12px;border-radius:10px;margin:4px 0}.menuhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.qrpreview{height:150px;background:#f4f5f7;color:#4b5668;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:10px 0}.qrpreview img{max-width:100%;max-height:100%;object-fit:contain}.boardrow{padding:12px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
-.order-item{border-bottom:1px solid var(--line);padding:10px 0;}
-.order-item:last-child{border-bottom:none;}
-@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.service-list{grid-template-columns:1fr}.metric strong{font-size:22px}}
-</style>
-<!-- Подключаем библиотеку Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body><div class="app">
-<header><button class="icon" onclick="menu(true)">☰</button><div><div class="brand">KYRAAN ADMIN</div><div class="small">ПАНЕЛЬ УПРАВЛЕНИЯ</div></div><div class="grow"></div><span id="sys-status" class="status off">Подключение...</span></header>
-<nav class="tabs">
-<button class="active" onclick="page('market',this)">Рынок</button><button onclick="page('orders',this)">Заказы</button><button onclick="page('search',this)">⌕ Поиск</button><button onclick="page('add',this)">＋ Добавить</button>
-</nav>
-<main>
-<section id="market" class="page active">
-<h1>Общий мониторинг</h1>
-<div class="grid">
-<div class="metric"><div class="label">Всего исполнителей</div><strong id="stat-executors">-</strong></div>
-<div class="metric"><div class="label">Заказов всего</div><strong id="stat-orders">-</strong></div>
-<div class="metric"><div class="label">Новых заказов</div><strong id="stat-new-orders">-</strong></div>
-<div class="metric"><div class="label">На линии</div><strong id="stat-online">-</strong></div>
-</div>
-<div class="two">
-<div class="card"><h2>HUNTER_01 · Спецтехника</h2><span class="status ok">АКТИВЕН</span><p class="small">Грузоперевозки · Манипулятор · Эвакуатор</p></div>
-<div class="card"><h2>HUNTER_02 · Бытовые услуги</h2><span class="status ok">АКТИВЕН</span><p class="small">Сантехник, Электрик и др.</p></div>
-</div>
-</section>
-
-<section id="orders" class="page"><h1>Лента заказов</h1><div class="card" id="orders-list"><p class="small">Загрузка данных...</p></div></section>
-
-<section id="search" class="page">
-<h1>Поиск исполнителя</h1>
-<input id="search-input" placeholder="Имя или телефон" onkeyup="filterExecutors()">
-<div class="card" id="executors-list" style="margin-top:12px"><p class="small">Загрузка...</p></div>
-</section>
-
-<section id="add" class="page"><h1>Добавить исполнителя</h1><div class="card">
-<div class="field"><label>Категория услуги</label><select id="service" onchange="variants()"><option value="">Выберите услугу</option><optgroup label="HUNTER_01 · Спецтехника"><option>Грузоперевозки</option><option>Эвакуатор</option><option>Манипулятор</option></optgroup><optgroup label="HUNTER_02 · Бытовые услуги"><option>Сантехник</option><option>Электрик</option><option>Клининг</option><option>Сварщик</option><option>Ремонт холодильников</option><option>Ремонт стиральных машин</option><option>Телемастер</option><option>Мастер на час</option></optgroup></select></div>
-<div class="field" id="variantField"><label>Подкатегория / вариант</label><select id="variant"><option value="">Сначала выберите услугу</option></select></div>
-<div class="field"><label>Имя исполнителя</label><input id="personName" type="text" placeholder="Например, Азамат"></div>
-<div class="field"><label>Телефон исполнителя</label><div class="phone"><b>+996</b><input id="phone" type="tel" inputmode="numeric" placeholder="700 700 500"></div></div>
-<div class="field hidden" id="vehicleField"><label>Номер автомобиля</label><input id="vehicleNumber" type="text" placeholder="Например, 01 KG 123 ABC" autocomplete="off"></div>
-<div id="addButtons" class="row"><button class="btn" onclick="saveToSupabase()">Добавить в базу</button><button class="btn secondary" onclick="clearForm()">Очистить</button></div>
-<div id="result"></div>
-</div></section>
-</main></div>
-
-<div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)"><aside class="drawer"><div class="menuhead"><b>KYRAAN ADMIN · МЕНЮ</b><button class="icon" onclick="menu(false)">×</button></div>
-<button class="menuitem" onclick="go('market')">Рынок · общий мониторинг</button><button class="menuitem" onclick="go('orders')">Лента заказов</button><button class="menuitem" onclick="go('search')">Поиск исполнителей</button><button class="menuitem" onclick="go('add')">＋ Добавить исполнителя</button>
-</aside></div>
-
 <script>
-// ====== НАСТРОЙКИ SUPABASE ======
+// ====== НАСТРОЙКИ ======
 const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
 const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-let allExecutors = [];
-let allOrders = [];
+// ⚠️ ВСТАВЬ СЮДА ССЫЛКУ ТВОЕГО КРАКЕНА С RENDER (без слэша в конце!)
+const RENDER_URL = 'https://kyraan-client-bot-1.onrender.com'; 
 
-// ====== ИНИЦИАЛИЗАЦИЯ И ЗАГРУЗКА ДАННЫХ ======
+let allExecutors = [];
+
+// 🛡️ ФУНКЦИЯ ЗАЩИТЫ ОТ XSS (Meta AI одобряет!)
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag])
+  );
+}
+
+// ====== ИНИЦИАЛИЗАЦИЯ ======
 async function loadData() {
-  // 1. Загружаем исполнителей
+  // 1. Загружаем исполнителей из Supabase
   const { data: execs, error: err1 } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
   if (!err1 && execs) {
     allExecutors = execs;
@@ -79,115 +34,41 @@ async function loadData() {
     document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
   }
 
-  // 2. Загружаем заказы
-  const { data: orders, error: err2 } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-  if (!err2 && orders) {
-    allOrders = orders;
-    renderOrders(orders);
-    document.getElementById('stat-orders').innerText = orders.length;
-    document.getElementById('stat-new-orders').innerText = orders.filter(o => o.status === 'NEW').length;
+  // 2. Загружаем заказы из Кракена (JSON)
+  try {
+    const response = await fetch(`${RENDER_URL}/api/orders`);
+    if (response.ok) {
+      const orders = await response.json();
+      renderOrders(orders);
+      document.getElementById('stat-orders').innerText = orders.length;
+      document.getElementById('stat-new-orders').innerText = orders.length; 
+      
+      document.getElementById('sys-status').className = 'status ok';
+      document.getElementById('sys-status').innerText = 'Супервайзер: Онлайн';
+    }
+  } catch (err) {
+    console.error("Ошибка загрузки:", err);
+    document.getElementById('sys-status').className = 'status off';
+    document.getElementById('sys-status').innerText = 'Кракен спит...';
   }
-
-  document.getElementById('sys-status').className = 'status ok';
-  document.getElementById('sys-status').innerText = 'База подключена';
 }
 
-// ====== ОТРИСОВКА ЗАКАЗОВ ======
+// ====== ОТРИСОВКА ЗАКАЗОВ (С защитой XSS) ======
 function renderOrders(orders) {
   const container = document.getElementById('orders-list');
-  if(orders.length === 0) { container.innerHTML = '<p class="small">Заказов пока нет.</p>'; return; }
+  if(!orders || orders.length === 0) { container.innerHTML = '<p class="small">Заказов пока нет.</p>'; return; }
+  
   container.innerHTML = orders.map(o => `
     <div class="order-item">
       <div style="display:flex; justify-content:space-between;">
-        <b>${o.service_id} ${o.variant_id ? '('+o.variant_id+')' : ''}</b>
-        <span class="status ${o.status === 'NEW' ? 'ok' : ''}">${o.status}</span>
+        <b>${escapeHTML(o.service).toUpperCase()} [${escapeHTML(o.tag)}]</b>
+        <span class="status ok">NEW</span>
       </div>
-      <div class="small" style="margin-top:4px;">📍 ${o.address || 'Без адреса'} | 📞 ${o.client_phone}</div>
+      <div class="small" style="margin-top:4px;">📞 ${escapeHTML(o.phone)}</div>
+      <div class="small" style="margin-top:4px; color: #a5b4fc;">📝 ${escapeHTML(o.text)}</div>
     </div>
   `).join('');
 }
 
-// ====== ОТРИСОВКА ИСПОЛНИТЕЛЕЙ ======
-function renderExecutors(execs) {
-  const container = document.getElementById('executors-list');
-  if(execs.length === 0) { container.innerHTML = '<p class="small">Исполнителей пока нет.</p>'; return; }
-  container.innerHTML = execs.map(e => `
-    <div class="order-item">
-      <div style="display:flex; justify-content:space-between;">
-        <b>${e.name}</b>
-        <span class="small">${e.plate_number || ''}</span>
-      </div>
-      <div class="small" style="margin-top:4px;">📞 ${e.phone} | ${e.service_id}</div>
-    </div>
-  `).join('');
-}
-
-function filterExecutors() {
-  const q = document.getElementById('search-input').value.toLowerCase();
-  const filtered = allExecutors.filter(e => 
-    (e.name && e.name.toLowerCase().includes(q)) || 
-    (e.phone && e.phone.includes(q))
-  );
-  renderExecutors(filtered);
-}
-
-// ====== REALTIME (МГНОВЕННОЕ ОБНОВЛЕНИЕ) ======
-supabase.channel('custom-all-channel')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-    console.log('Новый заказ!', payload);
-    loadData(); // Перезагружаем данные при изменении таблицы orders
-  })
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'executors' }, payload => {
-    console.log('Новый исполнитель!', payload);
-    loadData(); // Перезагружаем данные при изменении таблицы executors
-  })
-  .subscribe();
-
-// ====== СОХРАНЕНИЕ НОВОГО ИСПОЛНИТЕЛЯ ======
-async function saveToSupabase() {
-  let s = document.getElementById('service').value;
-  let phone = document.getElementById('phone').value.replace(/\D/g,'');
-  let personName = document.getElementById('personName').value.trim();
-  let vehicleNumber = document.getElementById('vehicleNumber').value.trim();
-  let result = document.getElementById('result');
-
-  if(!s) { result.innerHTML = '<div class="notice">Выбери услугу.</div>'; return; }
-  if(phone.length !== 9) { result.innerHTML = '<div class="notice">Введи 9 цифр номера.</div>'; return; }
-  if(['Грузоперевозки','Эвакуатор','Манипулятор'].includes(s) && !vehicleNumber) {
-    result.innerHTML = '<div class="notice">Введи номер автомобиля.</div>'; return;
-  }
-
-  result.innerHTML = '<div class="small">Сохранение...</div>';
-
-  const { error } = await supabase.from('executors').insert([{
-    name: personName || 'Исполнитель',
-    phone: '+996 ' + phone,
-    service_id: s,
-    plate_number: vehicleNumber,
-    is_approved: true,
-    rating: 15,
-    is_online: false,
-    is_busy: false
-  }]);
-
-  if(error) {
-    result.innerHTML = '<div class="notice">Ошибка базы: ' + error.message + '</div>';
-  } else {
-    result.innerHTML = '<div class="success">Исполнитель успешно добавлен в базу!</div>';
-    clearForm();
-    loadData(); // Обновляем список
-  }
-}
-
-// ====== УТИЛИТЫ ИНТЕРФЕЙСА ======
-function page(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo(0,0)}
-function menu(open){document.getElementById('drawer').classList.toggle('open',open)}
-function go(id){menu(false);page(id)}
-const vmap={'Грузоперевозки':['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],'Эвакуатор':['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],'Манипулятор':['3 тонны — стрела 3 м','5 тонн — стрела 4 м','8 тонн — стрела 7 м','10 тонн — стрела 7 м']};
-const vehicleServices=['Грузоперевозки','Эвакуатор','Манипулятор','Межгород такси'];
-function variants(){let s=document.getElementById('service').value,sel=document.getElementById('variant'),field=document.getElementById('variantField');sel.innerHTML='';let arr=vmap[s]||[];field.classList.toggle('hidden',!arr.length);arr.forEach(x=>{let o=document.createElement('option');o.textContent=x;sel.appendChild(o)});document.getElementById('vehicleField').classList.toggle('hidden',!vehicleServices.includes(s));}
-function clearForm(){document.getElementById('service').value='';document.getElementById('phone').value='';document.getElementById('personName').value='';document.getElementById('vehicleNumber').value='';document.getElementById('result').innerHTML='';variants()}
-
-// Запуск при загрузке страницы
-window.onload = loadData;
-</script></body></html>к, админку соединяю с супервайзером. Плотней сейчас, чтобы из админки поступали полные сигналы зарегистрированных Telegram-ботовские сигналы. Все стопроцентные сигналы, полная корректировка. Проходили через админ. Вот. Надо так вот это проверь.
+// (Остальные функции renderExecutors, filterExecutors, saveToSupabase, page, menu, go, variants, clearForm оставляем без изменений — они уже есть в твоем коде)
+</script>
