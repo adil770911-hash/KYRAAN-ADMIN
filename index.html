@@ -15,14 +15,25 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 75px; }
 
-/* --- ALARM BANNER --- */
+/* --- БАННЕР ВЗЯТИЯ ЗАКАЗА (ЗЕЛЕНЫЙ) --- */
+#take-banner {
+    display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    z-index: 998; background: var(--green); color: #000; padding: 12px 20px;
+    border-radius: 12px; font-weight: 800; font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0, 208, 156, 0.4);
+    animation: slideDownGreen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center; width: 90%; max-width: 400px;
+}
+@keyframes slideDownGreen { from { top: -100px; opacity: 0; } to { top: 60px; opacity: 1; } }
+
+/* --- ТРЕВОГА (КРАСНАЯ) --- */
 #alarm-banner {
     display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999;
     background: var(--red); color: white; text-align: center; padding: 15px;
     font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(255,59,48,0.5);
-    animation: flash 1s infinite;
+    animation: flashRed 1s infinite;
 }
-@keyframes flash { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
+@keyframes flashRed { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
 
 /* --- HEADER --- */
 header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 100; border-bottom: 1px solid var(--line); }
@@ -128,7 +139,8 @@ input:focus, select:focus { border-color: var(--gold); }
 </head>
 <body>
 
-<!-- КРАСНАЯ ПЛАШКА ТРЕВОГИ -->
+<!-- ПЛАШКИ УВЕДОМЛЕНИЙ -->
+<div id="take-banner"></div>
 <div id="alarm-banner" onclick="page('orders')">
     ⚠️ ВНИМАНИЕ: ЕСТЬ ЗАКАЗ, КОТОРЫЙ ВИСИТ БОЛЕЕ 1 МИНУТЫ!<br>
     <span style="font-size: 11px; font-weight: normal;">Нажмите, чтобы перейти к заказам</span>
@@ -146,7 +158,6 @@ input:focus, select:focus { border-color: var(--gold); }
 </header>
 
 <main>
-  <!-- PAGE: MARKET (HOME) -->
   <section id="page-market" class="page active">
     <h1>Рынок</h1>
     <div class="tabs">
@@ -158,19 +169,9 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="market-list"></div>
   </section>
 
-  <!-- PAGE: ALPHA (HUNTER 01) -->
-  <section id="page-alpha" class="page">
-    <h1>Альфа (Спецтехника)</h1>
-    <div class="list-container" id="alpha-list"></div>
-  </section>
+  <section id="page-alpha" class="page"><h1>Альфа (Спецтехника)</h1><div class="list-container" id="alpha-list"></div></section>
+  <section id="page-search" class="page"><h1>Искать (Бытовые)</h1><div class="list-container" id="search-list"></div></section>
 
-  <!-- PAGE: SEARCH (HUNTER 02) -->
-  <section id="page-search" class="page">
-    <h1>Искать (Бытовые)</h1>
-    <div class="list-container" id="search-list"></div>
-  </section>
-
-  <!-- PAGE: PORTFOLIO (FINANCE) -->
   <section id="page-portfolio" class="page">
     <h1>Портфель</h1>
     <div class="fin-card">
@@ -179,29 +180,17 @@ input:focus, select:focus { border-color: var(--gold); }
       <div class="fin-row"><span>Ожидаем оплату</span> <span style="color: var(--red); font-weight: 700;">100 сом</span></div>
       <button class="fin-btn" onclick="alert('Список должников спецтехники будет здесь.')">Ожидаем оплату →</button>
     </div>
-
     <div class="fin-card">
       <div class="fin-header"><div class="fin-title" style="color: var(--blue);">HUNTER 02 — Бытовые услуги</div></div>
       <div class="fin-row"><span>Переведено за сутки</span> <span class="fin-val">0 сом</span></div>
       <div class="fin-row"><span>Ожидаем оплату</span> <span style="color: var(--red); font-weight: 700;">200 сом</span></div>
       <button class="fin-btn" onclick="alert('Список должников бытовых услуг будет здесь.')">Ожидаем оплату →</button>
     </div>
-    <p class="sub" style="text-align:center;">Квитанция не означает подтверждённую оплату. Проверяйте вручную.</p>
   </section>
 
-  <!-- PAGE: ORDERS (24H) -->
-  <section id="page-orders" class="page">
-    <h1>Заказы (24ч)</h1>
-    <div class="list-container" id="orders-list"></div>
-  </section>
-
-  <!-- PAGE: APPROVALS (NEW EXECUTORS) -->
-  <section id="page-approvals" class="page">
-    <h1>Новые исполнители</h1>
-    <div class="list-container" id="approvals-list"></div>
-  </section>
-
-  <!-- PAGE: DOSSIER SEARCH -->
+  <section id="page-orders" class="page"><h1>Заказы (24ч)</h1><div class="list-container" id="orders-list"></div></section>
+  <section id="page-approvals" class="page"><h1>Новые исполнители</h1><div class="list-container" id="approvals-list"></div></section>
+  
   <section id="page-dossier" class="page">
     <h1>Поиск / Досье</h1>
     <div style="padding: 0 16px; margin-bottom: 16px;">
@@ -211,25 +200,15 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="dossier-results"></div>
   </section>
 
-  <!-- PAGE: TERMINAL 1 (HUNTER 01) -->
   <section id="page-term-1" class="page">
-    <h1>Журнал Спецтехники</h1>
-    <p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
-    <div class="terminal-container">
-      <div class="terminal-box"><div id="term-1">[]</div></div>
-    </div>
+    <h1>Журнал Спецтехники</h1><p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
+    <div class="terminal-container"><div class="terminal-box"><div id="term-1">[]</div></div></div>
   </section>
-
-  <!-- PAGE: TERMINAL 2 (HUNTER 02) -->
   <section id="page-term-2" class="page">
-    <h1>Журнал Бытовых услуг</h1>
-    <p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
-    <div class="terminal-container">
-      <div class="terminal-box term-2"><div id="term-2">[]</div></div>
-    </div>
+    <h1>Журнал Бытовых услуг</h1><p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
+    <div class="terminal-container"><div class="terminal-box term-2"><div id="term-2">[]</div></div></div>
   </section>
 
-  <!-- PAGE: BOARDS (ANNOUNCEMENTS) -->
   <section id="page-boards" class="page">
     <h1>Доски объявлений</h1>
     <div class="tabs" style="margin-bottom: 10px;">
@@ -239,7 +218,6 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="boards-list"></div>
   </section>
 
-  <!-- PAGE: ADD EXECUTOR -->
   <section id="page-add" class="page">
     <h1>Добавить вручную</h1>
     <div class="card">
@@ -269,22 +247,13 @@ input:focus, select:focus { border-color: var(--gold); }
         </select>
       </div>
       <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
-      
-      <div class="field">
-        <label>Имя</label>
-        <input type="text" id="add-name">
-      </div>
-      
+      <div class="field"><label>Имя</label><input type="text" id="add-name"></div>
       <div class="field">
         <label>Телефон (+996)</label>
         <input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500">
-        <!-- НОВАЯ КНОПКА ВЫБОРА ИЗ КОНТАКТОВ -->
         <button type="button" class="btn sec" onclick="pickContact()" style="margin-top: 8px; padding: 8px; font-size: 12px;">📞 Выбрать из контактов</button>
       </div>
-      
-      <!-- ПОЛЕ НОМЕРА АВТО -->
       <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle" placeholder="01 KG 123 ABC"></div>
-      
       <div class="row-btn" style="margin-top: 20px;">
         <button class="btn" onclick="submitAdd()">Добавить</button>
         <button class="btn sec" onclick="page('market')">Отмена</button>
@@ -293,15 +262,11 @@ input:focus, select:focus { border-color: var(--gold); }
     </div>
   </section>
   
-  <!-- PAGE: SETTINGS -->
   <section id="page-settings" class="page">
-    <h1>Настройки</h1>
-    <p class="sub">Скоро здесь будет настройка км/сек.</p>
-    <button class="btn sec" onclick="page('market')">Назад</button>
+    <h1>Настройки</h1><p class="sub">Скоро здесь будет настройка км/сек.</p><button class="btn sec" onclick="page('market')">Назад</button>
   </section>
 </main>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-market" onclick="page('market')"><span class="nav-icon">📊</span> Рынок</button>
   <button class="nav-item" id="nav-alpha" onclick="page('alpha')"><span class="nav-icon">🚜</span> Альфа</button>
@@ -310,7 +275,6 @@ input:focus, select:focus { border-color: var(--gold); }
   <button class="nav-item" onclick="menu(true)"><span class="nav-icon">☰</span> Меню</button>
 </nav>
 
-<!-- DRAWER MENU -->
 <div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)">
   <aside class="drawer">
     <h2>KYRAAN MENU</h2>
@@ -343,7 +307,7 @@ input:focus, select:focus { border-color: var(--gold); }
   const vmap = { 'cargo': ['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'], 'evacuator': ['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'], 'manipulator': ['3 тонны','5 тонн','8 тонн','10 тонн'] };
   const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
 
-  // --- ТРЕВОГА (ЗВУК И ВИБРАЦИЯ) ---
+  // --- ЗВУКИ ---
   window.playAlarm = function() {
       if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
       try {
@@ -353,26 +317,50 @@ input:focus, select:focus { border-color: var(--gold); }
           osc.frequency.setValueAtTime(800, ctx.currentTime);
           osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.5);
           osc.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.5);
+          osc.start(); osc.stop(ctx.currentTime + 0.5);
       } catch(e) {}
       document.getElementById('alarm-banner').style.display = 'block';
+  }
+
+  window.playSuccess = function() {
+      try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, ctx.currentTime);
+          osc.frequency.setValueAtTime(800, ctx.currentTime + 0.1);
+          osc.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
   }
 
   document.body.addEventListener('click', () => {
       try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
   }, { once: true });
 
+  // --- REALTIME СЛУШАТЕЛЬ ЗАКАЗОВ ---
   const orderChannel = supabase.channel('admin-alerts')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
         const newOrder = payload.new;
         if (newOrder.executor_id) return;
         setTimeout(async () => {
             const { data } = await supabase.from('orders').select('executor_id').eq('id', newOrder.id).single();
-            if (data && !data.executor_id) {
-                window.playAlarm();
-            }
+            if (data && !data.executor_id) window.playAlarm();
         }, 60000);
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, payload => {
+        const oldOrder = payload.old;
+        const newOrder = payload.new;
+        if (!oldOrder.executor_id && newOrder.executor_id) {
+            document.getElementById('alarm-banner').style.display = 'none';
+            window.playSuccess();
+            const banner = document.getElementById('take-banner');
+            const shortId = newOrder.id.split('-')[0].toUpperCase();
+            banner.innerHTML = `✅ Заказ #${shortId} взят!<br><span style="font-size:11px; font-weight:normal;">Исполнитель на связи</span>`;
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 5000);
+            if(document.getElementById('page-orders').classList.contains('active')) loadOrders();
+        }
     }).subscribe();
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -385,7 +373,6 @@ input:focus, select:focus { border-color: var(--gold); }
   window.page = function(id) {
     menu(false);
     if(id === 'orders') document.getElementById('alarm-banner').style.display = 'none';
-
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
@@ -415,64 +402,43 @@ input:focus, select:focus { border-color: var(--gold); }
     reader.readAsDataURL(input.files[0]);
   }
 
-  // --- НОВАЯ ФУНКЦИЯ: ВЫБОР ИЗ КОНТАКТОВ ---
+  window.copyOrder = function(orderId, serviceName, address) {
+      const shortId = orderId.split('-')[0].toUpperCase();
+      const text = `🔔 НОВЫЙ ЗАКАЗ #${shortId}\nУслуга: ${serviceName}\n📍 ${address || 'Адрес уточняется'}\n\nКто берет? Введите ID #${shortId} в приложении KYRAAN.`;
+      navigator.clipboard.writeText(text).then(() => {
+          alert("✅ Текст скопирован! Вставьте его в WhatsApp.\n\n" + text);
+      }).catch(err => { alert("Ошибка копирования:\n\n" + text); });
+  }
+
   window.pickContact = async function() {
     const res = document.getElementById('add-result');
     if (!('contacts' in navigator) || !('ContactsManager' in window)) {
-        res.style.color = 'var(--gold)';
-        res.textContent = 'Этот браузер не поддерживает выбор из контактов. Введите вручную.';
-        return;
+        res.style.color = 'var(--gold)'; res.textContent = 'Браузер не поддерживает.'; return;
     }
     try {
         const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
         if (!contacts || contacts.length === 0) return;
-
         const contact = contacts[0];
-        
-        // Подставляем имя
-        if (contact.name && contact.name.length > 0) {
-            document.getElementById('add-name').value = contact.name[0];
-        }
-        
-        // Подставляем и очищаем телефон (оставляем только 9 цифр)
+        if (contact.name && contact.name.length > 0) document.getElementById('add-name').value = contact.name[0];
         if (contact.tel && contact.tel.length > 0) {
             let rawPhone = contact.tel[0];
-            rawPhone = rawPhone.replace(/[^0-9]/g, '') // Удаляем всё, кроме цифр
-                               .replace(/^996/, '')   // Убираем 996 в начале, если есть
-                               .replace(/^0/, '');    // Убираем 0 в начале, если есть
+            rawPhone = rawPhone.replace(/[^0-9]/g, '').replace(/^996/, '').replace(/^0/, '');
             document.getElementById('add-phone').value = rawPhone;
         }
-        
-        res.style.color = 'var(--green)';
-        res.textContent = '✅ Контакт успешно выбран!';
-    } catch (err) {
-        console.error(err);
-        res.style.color = 'var(--red)';
-        res.textContent = 'Выбор контакта отменен.';
-    }
+        res.style.color = 'var(--green)'; res.textContent = '✅ Контакт выбран!';
+    } catch (err) { res.style.color = 'var(--red)'; res.textContent = 'Отменено.'; }
   };
 
-  // --- 1. РЫНОК ---
   let marketData = []; let currentFilter = 'all';
-
   async function loadMarket() {
-    const list = document.getElementById('market-list');
-    list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    const list = document.getElementById('market-list'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
-
-    let stats = {};
-    for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
-    data.forEach(ex => {
-        if (!stats[ex.service_id]) return;
-        if (!ex.is_approved) stats[ex.service_id].pending++;
-        else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; }
-    });
+    let stats = {}; for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
+    data.forEach(ex => { if (!stats[ex.service_id]) return; if (!ex.is_approved) stats[ex.service_id].pending++; else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; } });
     marketData = stats; renderMarketList();
   }
-
   window.filterMarket = function(type, btn) { currentFilter = type; document.querySelectorAll('#page-market .tabs button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); renderMarketList(); }
-
   function renderMarketList() {
     const list = document.getElementById('market-list'); let html = '';
     for (let key in names) {
@@ -485,20 +451,13 @@ input:focus, select:focus { border-color: var(--gold); }
     list.innerHTML = html;
   }
 
-  // --- 2. МОНИТОРИНГИ ---
   async function loadMonitor(hunterType, elementId) {
-    const list = document.getElementById(elementId);
-    list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    const list = document.getElementById(elementId); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved').eq('hunter', hunterType);
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
-
     let stats = {};
     for (let key in names) { if ((hunterType === 'HUNTER_01' && hunters[key] === 'HUNTER_01') || (hunterType === 'HUNTER_02' && hunters[key] !== 'HUNTER_01' && hunters[key] !== 'BOARD')) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; } }
-    data.forEach(ex => {
-        if (!stats[ex.service_id]) return;
-        if (!ex.is_approved) stats[ex.service_id].pending++;
-        else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; }
-    });
+    data.forEach(ex => { if (!stats[ex.service_id]) return; if (!ex.is_approved) stats[ex.service_id].pending++; else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; } });
     let html = '';
     for (let key in stats) {
         let s = stats[key]; let icon = icons[key] || '🔧';
@@ -507,23 +466,35 @@ input:focus, select:focus { border-color: var(--gold); }
     list.innerHTML = html || '<div style="padding:20px; text-align:center; color:#888;">Нет данных</div>';
   }
 
-  // --- 3. ЗАКАЗЫ ---
   async function loadOrders() {
     const list = document.getElementById('orders-list'); list.innerHTML = 'Загрузка...';
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase.from('orders').select('*').gte('created_at', yesterday).order('created_at', { ascending: false });
     if(!data || data.length === 0) { list.innerHTML = 'Заказов нет.'; return; }
-    list.innerHTML = data.map(o => `
-      <div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${o.executor_id ? 'var(--green)' : 'var(--red)'};">
-        <div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div>
-        <div style="font-size:16px; font-weight:700; margin:4px 0;">${escapeHTML(o.client_phone)}</div>
-        <div style="font-size:12px; margin-bottom:8px;">Категория: ${names[o.service_id] || o.hunter} · ${o.executor_id ? '<span style="color:var(--green)">Взят</span>' : '<span style="color:var(--red)">Ждет</span>'}</div>
-        <a href="tel:${escapeHTML(o.client_phone)}" class="btn" style="padding:8px; text-decoration:none; display:inline-block; width:auto;">📞 Позвонить</a>
-      </div>
-    `).join('');
+    
+    list.innerHTML = data.map(o => {
+      const shortId = o.id.split('-')[0].toUpperCase();
+      const sName = names[o.service_id] || o.hunter;
+      const isTaken = o.executor_id !== null;
+      
+      return `
+      <div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${isTaken ? 'var(--green)' : 'var(--red)'};">
+        <div style="display:flex; justify-content:space-between;">
+            <div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div>
+            <div style="font-size:11px; color:${isTaken ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">${isTaken ? '✅ ВЗЯТ' : '⏳ ЖДЕТ'}</div>
+        </div>
+        <div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div>
+        <div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName}</div>
+        <div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(o.address || 'Адрес не указан')}</div>
+        
+        <div class="row-btn">
+            <button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(o.address)})">📋 Копировать</button>
+            ${isTaken ? `<a href="tel:${escapeHTML(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`}
+        </div>
+      </div>`;
+    }).join('');
   }
 
-  // --- 4. ЗАЯВКИ ---
   async function loadApprovals() {
     const list = document.getElementById('approvals-list'); list.innerHTML = 'Загрузка...';
     const { data } = await supabase.from('executors').select('*').eq('is_approved', false).order('created_at', { ascending: false });
@@ -539,7 +510,6 @@ input:focus, select:focus { border-color: var(--gold); }
   }
   window.approveExec = async function(id) { await supabase.from('executors').update({ is_approved: true }).eq('id', id); loadApprovals(); }
 
-  // --- 5. ТЕРМИНАЛЫ ---
   async function loadTerminal(hunterType, elementId) {
     const el = document.getElementById(elementId); el.innerHTML = 'Загрузка...';
     const { data: orders } = await supabase.from('orders').select('*').eq('hunter', hunterType).order('created_at', { ascending: false }).limit(20);
@@ -554,12 +524,12 @@ input:focus, select:focus { border-color: var(--gold); }
         let exPhone = o.executor_id && execPhones[o.executor_id] ? execPhones[o.executor_id] : null;
         let clientLink = o.client_phone ? `<a href='tel:${o.client_phone}' class='json-link'>📞 ${o.client_phone}</a>` : 'NO_PHONE';
         let execLink = exPhone ? `<a href='tel:${exPhone}' class='json-link'>📞 ${exId}</a>` : `<span class='json-key'>${exId}</span>`;
-        html += `  {\n    "time": "<span class='json-str'>${new Date(o.created_at).toLocaleTimeString('ru-RU')}</span>",\n    "order_id": "<span class='json-num'>#${o.id.split('-')[0].toUpperCase()}</span>",\n    "client": "${clientLink}",\n    "executor": "${execLink}"\n  }${i < orders.length-1 ? ',' : ''}\n`;
+        
+        html += `  {\n    "time": "<span class='json-str'>${new Date(o.created_at).toLocaleTimeString('ru-RU')}</span>",\n    "order_id": "<span class='json-num'>#${o.id.split('-')[0].toUpperCase()}</span>",\n    "address": "<span class='json-str'>${escapeHTML(o.address || 'Не указан')}</span>",\n    "client": "${clientLink}",\n    "executor": "${execLink}"\n  }${i < orders.length-1 ? ',' : ''}\n`;
     });
     html += "]"; el.innerHTML = html;
   }
 
-  // --- 6. ДОСКИ ---
   let currentBoard = 'intercity';
   window.switchBoard = function(type, btn) { currentBoard = type; document.querySelectorAll('#page-boards .tabs button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); loadBoards(type); }
   async function loadBoards(type) {
@@ -572,7 +542,6 @@ input:focus, select:focus { border-color: var(--gold); }
   }
   window.hideBoardAd = async function(id) { await supabase.from('executors').update({ is_active: false }).eq('id', id); loadBoards(currentBoard); }
 
-  // --- 7. ДОСЬЕ ---
   window.searchDossier = async function() {
     const q = document.getElementById('dossier-query').value.trim(); const res = document.getElementById('dossier-results');
     if(!q) return; res.innerHTML = 'Поиск...';
@@ -628,13 +597,10 @@ input:focus, select:focus { border-color: var(--gold); }
     let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
     const { error } = await supabase.from('executors').insert([{ name: name, phone: '+996' + phone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true }]);
     if(error) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: ' + error.message; } 
-    else { 
-        res.style.color = 'var(--green)'; res.innerHTML = 'Успешно добавлен!'; 
-        setTimeout(() => page('market'), 1000); 
-    }
+    else { res.style.color = 'var(--green)'; res.innerHTML = 'Успешно добавлен!'; setTimeout(() => page('market'), 1000); }
   }
 
   loadMarket();
 </script>
 </body>
-</html>￼Enter
+  </html>
