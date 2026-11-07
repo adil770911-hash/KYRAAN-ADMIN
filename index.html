@@ -1,91 +1,121 @@
-<script>
-// ====== НАСТРОЙКИ ======
-const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
-const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYRAAN ADMIN</title>
+    <!-- Подключаем Supabase JS (если ещё не подключён) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Добавьте сюда ваши стили, если они были в отдельном файле */
+        body { font-family: sans-serif; background: #0f172a; color: #fff; padding: 20px; }
+        .status.ok { color: #22c55e; }
+        .status.off { color: #ef4444; }
+        .order-item { background: #1e293b; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+        .small { font-size: 0.9em; color: #94a3b8; }
+    </style>
+</head>
+<body>
 
-let allExecutors = [];
-
-// 🛡️ Защита от XSS
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.replace(/[&<>'"]/g, tag => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-  }[tag]));
-}
-
-// ====== ЗАГРУЗКА ДАННЫХ ======
-async function loadData() {
-  console.log("Загрузка данных из Supabase...");
-
-  // 1. Загружаем исполнителей
-  const { data: execs, error: err1 } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
-  if (!err1 && execs) {
-    allExecutors = execs;
-    if (typeof renderExecutors === 'function') renderExecutors(execs);
-    
-    // Обновляем статистику, если элементы есть на странице
-    if (document.getElementById('stat-executors')) document.getElementById('stat-executors').innerText = execs.length;
-    if (document.getElementById('stat-online')) document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
-  } else {
-    console.error("Ошибка загрузки исполнителей:", err1);
-  }
-
-  // 2. Загружаем ЗАКАЗЫ (только новые и лишние)
-  const { data: orders, error: err2 } = await supabase
-    .from('orders')
-    .select('*')
-    .in('status', ['new', 'extra']) 
-    .order('created_at', { ascending: false });
-
-  if (!err2 && orders) {
-    renderOrders(orders);
-    
-    if (document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders.length;
-    if (document.getElementById('stat-new-orders')) document.getElementById('stat-new-orders').innerText = orders.length; 
-    
-    if (document.getElementById('sys-status')) {
-      document.getElementById('sys-status').className = 'status ok';
-      document.getElementById('sys-status').innerText = 'База данных: Онлайн';
-    }
-  } else {
-    console.error("Ошибка загрузки заказов:", err2);
-    if (document.getElementById('sys-status')) {
-      document.getElementById('sys-status').className = 'status off';
-      document.getElementById('sys-status').innerText = 'Ошибка БД';
-    }
-  }
-}
-
-// ====== ОТРИСОВКА ЗАКАЗОВ ======
-function renderOrders(orders) {
-  const container = document.getElementById('orders-list');
-  if(!container) return; // Защита, если элемента нет
-
-  if(!orders || orders.length === 0) { 
-    container.innerHTML = '<p class="small">Заказов пока нет.</p>'; 
-    return; 
-  }
-  
-  container.innerHTML = orders.map(o => {
-    // Подстраиваемся под твои колонки в Supabase
-    const serviceName = o.service_id || o.service || 'Услуга';
-    const tagName = o.hunter || o.tag || 'NEW';
-    const phone = o.client_phone || o.phone || 'Нет телефона';
-    const address = o.address || o.text || 'Адрес не указан';
-
-    return `
-    <div class="order-item" style="border-left: 3px solid #6366f1; padding-left: 10px; margin-bottom: 10px;">
-      <div style="display:flex; justify-content:space-between;">
-        <b>${escapeHTML(serviceName).toUpperCase()} [${escapeHTML(tagName)}]</b>
-        <span class="status ok">NEW</span>
-      </div>
-      <div class="small" style="margin-top:4px;">📞 ${escapeHTML(phone)}</div>
-      <div class="small" style="margin-top:4px; color: #a5b4fc;">📍 ${escapeHTML(address)}</div>
+    <!-- Элементы, которые ищет ваш JavaScript -->
+    <h1>Супервайзер</h1>
+    <div>
+        <span id="sys-status" class="status off">Загрузка...</span>
     </div>
-  `}).join('');
-}
+    <div>
+        <p>Исполнителей: <span id="stat-executors">0</span> | Онлайн: <span id="stat-online">0</span></p>
+        <p>Заказов: <span id="stat-orders">0</span> | Новых: <span id="stat-new-orders">0</span></p>
+    </div>
+    <div id="orders-list">
+        <p class="small">Загрузка заказов...</p>
+    </div>
 
-// Запускаем при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadData);
-</script>
+    <!-- ВАШ JS-КОД (начинается здесь) -->
+    <script>
+    // ====== НАСТРОЙКИ ======
+    const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
+    const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ⚠️ ВСТАВЬ СЮДА ССЫЛКУ ТВОЕГО КРАКЕНА С RENDER (без слэша в конце!)
+    const RENDER_URL = 'https://kyraan-client-bot-1.onrender.com'; 
+
+    let allExecutors = [];
+
+    // 🛡️ ФУНКЦИЯ ЗАЩИТЫ ОТ XSS
+    function escapeHTML(str) {
+      if (str == null) return '';
+      return String(str).replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag]));
+    }
+
+    // ====== ИНИЦИАЛИЗАЦИЯ ======
+    async function loadData() {
+      console.log("Загрузка данных...");
+      // 1. Загружаем исполнителей из Supabase
+      try {
+        const { data: execs, error: err1 } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
+        if (err1) throw err1;
+        if (execs) {
+          allExecutors = execs;
+          if (typeof renderExecutors === 'function') renderExecutors(execs);
+          if (document.getElementById('stat-executors')) document.getElementById('stat-executors').innerText = execs.length;
+          if (document.getElementById('stat-online')) document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
+        }
+      } catch (err) {
+        console.error("Ошибка загрузки исполнителей:", err);
+      }
+
+      // 2. Загружаем ЗАКАЗЫ
+      try {
+        const response = await fetch(`${RENDER_URL}/api/orders`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const orders = await response.json();
+        
+        renderOrders(orders);
+        if (document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders.length;
+        if (document.getElementById('stat-new-orders')) document.getElementById('stat-new-orders').innerText = orders.length; 
+        
+        const statusEl = document.getElementById('sys-status');
+        if (statusEl) {
+          statusEl.className = 'status ok';
+          statusEl.innerText = 'Супервайзер: Онлайн';
+        }
+      } catch (err) {
+        console.error("Ошибка загрузки заказов:", err);
+        const statusEl = document.getElementById('sys-status');
+        if (statusEl) {
+          statusEl.className = 'status off';
+          statusEl.innerText = 'Ошибка API (Кракен спит?)';
+        }
+      }
+    }
+
+    // ====== ОТРИСОВКА ЗАКАЗОВ ======
+    function renderOrders(orders) {
+      const container = document.getElementById('orders-list');
+      if (!container) return;
+      
+      if (!orders || orders.length === 0) {
+        container.innerHTML = '<p class="small">Заказов пока нет.</p>';
+        return;
+      }
+
+      container.innerHTML = orders.map(o => `
+        <div class="order-item">
+          <div style="display:flex; justify-content:space-between;">
+            <b>${escapeHTML(o.service).toUpperCase()} [${escapeHTML(o.tag)}]</b>
+            <span class="status ok">NEW</span>
+          </div>
+          <div class="small" style="margin-top:4px;">📞 ${escapeHTML(o.phone)}</div>
+          <div class="small" style="margin-top:4px; color: #a5b4fc;">📝 ${escapeHTML(o.text)}</div>
+        </div>
+      `).join('');
+    }
+
+    // Запускаем загрузку после загрузки страницы
+    loadData();
+    </script>
+</body>
+</html>
