@@ -269,10 +269,23 @@ input:focus, select:focus { border-color: var(--gold); }
         </select>
       </div>
       <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
-      <div class="field"><label>Имя</label><input type="text" id="add-name"></div>
-      <div class="field"><label>Телефон (+996)</label><input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500"></div>
-      <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle"></div>
-      <div class="row-btn">
+      
+      <div class="field">
+        <label>Имя</label>
+        <input type="text" id="add-name">
+      </div>
+      
+      <div class="field">
+        <label>Телефон (+996)</label>
+        <input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500">
+        <!-- НОВАЯ КНОПКА ВЫБОРА ИЗ КОНТАКТОВ -->
+        <button type="button" class="btn sec" onclick="pickContact()" style="margin-top: 8px; padding: 8px; font-size: 12px;">📞 Выбрать из контактов</button>
+      </div>
+      
+      <!-- ПОЛЕ НОМЕРА АВТО -->
+      <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle" placeholder="01 KG 123 ABC"></div>
+      
+      <div class="row-btn" style="margin-top: 20px;">
         <button class="btn" onclick="submitAdd()">Добавить</button>
         <button class="btn sec" onclick="page('market')">Отмена</button>
       </div>
@@ -331,13 +344,8 @@ input:focus, select:focus { border-color: var(--gold); }
   const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
 
   // --- ТРЕВОГА (ЗВУК И ВИБРАЦИЯ) ---
-  let alarmInterval = null;
-
   window.playAlarm = function() {
-      // Вибрация
       if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
-      
-      // Звук (Сирена)
       try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           const osc = ctx.createOscillator();
@@ -348,31 +356,23 @@ input:focus, select:focus { border-color: var(--gold); }
           osc.start();
           osc.stop(ctx.currentTime + 0.5);
       } catch(e) {}
-
-      // Показываем баннер
-      const banner = document.getElementById('alarm-banner');
-      banner.style.display = 'block';
+      document.getElementById('alarm-banner').style.display = 'block';
   }
 
-  // Автозапуск звука при первом клике (ограничение браузеров)
   document.body.addEventListener('click', () => {
       try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
   }, { once: true });
 
-  // --- REALTIME СЛУШАТЕЛЬ ЗАКАЗОВ ---
   const orderChannel = supabase.channel('admin-alerts')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
         const newOrder = payload.new;
-        if (newOrder.executor_id) return; // Если кто-то уже взял, не тревожим
-
-        // Ставим таймер на 60 секунд
+        if (newOrder.executor_id) return;
         setTimeout(async () => {
             const { data } = await supabase.from('orders').select('executor_id').eq('id', newOrder.id).single();
             if (data && !data.executor_id) {
-                // Заказ всё еще висит!
                 window.playAlarm();
             }
-        }, 60000); // 60 секунд
+        }, 60000);
     }).subscribe();
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -384,7 +384,6 @@ input:focus, select:focus { border-color: var(--gold); }
 
   window.page = function(id) {
     menu(false);
-    // Скрываем баннер при переходе в заказы
     if(id === 'orders') document.getElementById('alarm-banner').style.display = 'none';
 
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
@@ -415,6 +414,43 @@ input:focus, select:focus { border-color: var(--gold); }
     reader.onload = function(e) { localStorage.setItem('kyraan_qr_' + num, e.target.result); };
     reader.readAsDataURL(input.files[0]);
   }
+
+  // --- НОВАЯ ФУНКЦИЯ: ВЫБОР ИЗ КОНТАКТОВ ---
+  window.pickContact = async function() {
+    const res = document.getElementById('add-result');
+    if (!('contacts' in navigator) || !('ContactsManager' in window)) {
+        res.style.color = 'var(--gold)';
+        res.textContent = 'Этот браузер не поддерживает выбор из контактов. Введите вручную.';
+        return;
+    }
+    try {
+        const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+        if (!contacts || contacts.length === 0) return;
+
+        const contact = contacts[0];
+        
+        // Подставляем имя
+        if (contact.name && contact.name.length > 0) {
+            document.getElementById('add-name').value = contact.name[0];
+        }
+        
+        // Подставляем и очищаем телефон (оставляем только 9 цифр)
+        if (contact.tel && contact.tel.length > 0) {
+            let rawPhone = contact.tel[0];
+            rawPhone = rawPhone.replace(/[^0-9]/g, '') // Удаляем всё, кроме цифр
+                               .replace(/^996/, '')   // Убираем 996 в начале, если есть
+                               .replace(/^0/, '');    // Убираем 0 в начале, если есть
+            document.getElementById('add-phone').value = rawPhone;
+        }
+        
+        res.style.color = 'var(--green)';
+        res.textContent = '✅ Контакт успешно выбран!';
+    } catch (err) {
+        console.error(err);
+        res.style.color = 'var(--red)';
+        res.textContent = 'Выбор контакта отменен.';
+    }
+  };
 
   // --- 1. РЫНОК ---
   let marketData = []; let currentFilter = 'all';
@@ -583,13 +619,22 @@ input:focus, select:focus { border-color: var(--gold); }
 
   window.submitAdd = async function() {
     let s = document.getElementById('add-service').value; let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); let name = document.getElementById('add-name').value.trim(); let car = document.getElementById('add-vehicle').value.trim(); let res = document.getElementById('add-result');
-    if(!s || phone.length !== 9) { res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
+    
+    if(!s || phone.length !== 9) { res.style.color = 'var(--red)'; res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
+    
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s);
+    if(needCar && !car) { res.style.color = 'var(--red)'; res.textContent = 'Введите номер автомобиля!'; return; }
+    
     let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
     const { error } = await supabase.from('executors').insert([{ name: name, phone: '+996' + phone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true }]);
-    if(error) { res.textContent = 'Ошибка: ' + error.message; } else { res.innerHTML = '<span style="color:var(--green)">Успешно добавлен!</span>'; setTimeout(() => page('market'), 1000); }
+    if(error) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: ' + error.message; } 
+    else { 
+        res.style.color = 'var(--green)'; res.innerHTML = 'Успешно добавлен!'; 
+        setTimeout(() => page('market'), 1000); 
+    }
   }
 
   loadMarket();
 </script>
 </body>
-    </html>
+</html>￼Enter
