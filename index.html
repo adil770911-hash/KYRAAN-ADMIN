@@ -15,29 +15,29 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 75px; }
 
+/* --- ALARM BANNER --- */
+#alarm-banner {
+    display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: var(--red); color: white; text-align: center; padding: 15px;
+    font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(255,59,48,0.5);
+    animation: flash 1s infinite;
+}
+@keyframes flash { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
+
 /* --- HEADER --- */
 header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 100; border-bottom: 1px solid var(--line); }
-.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; height: 60px; }
 .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
 .logo-icon { color: var(--gold); font-size: 24px; }
 .top-icons { display: flex; gap: 15px; font-size: 20px; color: var(--muted); }
 
-/* QR Blocks */
-.qr-header { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 12px; }
-.qr-box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; position: relative; overflow: hidden; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.qr-box span { font-size: 10px; color: var(--muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; }
-.qr-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
-.qr-img-preview { max-width: 100%; max-height: 100%; object-fit: contain; display: none; position: absolute; inset: 0; margin: auto; background: white; padding: 4px; border-radius: 8px;}
-.qr-box.has-img .qr-img-preview { display: block; }
-.qr-box.has-img span { display: none; }
-
 /* --- MAIN CONTENT --- */
-main { padding-top: 130px; max-width: 600px; margin: 0 auto; }
+main { padding-top: 60px; max-width: 600px; margin: 0 auto; }
 .page { display: none; animation: fadeIn 0.3s ease; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-h1 { font-size: 22px; margin: 0 16px 12px; font-weight: 700; }
+h1 { font-size: 22px; margin: 16px 16px 12px; font-weight: 700; }
 p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 
 /* Tabs */
@@ -70,12 +70,15 @@ p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 
 /* Terminal */
 .terminal-container { padding: 0 16px; }
-.terminal-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 11px; color: #00ff00; margin-bottom: 15px; max-height: 300px; overflow-y: auto; }
+.terminal-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 11px; color: #00ff00; margin-bottom: 15px; height: 60vh; overflow-y: auto; }
 .terminal-box.term-2 { color: var(--gold); }
 .term-head { display: flex; justify-content: space-between; color: #666; border-bottom: 1px dashed #333; padding-bottom: 5px; margin-bottom: 8px; }
 .json-key { color: #568cff; }
 .json-str { color: var(--gold); }
 .json-num { color: var(--green); }
+.json-link { color: var(--green); text-decoration: none; font-weight: bold; border-bottom: 1px dotted var(--green); }
+.json-link:hover { color: #fff; border-bottom-color: #fff; }
+.term-2 .json-link { color: var(--blue); border-bottom-color: var(--blue); }
 
 /* Forms & Buttons */
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 16px 16px; }
@@ -91,11 +94,20 @@ input:focus, select:focus { border-color: var(--gold); }
 /* Drawer */
 .drawer-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(2px); }
 .drawer-bg.open { display: block; }
-.drawer { position: absolute; top: 0; left: 0; bottom: 0; width: 280px; background: var(--bg); border-right: 1px solid var(--line); padding: 20px; transform: translateX(-100%); transition: 0.3s; display: flex; flex-direction: column; }
+.drawer { position: absolute; top: 0; left: 0; bottom: 0; width: 280px; background: var(--bg); border-right: 1px solid var(--line); padding: 20px; transform: translateX(-100%); transition: 0.3s; display: flex; flex-direction: column; overflow-y: auto; }
 .drawer-bg.open .drawer { transform: translateX(0); }
-.drawer h2 { font-size: 20px; margin: 0 0 20px; color: var(--gold); }
+.drawer h2 { font-size: 20px; margin: 0 0 15px; color: var(--gold); }
 .menu-btn { background: none; border: none; color: var(--text); text-align: left; padding: 12px 0; font-size: 15px; font-weight: 500; border-bottom: 1px solid var(--line); cursor: pointer; }
 .menu-btn:active { color: var(--gold); }
+
+/* QR Blocks inside Drawer */
+.qr-header { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--line); }
+.qr-box { background: var(--panel); border: 1px dashed #444; border-radius: 10px; padding: 8px; text-align: center; position: relative; overflow: hidden; height: 65px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.qr-box span { font-size: 10px; color: var(--muted); font-weight: 600; pointer-events: none; line-height: 1.2; }
+.qr-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 10; }
+.qr-img-preview { max-width: 100%; max-height: 100%; object-fit: contain; display: none; position: absolute; inset: 0; margin: auto; background: white; padding: 2px; border-radius: 8px; pointer-events: none; }
+.qr-box.has-img .qr-img-preview { display: block; }
+.qr-box.has-img span { display: none; }
 
 /* Bottom Nav */
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0E0E0E; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 10px); }
@@ -116,6 +128,12 @@ input:focus, select:focus { border-color: var(--gold); }
 </head>
 <body>
 
+<!-- КРАСНАЯ ПЛАШКА ТРЕВОГИ -->
+<div id="alarm-banner" onclick="page('orders')">
+    ⚠️ ВНИМАНИЕ: ЕСТЬ ЗАКАЗ, КОТОРЫЙ ВИСИТ БОЛЕЕ 1 МИНУТЫ!<br>
+    <span style="font-size: 11px; font-weight: normal;">Нажмите, чтобы перейти к заказам</span>
+</div>
+
 <!-- HEADER -->
 <header>
   <div class="top-bar">
@@ -124,19 +142,6 @@ input:focus, select:focus { border-color: var(--gold); }
       <span onclick="page('dossier')">🔍</span>
       <span onclick="menu(true)">☰</span>
     </div>
-  </div>
-  
-  <div class="qr-header">
-    <label class="qr-box" id="qr-box-1">
-      <span>QR №1 (Спецтех)</span>
-      <img src="" class="qr-img-preview" id="qr-img-1">
-      <input type="file" accept="image/*" onchange="uploadQR(this, 1)">
-    </label>
-    <label class="qr-box" id="qr-box-2">
-      <span>QR №2 (Бытовые)</span>
-      <img src="" class="qr-img-preview" id="qr-img-2">
-      <input type="file" accept="image/*" onchange="uploadQR(this, 2)">
-    </label>
   </div>
 </header>
 
@@ -206,18 +211,21 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="dossier-results"></div>
   </section>
 
-  <!-- PAGE: TERMINAL (JSON) -->
-  <section id="page-terminal" class="page">
-    <h1>Терминалы</h1>
+  <!-- PAGE: TERMINAL 1 (HUNTER 01) -->
+  <section id="page-term-1" class="page">
+    <h1>Журнал Спецтехники</h1>
+    <p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
     <div class="terminal-container">
-      <div class="terminal-box">
-        <div class="term-head"><span>HUNTER_01.json</span><span>LIVE</span></div>
-        <div id="term-1">[]</div>
-      </div>
-      <div class="terminal-box term-2">
-        <div class="term-head"><span>HUNTER_02.json</span><span>LIVE</span></div>
-        <div id="term-2">[]</div>
-      </div>
+      <div class="terminal-box"><div id="term-1">[]</div></div>
+    </div>
+  </section>
+
+  <!-- PAGE: TERMINAL 2 (HUNTER 02) -->
+  <section id="page-term-2" class="page">
+    <h1>Журнал Бытовых услуг</h1>
+    <p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
+    <div class="terminal-container">
+      <div class="terminal-box term-2"><div id="term-2">[]</div></div>
     </div>
   </section>
 
@@ -260,22 +268,10 @@ input:focus, select:focus { border-color: var(--gold); }
           </optgroup>
         </select>
       </div>
-      <div class="field hidden" id="add-variant-field">
-        <label>Подкатегория</label>
-        <select id="add-variant"></select>
-      </div>
-      <div class="field">
-        <label>Имя</label>
-        <input type="text" id="add-name">
-      </div>
-      <div class="field">
-        <label>Телефон (+996)</label>
-        <input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500">
-      </div>
-      <div class="field hidden" id="add-vehicle-field">
-        <label>Номер авто</label>
-        <input type="text" id="add-vehicle">
-      </div>
+      <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
+      <div class="field"><label>Имя</label><input type="text" id="add-name"></div>
+      <div class="field"><label>Телефон (+996)</label><input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500"></div>
+      <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle"></div>
       <div class="row-btn">
         <button class="btn" onclick="submitAdd()">Добавить</button>
         <button class="btn sec" onclick="page('market')">Отмена</button>
@@ -283,47 +279,42 @@ input:focus, select:focus { border-color: var(--gold); }
       <div id="add-result" class="sub" style="margin-top: 10px; text-align: center;"></div>
     </div>
   </section>
+  
+  <!-- PAGE: SETTINGS -->
+  <section id="page-settings" class="page">
+    <h1>Настройки</h1>
+    <p class="sub">Скоро здесь будет настройка км/сек.</p>
+    <button class="btn sec" onclick="page('market')">Назад</button>
+  </section>
 </main>
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-item active" id="nav-market" onclick="page('market')">
-    <span class="nav-icon">📊</span> Рынок
-  </button>
-  <button class="nav-item" id="nav-alpha" onclick="page('alpha')">
-    <span class="nav-icon">🚜</span> Альфа
-  </button>
-  <button class="nav-item" id="nav-search" onclick="page('search')">
-    <span class="nav-icon">🔍</span> Искать
-  </button>
-  <button class="nav-item" id="nav-portfolio" onclick="page('portfolio')">
-    <span class="nav-icon">💼</span> Портфель
-  </button>
-  <button class="nav-item" onclick="menu(true)">
-    <span class="nav-icon">☰</span> Меню
-  </button>
+  <button class="nav-item active" id="nav-market" onclick="page('market')"><span class="nav-icon">📊</span> Рынок</button>
+  <button class="nav-item" id="nav-alpha" onclick="page('alpha')"><span class="nav-icon">🚜</span> Альфа</button>
+  <button class="nav-item" id="nav-search" onclick="page('search')"><span class="nav-icon">🔍</span> Искать</button>
+  <button class="nav-item" id="nav-portfolio" onclick="page('portfolio')"><span class="nav-icon">💼</span> Портфель</button>
+  <button class="nav-item" onclick="menu(true)"><span class="nav-icon">☰</span> Меню</button>
 </nav>
 
 <!-- DRAWER MENU -->
 <div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)">
   <aside class="drawer">
     <h2>KYRAAN MENU</h2>
+    <div class="qr-header">
+      <label class="qr-box" id="qr-box-1"><span>📸 QR №1<br>(Спецтех)</span><img src="" class="qr-img-preview" id="qr-img-1"><input type="file" accept="image/*" onchange="uploadQR(this, 1)"></label>
+      <label class="qr-box" id="qr-box-2"><span>📸 QR №2<br>(Бытовые)</span><img src="" class="qr-img-preview" id="qr-img-2"><input type="file" accept="image/*" onchange="uploadQR(this, 2)"></label>
+    </div>
+    <button class="menu-btn" onclick="page('term-1')">💻 Журнал Спецтехники (H1)</button>
+    <button class="menu-btn" onclick="page('term-2')">💻 Журнал Бытовые (H2)</button>
     <button class="menu-btn" onclick="page('orders')">🧾 Заказы (24ч)</button>
     <button class="menu-btn" onclick="page('approvals')">👤 Новые исполнители</button>
     <button class="menu-btn" onclick="page('dossier')">🗂 Поиск / Досье</button>
-    <button class="menu-btn" onclick="page('terminal')">💻 Терминалы (JSON)</button>
     <button class="menu-btn" onclick="page('boards')">📋 Доски объявлений</button>
     <button class="menu-btn" onclick="page('add')">➕ Добавить вручную</button>
     <button class="menu-btn" onclick="page('settings')">⚙️ Настройки волны</button>
   </aside>
 </div>
-
-<!-- SETTINGS PAGE (Заглушка) -->
-<section id="page-settings" class="page" style="padding:16px;">
-  <h1>Настройки</h1>
-  <p class="sub">Скоро здесь будет настройка км/сек.</p>
-  <button class="btn sec" onclick="page('market')">Назад</button>
-</section>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -331,33 +322,71 @@ input:focus, select:focus { border-color: var(--gold); }
   const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Защита от XSS (Безопасный вывод)
-  function escapeHTML(str) {
-      if(!str) return '';
-      return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-  }
+  function escapeHTML(str) { if(!str) return ''; return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
+  function safeParam(str) { if (!str) return "''"; return JSON.stringify(str).replace(/"/g, '&quot;'); }
 
-  const names = {
-    'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки',
-    'intercity': 'Ош-Бишкек такси', 'plumber': 'Сантехник', 'electrician': 'Электрик',
-    'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.',
-    'washer': 'Ремонт стир.', 'tv': 'Телемастер', 'hour': 'Мастер на час', 'workers': 'Разнорабочие'
-  };
-  const hunters = {
-    'evacuator': 'HUNTER_01', 'manipulator': 'HUNTER_01', 'cargo': 'HUNTER_01',
-    'plumber': 'HUNTER_02', 'electrician': 'HUNTER_02', 'cleaning': 'HUNTER_02', 
-    'welder': 'HUNTER_02', 'fridge': 'HUNTER_02', 'washer': 'HUNTER_02', 
-    'tv': 'HUNTER_02', 'hour': 'HUNTER_02',
-    'intercity': 'BOARD', 'workers': 'BOARD'
-  };
-  const vmap = {
-    'cargo': ['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],
-    'evacuator': ['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],
-    'manipulator': ['3 тонны','5 тонн','8 тонн','10 тонн']
-  };
+  const names = { 'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки', 'intercity': 'Ош-Бишкек такси', 'plumber': 'Сантехник', 'electrician': 'Электрик', 'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.', 'washer': 'Ремонт стир.', 'tv': 'Телемастер', 'hour': 'Мастер на час', 'workers': 'Разнорабочие' };
+  const hunters = { 'evacuator': 'HUNTER_01', 'manipulator': 'HUNTER_01', 'cargo': 'HUNTER_01', 'plumber': 'HUNTER_02', 'electrician': 'HUNTER_02', 'cleaning': 'HUNTER_02', 'welder': 'HUNTER_02', 'fridge': 'HUNTER_02', 'washer': 'HUNTER_02', 'tv': 'HUNTER_02', 'hour': 'HUNTER_02', 'intercity': 'BOARD', 'workers': 'BOARD' };
+  const vmap = { 'cargo': ['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'], 'evacuator': ['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'], 'manipulator': ['3 тонны','5 тонн','8 тонн','10 тонн'] };
   const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
 
+  // --- ТРЕВОГА (ЗВУК И ВИБРАЦИЯ) ---
+  let alarmInterval = null;
+
+  window.playAlarm = function() {
+      // Вибрация
+      if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
+      
+      // Звук (Сирена)
+      try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(800, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.5);
+          osc.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.5);
+      } catch(e) {}
+
+      // Показываем баннер
+      const banner = document.getElementById('alarm-banner');
+      banner.style.display = 'block';
+  }
+
+  // Автозапуск звука при первом клике (ограничение браузеров)
+  document.body.addEventListener('click', () => {
+      try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
+  }, { once: true });
+
+  // --- REALTIME СЛУШАТЕЛЬ ЗАКАЗОВ ---
+  const orderChannel = supabase.channel('admin-alerts')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+        const newOrder = payload.new;
+        if (newOrder.executor_id) return; // Если кто-то уже взял, не тревожим
+
+        // Ставим таймер на 60 секунд
+        setTimeout(async () => {
+            const { data } = await supabase.from('orders').select('executor_id').eq('id', newOrder.id).single();
+            if (data && !data.executor_id) {
+                // Заказ всё еще висит!
+                window.playAlarm();
+            }
+        }, 60000); // 60 секунд
+    }).subscribe();
+
+  window.addEventListener('DOMContentLoaded', () => {
+      const qr1 = localStorage.getItem('kyraan_qr_1');
+      const qr2 = localStorage.getItem('kyraan_qr_2');
+      if(qr1) { document.getElementById('qr-img-1').src = qr1; document.getElementById('qr-box-1').classList.add('has-img'); }
+      if(qr2) { document.getElementById('qr-img-2').src = qr2; document.getElementById('qr-box-2').classList.add('has-img'); }
+  });
+
   window.page = function(id) {
+    menu(false);
+    // Скрываем баннер при переходе в заказы
+    if(id === 'orders') document.getElementById('alarm-banner').style.display = 'none';
+
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
@@ -370,74 +399,52 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'search') loadMonitor('HUNTER_02', 'search-list');
     if(id === 'orders') loadOrders();
     if(id === 'approvals') loadApprovals();
-    if(id === 'terminal') loadTerminals();
+    if(id === 'term-1') loadTerminal('HUNTER_01', 'term-1');
+    if(id === 'term-2') loadTerminal('HUNTER_02', 'term-2');
     if(id === 'boards') loadBoards(currentBoard);
   }
+  
   window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
 
-  // --- 1. РЫНОК (CMC STYLE) ---
-  let marketData = [];
-  let currentFilter = 'all';
+  window.uploadQR = function(input, num) {
+    if(!input.files || !input.files[0]) return;
+    let url = URL.createObjectURL(input.files[0]);
+    document.getElementById('qr-img-'+num).src = url;
+    document.getElementById('qr-box-'+num).classList.add('has-img');
+    let reader = new FileReader();
+    reader.onload = function(e) { localStorage.setItem('kyraan_qr_' + num, e.target.result); };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  // --- 1. РЫНОК ---
+  let marketData = []; let currentFilter = 'all';
 
   async function loadMarket() {
     const list = document.getElementById('market-list');
     list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
-    
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
 
     let stats = {};
     for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
-
     data.forEach(ex => {
         if (!stats[ex.service_id]) return;
         if (!ex.is_approved) stats[ex.service_id].pending++;
-        else {
-            stats[ex.service_id].total++;
-            if (ex.is_busy) stats[ex.service_id].busy++;
-            else if (ex.is_online) stats[ex.service_id].online++;
-        }
+        else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; }
     });
-
-    marketData = stats;
-    renderMarketList();
+    marketData = stats; renderMarketList();
   }
 
-  window.filterMarket = function(type, btn) {
-    currentFilter = type;
-    document.querySelectorAll('#page-market .tabs button').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    renderMarketList();
-  }
+  window.filterMarket = function(type, btn) { currentFilter = type; document.querySelectorAll('#page-market .tabs button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); renderMarketList(); }
 
   function renderMarketList() {
-    const list = document.getElementById('market-list');
-    let html = '';
-    
+    const list = document.getElementById('market-list'); let html = '';
     for (let key in names) {
-        let s = marketData[key];
-        let h = hunters[key] || 'HUNTER_02';
-
+        let s = marketData[key]; let h = hunters[key] || 'HUNTER_02';
         if (currentFilter !== 'all' && currentFilter !== h) continue;
-        if (currentFilter === 'all' && key === 'intercity') {
-            html += `<div style="padding: 15px 0 5px; font-size:12px; color:var(--muted); font-weight:700;">ДОСКИ ОБЪЯВЛЕНИЙ</div>`;
-        }
-
-        let icon = icons[key] || '🔧';
-        let badgeClass = s.online > 0 ? 'badge-green' : 'badge-gold';
-        
-        html += `
-        <div class="cmc-item">
-            <div class="cmc-icon">${icon}</div>
-            <div class="cmc-info">
-                <div class="cmc-name">${names[key]}</div>
-                <div class="cmc-sub">Всего: ${s.total} · Ожидают: ${s.pending}</div>
-            </div>
-            <div class="cmc-right">
-                <div class="cmc-val">${s.online} <span style="font-size:10px; color:#888;">на линии</span></div>
-                <div class="cmc-badge ${badgeClass}">${s.busy} занято</div>
-            </div>
-        </div>`;
+        if (currentFilter === 'all' && key === 'intercity') html += `<div style="padding: 15px 0 5px; font-size:12px; color:var(--muted); font-weight:700;">ДОСКИ ОБЪЯВЛЕНИЙ</div>`;
+        let icon = icons[key] || '🔧'; let badgeClass = s.online > 0 ? 'badge-green' : 'badge-gold';
+        html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Всего: ${s.total} · Ожидают: ${s.pending}</div></div><div class="cmc-right"><div class="cmc-val">${s.online} <span style="font-size:10px; color:#888;">на линии</span></div><div class="cmc-badge ${badgeClass}">${s.busy} занято</div></div></div>`;
     }
     list.innerHTML = html;
   }
@@ -446,60 +453,35 @@ input:focus, select:focus { border-color: var(--gold); }
   async function loadMonitor(hunterType, elementId) {
     const list = document.getElementById(elementId);
     list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
-    
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved').eq('hunter', hunterType);
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
 
     let stats = {};
-    for (let key in names) {
-        if ((hunterType === 'HUNTER_01' && hunters[key] === 'HUNTER_01') || (hunterType === 'HUNTER_02' && hunters[key] !== 'HUNTER_01' && hunters[key] !== 'BOARD')) {
-            stats[key] = { total: 0, online: 0, busy: 0, pending: 0 };
-        }
-    }
-
+    for (let key in names) { if ((hunterType === 'HUNTER_01' && hunters[key] === 'HUNTER_01') || (hunterType === 'HUNTER_02' && hunters[key] !== 'HUNTER_01' && hunters[key] !== 'BOARD')) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; } }
     data.forEach(ex => {
         if (!stats[ex.service_id]) return;
         if (!ex.is_approved) stats[ex.service_id].pending++;
-        else {
-            stats[ex.service_id].total++;
-            if (ex.is_busy) stats[ex.service_id].busy++;
-            else if (ex.is_online) stats[ex.service_id].online++;
-        }
+        else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; }
     });
-
     let html = '';
     for (let key in stats) {
-        let s = stats[key];
-        let icon = icons[key] || '🔧';
-        html += `
-        <div class="cmc-item">
-            <div class="cmc-icon">${icon}</div>
-            <div class="cmc-info">
-                <div class="cmc-name">${names[key]}</div>
-                <div class="cmc-sub">Зарег: ${s.total} · Ожид: ${s.pending}</div>
-            </div>
-            <div class="cmc-right" style="display:flex; gap:15px; text-align:right;">
-                <div><div style="font-weight:700; color:var(--green);">${s.online}</div><div style="font-size:10px; color:#888;">линия</div></div>
-                <div><div style="font-weight:700; color:var(--gold);">${s.busy}</div><div style="font-size:10px; color:#888;">заказ</div></div>
-            </div>
-        </div>`;
+        let s = stats[key]; let icon = icons[key] || '🔧';
+        html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Зарег: ${s.total} · Ожид: ${s.pending}</div></div><div class="cmc-right" style="display:flex; gap:15px; text-align:right;"><div><div style="font-weight:700; color:var(--green);">${s.online}</div><div style="font-size:10px; color:#888;">линия</div></div><div><div style="font-weight:700; color:var(--gold);">${s.busy}</div><div style="font-size:10px; color:#888;">заказ</div></div></div></div>`;
     }
     list.innerHTML = html || '<div style="padding:20px; text-align:center; color:#888;">Нет данных</div>';
   }
 
   // --- 3. ЗАКАЗЫ ---
   async function loadOrders() {
-    const list = document.getElementById('orders-list');
-    list.innerHTML = 'Загрузка...';
+    const list = document.getElementById('orders-list'); list.innerHTML = 'Загрузка...';
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase.from('orders').select('*').gte('created_at', yesterday).order('created_at', { ascending: false });
-    
     if(!data || data.length === 0) { list.innerHTML = 'Заказов нет.'; return; }
     list.innerHTML = data.map(o => `
-      <div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid var(--gold);">
+      <div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${o.executor_id ? 'var(--green)' : 'var(--red)'};">
         <div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div>
         <div style="font-size:16px; font-weight:700; margin:4px 0;">${escapeHTML(o.client_phone)}</div>
-        <div style="font-size:12px; margin-bottom:8px;">Категория: ${names[o.service_id] || o.hunter}</div>
+        <div style="font-size:12px; margin-bottom:8px;">Категория: ${names[o.service_id] || o.hunter} · ${o.executor_id ? '<span style="color:var(--green)">Взят</span>' : '<span style="color:var(--red)">Ждет</span>'}</div>
         <a href="tel:${escapeHTML(o.client_phone)}" class="btn" style="padding:8px; text-decoration:none; display:inline-block; width:auto;">📞 Позвонить</a>
       </div>
     `).join('');
@@ -507,235 +489,106 @@ input:focus, select:focus { border-color: var(--gold); }
 
   // --- 4. ЗАЯВКИ ---
   async function loadApprovals() {
-    const list = document.getElementById('approvals-list');
-    list.innerHTML = 'Загрузка...';
+    const list = document.getElementById('approvals-list'); list.innerHTML = 'Загрузка...';
     const { data } = await supabase.from('executors').select('*').eq('is_approved', false).order('created_at', { ascending: false });
     if(!data || data.length === 0) { list.innerHTML = 'Нет новых заявок.'; return; }
-    
     list.innerHTML = data.map(u => `
       <div class="card" style="padding:12px; margin:0 0 10px 0;">
         <div style="font-size:11px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div>
         <div style="font-size:16px; font-weight:700;">${escapeHTML(u.name)}</div>
         <div style="font-size:14px; color:var(--muted); margin-bottom:8px;">${escapeHTML(u.phone)} · ${names[u.service_id] || u.service_id}</div>
-        <div class="row-btn">
-            <button class="btn" onclick="approveExec('${u.id}')">Одобрить</button>
-            <button class="btn sec" style="color:var(--red);" onclick="deleteExec('${u.id}', '${escapeHTML(u.name)}', '${escapeHTML(u.phone)}')">Удалить</button>
-        </div>
+        <div class="row-btn"><button class="btn" onclick="approveExec('${u.id}')">Одобрить</button><button class="btn sec" style="color:var(--red);" onclick="deleteExec('${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)})">Удалить</button></div>
       </div>
     `).join('');
   }
-  window.approveExec = async function(id) {
-    await supabase.from('executors').update({ is_approved: true }).eq('id', id);
-    loadApprovals();
-  }
+  window.approveExec = async function(id) { await supabase.from('executors').update({ is_approved: true }).eq('id', id); loadApprovals(); }
 
   // --- 5. ТЕРМИНАЛЫ ---
-  async function loadTerminals() {
-    const { data: d1 } = await supabase.from('orders').select('*').eq('hunter', 'HUNTER_01').order('created_at', { ascending: false }).limit(5);
-    renderJSON(d1, 'term-1');
-    const { data: d2 } = await supabase.from('orders').select('*').eq('hunter', 'HUNTER_02').order('created_at', { ascending: false }).limit(5);
-    renderJSON(d2, 'term-2');
-  }
-  function renderJSON(data, id) {
-    const el = document.getElementById(id);
-    if(!data || data.length === 0) { el.innerHTML = '[]\n// Журнал пуст.'; return; }
+  async function loadTerminal(hunterType, elementId) {
+    const el = document.getElementById(elementId); el.innerHTML = 'Загрузка...';
+    const { data: orders } = await supabase.from('orders').select('*').eq('hunter', hunterType).order('created_at', { ascending: false }).limit(20);
+    if(!orders || orders.length === 0) { el.innerHTML = '[]\n// Журнал пуст.'; return; }
+
+    const execIds = orders.filter(o => o.executor_id).map(o => o.executor_id); let execPhones = {};
+    if (execIds.length > 0) { const { data: execs } = await supabase.from('executors').select('id, phone').in('id', execIds); if (execs) execs.forEach(e => execPhones[e.id] = e.phone); }
+
     let html = "[\n";
-    data.forEach((o, i) => {
-        let ex = o.executor_id ? o.executor_id.split('-')[0].toUpperCase() : 'WAITING';
-        html += `  {\n    "time": "<span class='json-str'>${new Date(o.created_at).toLocaleTimeString('ru-RU')}</span>",\n    "order_id": "<span class='json-num'>#${o.id.split('-')[0].toUpperCase()}</span>",\n    "executor": "<span class='json-key'>${ex}</span>"\n  }${i < data.length-1 ? ',' : ''}\n`;
+    orders.forEach((o, i) => {
+        let exId = o.executor_id ? o.executor_id.split('-')[0].toUpperCase() : 'WAITING';
+        let exPhone = o.executor_id && execPhones[o.executor_id] ? execPhones[o.executor_id] : null;
+        let clientLink = o.client_phone ? `<a href='tel:${o.client_phone}' class='json-link'>📞 ${o.client_phone}</a>` : 'NO_PHONE';
+        let execLink = exPhone ? `<a href='tel:${exPhone}' class='json-link'>📞 ${exId}</a>` : `<span class='json-key'>${exId}</span>`;
+        html += `  {\n    "time": "<span class='json-str'>${new Date(o.created_at).toLocaleTimeString('ru-RU')}</span>",\n    "order_id": "<span class='json-num'>#${o.id.split('-')[0].toUpperCase()}</span>",\n    "client": "${clientLink}",\n    "executor": "${execLink}"\n  }${i < orders.length-1 ? ',' : ''}\n`;
     });
-    html += "]";
-    el.innerHTML = html;
+    html += "]"; el.innerHTML = html;
   }
 
   // --- 6. ДОСКИ ---
   let currentBoard = 'intercity';
-  window.switchBoard = function(type, btn) {
-    currentBoard = type;
-    document.querySelectorAll('#page-boards .tabs button').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    loadBoards(type);
-  }
+  window.switchBoard = function(type, btn) { currentBoard = type; document.querySelectorAll('#page-boards .tabs button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); loadBoards(type); }
   async function loadBoards(type) {
-    const list = document.getElementById('boards-list');
-    list.innerHTML = 'Загрузка...';
+    const list = document.getElementById('boards-list'); list.innerHTML = 'Загрузка...';
     const { data } = await supabase.from('executors').select('*').eq('service_id', type).eq('is_active', true);
     if(!data || data.length === 0) { list.innerHTML = 'Нет активных объявлений.'; return; }
-    
     list.innerHTML = data.map(u => `
-      <div class="cmc-item">
-        <div class="cmc-icon">${type==='intercity'?'🚖':'👷'}</div>
-        <div class="cmc-info">
-            <div class="cmc-name">${escapeHTML(u.name)}</div>
-            <div class="cmc-sub">${escapeHTML(u.phone)} ${u.plate_number ? '· '+escapeHTML(u.plate_number) : ''}</div>
-        </div>
-        <div class="cmc-right">
-            <button class="btn sec" style="padding:6px 12px; font-size:12px; margin-bottom:4px;" onclick="hideBoardAd('${u.id}')">Скрыть</button>
-            <a href="tel:${escapeHTML(u.phone)}" class="btn" style="padding:6px 12px; font-size:12px; text-decoration:none; display:inline-block;">📞</a>
-        </div>
-      </div>
+      <div class="cmc-item"><div class="cmc-icon">${type==='intercity'?'🚖':'👷'}</div><div class="cmc-info"><div class="cmc-name">${escapeHTML(u.name)}</div><div class="cmc-sub">${escapeHTML(u.phone)} ${u.plate_number ? '· '+escapeHTML(u.plate_number) : ''}</div></div><div class="cmc-right"><button class="btn sec" style="padding:6px 12px; font-size:12px; margin-bottom:4px;" onclick="hideBoardAd('${u.id}')">Скрыть</button><a href="tel:${escapeHTML(u.phone)}" class="btn" style="padding:6px 12px; font-size:12px; text-decoration:none; display:inline-block;">📞</a></div></div>
     `).join('');
   }
-  window.hideBoardAd = async function(id) {
-    await supabase.from('executors').update({ is_active: false }).eq('id', id);
-    loadBoards(currentBoard);
-  }
+  window.hideBoardAd = async function(id) { await supabase.from('executors').update({ is_active: false }).eq('id', id); loadBoards(currentBoard); }
 
-  // --- 7. ДОСЬЕ И АУДИТ ЛОГ ---
+  // --- 7. ДОСЬЕ ---
   window.searchDossier = async function() {
-    const q = document.getElementById('dossier-query').value.trim();
-    const res = document.getElementById('dossier-results');
-    if(!q) return;
-    res.innerHTML = 'Поиск...';
-    
+    const q = document.getElementById('dossier-query').value.trim(); const res = document.getElementById('dossier-results');
+    if(!q) return; res.innerHTML = 'Поиск...';
     const { data } = await supabase.from('executors').select('*').or(`id.eq.${q},phone.ilike.%${q}%,name.ilike.%${q}%`);
     if(!data || data.length === 0) { res.innerHTML = 'Не найден.'; return; }
 
     res.innerHTML = data.map(u => `
       <div class="dossier">
-        <div class="dossier-head">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h2 class="dossier-name">${escapeHTML(u.name)}</h2>
-                    <div class="dossier-phone">${escapeHTML(u.phone)}</div>
-                </div>
-                <div style="background:var(--bg); padding:4px 8px; border-radius:6px; font-size:10px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div>
-            </div>
-        </div>
-        <div class="dossier-stats">
-            <div class="d-stat"><div class="d-val" style="color:var(--gold);">${u.rating || 15}</div><div class="d-lbl">Рейтинг</div></div>
-            <div class="d-stat"><div class="d-val">${u.completed_orders || 0}</div><div class="d-lbl">Заказов</div></div>
-            <div class="d-stat"><div class="d-val" style="color:${u.is_blocked ? 'var(--red)' : 'var(--green)'};">${u.is_blocked ? '🚫' : '✅'}</div><div class="d-lbl">Статус</div></div>
-        </div>
-        
-        <div style="font-size:13px; color:var(--muted); margin-bottom:16px;">
-            <div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>
-            ${u.plate_number ? `<div><b>Авто:</b> ${escapeHTML(u.plate_number)}</div>` : ''}
-            <div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>
-            ${u.is_blacklisted ? '<div style="color:var(--red); font-weight:bold; margin-top:4px;">В ЧЕРНОМ СПИСКЕ</div>' : ''}
-        </div>
-
+        <div class="dossier-head"><div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="dossier-name">${escapeHTML(u.name)}</h2><div class="dossier-phone">${escapeHTML(u.phone)}</div></div><div style="background:var(--bg); padding:4px 8px; border-radius:6px; font-size:10px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div></div></div>
+        <div class="dossier-stats"><div class="d-stat"><div class="d-val" style="color:var(--gold);">${u.rating || 15}</div><div class="d-lbl">Рейтинг</div></div><div class="d-stat"><div class="d-val">${u.completed_orders || 0}</div><div class="d-lbl">Заказов</div></div><div class="d-stat"><div class="d-val" style="color:${u.is_blocked ? 'var(--red)' : 'var(--green)'};">${u.is_blocked ? '🚫' : '✅'}</div><div class="d-lbl">Статус</div></div></div>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:16px;"><div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>${u.plate_number ? `<div><b>Авто:</b> ${escapeHTML(u.plate_number)}</div>` : ''}<div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>${u.is_blacklisted ? '<div style="color:var(--red); font-weight:bold; margin-top:4px;">В ЧЕРНОМ СПИСКЕ</div>' : ''}</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
-            <button class="btn" onclick="adminAction('BLOCK', '${u.id}', '${escapeHTML(u.name)}', '${escapeHTML(u.phone)}', ${u.is_blocked})">
-                ${u.is_blocked ? '✅ Разблок' : '⛔ Блок'}
-            </button>
-            <button class="btn" onclick="adminAction('BLACKLIST', '${u.id}', '${escapeHTML(u.name)}', '${escapeHTML(u.phone)}', ${u.is_blacklisted})">
-                ${u.is_blacklisted ? '🟢 Из ЧС' : '🚫 Blacklist'}
-            </button>
+            <button class="btn" onclick="adminAction('BLOCK', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, ${u.is_blocked})">${u.is_blocked ? '✅ Разблок' : '⛔ Блок'}</button>
+            <button class="btn" onclick="adminAction('BLACKLIST', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, ${u.is_blacklisted})">${u.is_blacklisted ? '🟢 Из ЧС' : '🚫 Blacklist'}</button>
         </div>
-        <div style="display:grid; grid-template-columns:1fr; gap:8px;">
-             <button class="btn" style="background:var(--red); color:white;" onclick="adminAction('DELETE', '${u.id}', '${escapeHTML(u.name)}', '${escapeHTML(u.phone)}', false)">🗑 Удалить навсегда</button>
-        </div>
-        <div style="margin-top: 12px; text-align:center;">
-            <button class="btn sec" style="padding:8px;" onclick="addOrderCount('${u.id}', ${u.completed_orders||0})">+1 Выполненный заказ</button>
-        </div>
+        <div style="display:grid; grid-template-columns:1fr; gap:8px;"><button class="btn" style="background:var(--red); color:white;" onclick="adminAction('DELETE', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, false)">🗑 Удалить навсегда</button></div>
+        <div style="margin-top: 12px; text-align:center;"><button class="btn sec" style="padding:8px;" onclick="addOrderCount('${u.id}', ${u.completed_orders||0})">+1 Выполненный заказ</button></div>
       </div>
     `).join('');
   }
 
-  // Единая функция действий с Audit Log
   window.adminAction = async function(actionType, id, name, phone, currentState) {
-      let confirmMsg = '';
-      let dbUpdate = {};
-      let logAction = '';
-
-      if (actionType === 'BLOCK') {
-          confirmMsg = currentState ? `Разблокировать ${name}?` : `Заблокировать ${name}?`;
-          dbUpdate = { is_blocked: !currentState };
-          logAction = currentState ? 'UNBLOCK' : 'BLOCK';
-      } 
-      else if (actionType === 'BLACKLIST') {
-          confirmMsg = currentState ? `Убрать ${name} из ЧС?` : `Отправить ${name} в черный список?`;
-          dbUpdate = { is_blacklisted: !currentState, is_active: false };
-          logAction = currentState ? 'UNBLACKLIST' : 'BLACKLIST';
-      } 
-      else if (actionType === 'DELETE') {
-          confirmMsg = `ВНИМАНИЕ! Удалить ${name} навсегда?`;
-          logAction = 'DELETE';
-      }
-
+      let confirmMsg = ''; let dbUpdate = {}; let logAction = '';
+      if (actionType === 'BLOCK') { confirmMsg = currentState ? `Разблокировать ${name}?` : `Заблокировать ${name}?`; dbUpdate = { is_blocked: !currentState }; logAction = currentState ? 'UNBLOCK' : 'BLOCK'; } 
+      else if (actionType === 'BLACKLIST') { confirmMsg = currentState ? `Убрать ${name} из ЧС?` : `Отправить ${name} в черный список?`; dbUpdate = { is_blacklisted: !currentState, is_active: false }; logAction = currentState ? 'UNBLACKLIST' : 'BLACKLIST'; } 
+      else if (actionType === 'DELETE') { confirmMsg = `ВНИМАНИЕ! Удалить ${name} навсегда?`; logAction = 'DELETE'; }
       if (!confirm(confirmMsg)) return;
-
       try {
-          if (actionType === 'DELETE') {
-              const { error } = await supabase.from('executors').delete().eq('id', id);
-              if (error) throw error;
-          } else {
-              const { error } = await supabase.from('executors').update(dbUpdate).eq('id', id);
-              if (error) throw error;
-          }
-
-          // Пишем в Audit Log
-          await supabase.from('audit_log').insert([{
-              admin_action: logAction,
-              target_executor_id: id,
-              target_name: name,
-              target_phone: phone,
-              details: `Выполнено действие: ${logAction}`
-          }]);
-
-          alert(`Действие "${logAction}" выполнено.`);
-          searchDossier();
-
-      } catch (err) {
-          alert('Ошибка: ' + err.message);
-      }
+          if (actionType === 'DELETE') { const { error } = await supabase.from('executors').delete().eq('id', id); if (error) throw error; } 
+          else { const { error } = await supabase.from('executors').update(dbUpdate).eq('id', id); if (error) throw error; }
+          await supabase.from('audit_log').insert([{ admin_action: logAction, target_executor_id: id, target_name: name, target_phone: phone, details: `Выполнено действие: ${logAction}` }]);
+          alert(`Действие "${logAction}" выполнено.`); searchDossier();
+      } catch (err) { alert('Ошибка: ' + err.message); }
   }
 
-  window.addOrderCount = async function(id, count) {
-    await supabase.from('executors').update({ completed_orders: count + 1 }).eq('id', id);
-    searchDossier();
-  }
+  window.addOrderCount = async function(id, count) { await supabase.from('executors').update({ completed_orders: count + 1 }).eq('id', id); searchDossier(); }
 
-  // --- 8. QR ЗАГРУЗКА ---
-  window.uploadQR = function(input, num) {
-    if(!input.files || !input.files[0]) return;
-    let url = URL.createObjectURL(input.files[0]);
-    document.getElementById('qr-img-'+num).src = url;
-    document.getElementById('qr-box-'+num).classList.add('has-img');
-  }
-
-  // --- 9. ДОБАВЛЕНИЕ ---
   window.updateAddVariant = function() {
-    let s = document.getElementById('add-service').value;
-    let vf = document.getElementById('add-variant-field');
-    let v = document.getElementById('add-variant');
-    let carf = document.getElementById('add-vehicle-field');
-    
-    v.innerHTML = '';
-    let arr = vmap[s] || [];
-    vf.classList.toggle('hidden', arr.length === 0);
+    let s = document.getElementById('add-service').value; let vf = document.getElementById('add-variant-field'); let v = document.getElementById('add-variant'); let carf = document.getElementById('add-vehicle-field');
+    v.innerHTML = ''; let arr = vmap[s] || []; vf.classList.toggle('hidden', arr.length === 0);
     arr.forEach(x => { let o = document.createElement('option'); o.textContent = x; v.appendChild(o); });
-    
-    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s);
-    carf.classList.toggle('hidden', !needCar);
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); carf.classList.toggle('hidden', !needCar);
   }
 
   window.submitAdd = async function() {
-    let s = document.getElementById('add-service').value;
-    let phone = document.getElementById('add-phone').value.replace(/\D/g, '');
-    let name = document.getElementById('add-name').value.trim();
-    let car = document.getElementById('add-vehicle').value.trim();
-    let res = document.getElementById('add-result');
-
+    let s = document.getElementById('add-service').value; let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); let name = document.getElementById('add-name').value.trim(); let car = document.getElementById('add-vehicle').value.trim(); let res = document.getElementById('add-result');
     if(!s || phone.length !== 9) { res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
-    
-    let hunter = hunters[s] || 'HUNTER_02';
-    let variant = document.getElementById('add-variant').value;
-
-    const { error } = await supabase.from('executors').insert([{
-        name: name, phone: '+996' + phone, service_id: s, hunter: hunter,
-        variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true
-    }]);
-
-    if(error) { res.textContent = 'Ошибка: ' + error.message; }
-    else { 
-        res.innerHTML = '<span style="color:var(--green)">Успешно добавлен!</span>'; 
-        setTimeout(() => page('market'), 1000);
-    }
+    let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
+    const { error } = await supabase.from('executors').insert([{ name: name, phone: '+996' + phone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true }]);
+    if(error) { res.textContent = 'Ошибка: ' + error.message; } else { res.innerHTML = '<span style="color:var(--green)">Успешно добавлен!</span>'; setTimeout(() => page('market'), 1000); }
   }
 
-  // Init
   loadMarket();
 </script>
 </body>
