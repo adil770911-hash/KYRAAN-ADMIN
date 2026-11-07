@@ -602,5 +602,26 @@ input:focus, select:focus { border-color: var(--gold); }
 
   loadMarket();
 </script>
-</body>
+</body> window.pickContactForSearch = async function() {
+  // Проверяем, поддерживает ли браузер доступ к контактам
+  if (!('contacts' in navigator) || !('ContactsManager' in window)) {
+      alert('Ваш браузер не поддерживает выбор контактов. Введите номер вручную.');
+      return;
+  }
+  try {
+      // Открываем телефонную книжку (выбираем 1 контакт)
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+      if (!contacts || contacts.length === 0) return;
+      
+      const contact = contacts[0];
+      if (contact.tel && contact.tel.length > 0) {
+          // Подставляем номер из контакта в поле поиска
+          document.getElementById('dossier-query').value = contact.tel[0];
+          // Сразу запускаем поиск
+          searchDossier();
+      }
+  } catch (err) {
+      console.log('Выбор контакта отменен или произошла ошибка', err);
+  }
+}
   </html>
