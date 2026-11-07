@@ -8,13 +8,46 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,Arial,sans-serif}.app{max-width:1000px;margin:auto;min-height:100vh;padding-bottom:25px}
 header{position:sticky;top:0;z-index:4;background:#101a2b;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 15px}.icon{background:var(--p2);border:1px solid var(--line);border-radius:11px;color:white;padding:9px 13px;font-size:20px}.brand{font-weight:850;letter-spacing:1px}.muted,.small{color:var(--muted)}.small{font-size:12px}.grow{flex:1}
 .tabs{display:flex;gap:8px;overflow:auto;padding:13px 12px}.tabs button{white-space:nowrap;border:1px solid var(--line);border-radius:22px;background:var(--p);color:var(--muted);padding:10px 15px;cursor:pointer}.tabs button.active{background:#244878;color:white;border-color:#548bd1}
-main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22px;margin:5px 0 15px}h2{font-size:18px;margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.card{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:14px}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .empty{font-size:16px;color:var(--muted)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.service-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}.service{background:var(--p2);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:13px;display:flex;justify-content:space-between;gap:8px}.status{display:inline-block;padding:4px 9px;border-radius:20px;background:#392d22;color:#f5c887;font-size:11px}.status.off{background:#3a2630;color:#f3a0a8}.status.ok{background:#203a33;color:#9ce6c7}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:var(--p2);border:1px solid var(--line)}.btn.red{background:#60313b}.btn.green{background:var(--green);color:#000}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#c4d0e1;margin-bottom:6px}input,select{width:100%;background:#0c1524;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font:inherit}.phone{display:flex;gap:7px}.phone b{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:10px;white-space:nowrap}.phone input{min-width:0}.notice{background:#30291e;border:1px solid #66502d;color:#f2d5a2;padding:12px;border-radius:11px;margin:12px 0}.success{background:#1e382f;border:1px solid #32664f;color:#a9ebce;padding:12px;border-radius:11px;margin:12px 0}.hidden{display:none!important}.drawer-bg{display:none;position:fixed;inset:0;background:#000a;z-index:8}.drawer-bg.open{display:block}.drawer{height:100%;overflow:auto;width:min(340px,88vw);background:#101a2b;padding:16px}.menuitem{width:100%;text-align:left;background:var(--p);border:1px solid var(--line);color:white;padding:12px;border-radius:10px;margin:4px 0;cursor:pointer}.menuhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-/* Стили для таблицы настроек */
+main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22px;margin:5px 0 15px}h2{font-size:18px;margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.card{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:14px}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .empty{font-size:16px;color:var(--muted)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:var(--p2);border:1px solid var(--line)}.btn.red{background:#60313b}.btn.green{background:var(--green);color:#000}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#c4d0e1;margin-bottom:6px}input,select{width:100%;background:#0c1524;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font:inherit}.phone{display:flex;gap:7px}.phone b{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:10px;white-space:nowrap}.notice{background:#30291e;border:1px solid #66502d;color:#f2d5a2;padding:12px;border-radius:11px;margin:12px 0}.success{background:#1e382f;border:1px solid #32664f;color:#a9ebce;padding:12px;border-radius:11px;margin:12px 0}.hidden{display:none!important}.drawer-bg{display:none;position:fixed;inset:0;background:#000a;z-index:8}.drawer-bg.open{display:block}.drawer{height:100%;overflow:auto;width:min(340px,88vw);background:#101a2b;padding:16px}.menuitem{width:100%;text-align:left;background:var(--p);border:1px solid var(--line);color:white;padding:12px;border-radius:10px;margin:4px 0;cursor:pointer}.menuhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.qrpreview{height:150px;background:#f4f5f7;color:#4b5668;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:10px 0}.qrpreview img{max-width:100%;max-height:100%;object-fit:contain}
+
+/* Стили для карточек на Рынке */
+.market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 15px; }
+.market-card { background: var(--p2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.market-title { font-weight: bold; font-size: 14px; margin-bottom: 10px; color: var(--blue); border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+.market-stats { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+.market-stats span:last-child { font-weight: bold; }
+.val-green { color: var(--green); }
+.val-amber { color: var(--amber); }
+.val-red { color: var(--red); }
+
+/* Стили для Терминала */
+.terminal-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+@media (max-width: 768px) { .terminal-container { grid-template-columns: 1fr; } }
+.terminal-box { background-color: #050505; border: 1px solid #333; border-radius: 12px; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #00ff00; box-shadow: inset 0 0 20px rgba(0,255,0,0.05); overflow-x: auto; max-height: 500px; overflow-y: auto; }
+.terminal-box.term-2 { color: #f2b65d; box-shadow: inset 0 0 20px rgba(242,182,93,0.05); }
+.terminal-header { display: flex; justify-content: space-between; border-bottom: 1px dashed #333; padding-bottom: 5px; margin-bottom: 10px; color: #888; }
+.terminal-content { white-space: pre-wrap; line-height: 1.5; }
+.json-key { color: #568cff; }
+.json-string { color: #f2b65d; }
+.json-number { color: #36c995; }
+.term-2 .json-string { color: #00ff00; }
+
 .settings-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .settings-row:last-child { border-bottom: none; }
 .settings-row input { text-align: center; padding: 8px; }
 .settings-row .name { font-size: 13px; font-weight: bold; }
-@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.service-list{grid-template-columns:1fr}.metric strong{font-size:22px}.settings-row{grid-template-columns: 1fr 1fr; }.settings-row .name { grid-column: 1 / -1; margin-bottom: 5px; }}
+.dossier { background: #152135; border: 1px solid #2c4570; border-radius: 15px; padding: 18px; margin-bottom: 15px; position: relative; overflow: hidden; }
+.dossier-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #2c4570; padding-bottom: 15px; margin-bottom: 15px; }
+.dossier-title { font-size: 20px; font-weight: 800; color: white; margin: 0; }
+.dossier-id { font-family: monospace; background: #244878; padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #a9c4ff; }
+.dossier-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+.stat-box { background: #1b2a43; padding: 12px; border-radius: 10px; text-align: center; }
+.stat-val { font-size: 20px; font-weight: bold; color: var(--green); }
+.stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+.dossier-info { font-size: 13px; line-height: 1.6; color: #c4d0e1; background: #111c2e; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
+.dossier-info b { color: white; }
+
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.metric strong{font-size:22px}.settings-row{grid-template-columns: 1fr 1fr; }.settings-row .name { grid-column: 1 / -1; margin-bottom: 5px; }.dossier-stats { grid-template-columns: 1fr 1fr; }}
 </style></head>
 <body><div class="app">
 <header><button class="icon" onclick="menu(true)">☰</button><div><div class="brand">KYRAAN ADMIN</div><div class="small">ПАНЕЛЬ УПРАВЛЕНИЯ</div></div><div class="grow"></div><span class="status off">Хищники не активны</span></header>
@@ -22,48 +55,51 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
 <button class="active" onclick="page('market',this)">Рынок</button>
 <button onclick="page('orders',this)">Заказы (24ч)</button>
 <button onclick="page('approvals',this)">Новые исполнители</button>
+<button onclick="page('search',this)">⌕ Поиск / Досье</button>
 <button onclick="page('settings',this)">Настройки волны</button>
-<button onclick="page('search',this)">⌕ Поиск</button>
+<button onclick="page('terminal',this)">Терминал JSON</button>
 </nav>
 <main>
+<!-- ВКЛАДКА РЫНОК: ТОЛЬКО СТАТИСТИКА -->
 <section id="market" class="page active">
-<h1>Общий мониторинг</h1><p class="small" id="status-text">Подключение к базе данных...</p>
-<div class="grid">
-<div class="metric"><div class="label">Всего исполнителей</div><strong id="stat-total" class="empty">...</strong></div>
-<div class="metric"><div class="label">На линии</div><strong id="stat-online" class="empty">...</strong></div>
-<div class="metric"><div class="label">На заказе</div><strong id="stat-busy" class="empty">...</strong></div>
-<div class="metric"><div class="label">Ожидают одобрения</div><strong id="stat-pending" class="empty">...</strong></div>
-</div>
-<div class="two"><div class="card"><h2>HUNTER_01 · Спецтехника</h2><span class="status off">НЕ АКТИВЕН</span></div><div class="card"><h2>HUNTER_02 · Бытовые услуги</h2><span class="status off">НЕ АКТИВЕН</span></div></div>
-</section>
-
-<section id="orders" class="page">
-<h1>Заказы за последние 24 часа</h1>
-<div id="orders-list" class="grid" style="grid-template-columns:1fr;">
-    <div class="card"><p class="small">Загрузка...</p></div>
+<h1>Общий мониторинг рынка</h1>
+<p class="small" id="status-text">Загрузка данных по исполнителям...</p>
+<div class="market-grid" id="market-dashboard">
+    <!-- Сюда будут генерироваться карточки категорий -->
 </div>
 </section>
 
-<!-- ОБНОВЛЕННЫЕ НАСТРОЙКИ -->
-<section id="settings" class="page">
-<h1>Настройки волны (Радиус и Таймер)</h1>
-<p class="small">Настройте дистанцию и время ожидания сигнала (в секундах) для каждой категории отдельно.</p>
-<div class="card" id="settings-container">
-    <p class="small">Загрузка настроек...</p>
-</div>
-<button class="btn full-width" onclick="saveAllSettings()" style="width:100%; margin-top:10px;">Сохранить все настройки</button>
-<div id="settings-result" style="margin-top:10px;"></div>
-</section>
-
-<section id="approvals" class="page">
-<h1>Новые заявки на проверку</h1>
-<div id="pending-list" class="grid" style="grid-template-columns:1fr;">
-    <div class="card"><p class="small">Загрузка...</p></div>
+<!-- ВКЛАДКА ТЕРМИНАЛ: ТОЛЬКО JSON -->
+<section id="terminal" class="page">
+<h1>Терминал событий (JSON)</h1>
+<p class="small">Живой журнал заявок. Спецтехника (слева) и Бытовые услуги (справа).</p>
+<div class="terminal-container">
+    <div class="terminal-box term-1">
+        <div class="terminal-header"><span>root@kyraan:~# tail -f HUNTER_01.json</span><span style="color:#568cff;">СПЕЦТЕХНИКА</span></div>
+        <div class="terminal-content" id="terminal-logs-1">// Ожидание...</div>
+    </div>
+    <div class="terminal-box term-2">
+        <div class="terminal-header"><span>root@kyraan:~# tail -f HUNTER_02.json</span><span style="color:#f2b65d;">БЫТОВЫЕ</span></div>
+        <div class="terminal-content" id="terminal-logs-2">// Ожидание...</div>
+    </div>
 </div>
 </section>
 
-<section id="add" class="page"><h1>Добавить исполнителя (вручную)</h1><div class="card">
-<div class="field"><label>Категория услуги</label><select id="service" onchange="variants()"><option value="">Выберите услугу</option><optgroup label="Спецтехника"><option value="cargo">Грузоперевозки</option><option value="evacuator">Эвакуатор</option><option value="manipulator">Манипулятор</option></optgroup><optgroup label="Бытовые услуги"><option value="plumber">Сантехник</option><option value="electrician">Электрик</option><option value="cleaning">Клининг</option><option value="welder">Сварщик</option></optgroup><optgroup label="Доски объявлений"><option value="intercity">Ош-Бишкек такси</option><option value="workers">Разнорабочие</option></optgroup></select></div>
+<section id="search" class="page">
+<h1>База исполнителей</h1>
+<div class="row" style="margin-bottom: 20px;">
+    <input id="searchInput" type="text" placeholder="ID, Имя или Телефон..." onkeypress="if(event.key === 'Enter') doSearch()">
+    <button class="btn" onclick="doSearch()">Найти</button>
+</div>
+<div id="search-results"><div class="card"><p class="small">Введите запрос...</p></div></div>
+</section>
+
+<section id="orders" class="page"><h1>Все заказы (24ч)</h1><div id="orders-list"></div></section>
+<section id="settings" class="page"><h1>Настройки волны</h1><div class="card" id="settings-container"></div><button class="btn" onclick="saveAllSettings()" style="width:100%; margin-top:10px;">Сохранить</button><div id="settings-result" style="margin-top:10px;"></div></section>
+<section id="approvals" class="page"><h1>Новые заявки</h1><div id="pending-list"></div></section>
+
+<section id="add" class="page"><h1>Добавить вручную</h1><div class="card">
+<div class="field"><label>Категория</label><select id="service" onchange="variants()"><option value="">Выберите</option><optgroup label="Спецтехника"><option value="cargo">Грузоперевозки</option><option value="evacuator">Эвакуатор</option><option value="manipulator">Манипулятор</option></optgroup><optgroup label="Бытовые"><option value="plumber">Сантехник</option><option value="electrician">Электрик</option><option value="cleaning">Клининг</option><option value="welder">Сварщик</option></optgroup><optgroup label="Доски"><option value="intercity">Ош-Бишкек такси</option><option value="workers">Разнорабочие</option></optgroup></select></div>
 <div class="field hidden" id="variantField"><label>Подкатегория</label><select id="variant"></select></div>
 <div class="field"><label>Имя</label><input id="personName" type="text"></div>
 <div class="field"><label>Телефон</label><div class="phone"><b>+996</b><input id="phone" type="tel" inputmode="numeric"></div></div>
@@ -76,12 +112,13 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
 </main></div>
 
 <div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)"><aside class="drawer"><div class="menuhead"><b>KYRAAN ADMIN</b><button class="icon" onclick="menu(false)">×</button></div>
-<button class="menuitem" onclick="go('market')">Рынок</button>
+<button class="menuitem" onclick="go('market')">Рынок (Обзор)</button>
+<button class="menuitem" onclick="go('terminal')">Терминал (JSON)</button>
+<button class="menuitem" onclick="go('search')">⌕ Поиск / Досье</button>
 <button class="menuitem" onclick="go('orders')">Заказы (24ч)</button>
 <button class="menuitem" onclick="go('approvals')">Новые исполнители</button>
 <button class="menuitem" onclick="go('settings')">Настройки волны</button>
-<button class="menuitem" onclick="go('add')">＋ Добавить вручную</button>
-</aside></div>
+</div></aside>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -89,12 +126,7 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
   const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const names = {
-    'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки',
-    'intercity': 'Ош-Бишкек такси', 'plumber': 'Сантехник', 'electrician': 'Электрик',
-    'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.', 
-    'washer': 'Ремонт стир.', 'tv': 'Телемастер', 'hour': 'Мастер на час', 'workers': 'Разнорабочие'
-  };
+  const names = {'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки', 'intercity': 'Ош-Бишкек такси', 'plumber': 'Сантехник', 'electrician': 'Электрик', 'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.', 'washer': 'Ремонт стир.', 'tv': 'Телемастер', 'hour': 'Мастер на час', 'workers': 'Разнорабочие'};
   const vmap={'cargo':['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'],'evacuator':['Sprinter','Sprinter + прицеп','Atego','Atego + прицеп'],'manipulator':['3 тонны','5 тонн','8 тонн','10 тонн']};
   const vehicleServices = ['cargo', 'evacuator', 'manipulator', 'intercity'];
   let pendingAdd = null;
@@ -105,8 +137,8 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
     document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
     if(btn)btn.classList.add('active');
     window.scrollTo(0,0); 
-    
-    if(id === 'market') fetchStats(); 
+    if(id === 'market') fetchDashboardStats(); 
+    if(id === 'terminal') fetchTerminalLogs();
     if(id === 'approvals') fetchApprovals(); 
     if(id === 'orders') fetchOrders();
     if(id === 'settings') loadSettings();
@@ -114,15 +146,141 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
   window.menu = function(open){document.getElementById('drawer').classList.toggle('open',open)}
   window.go = function(id){window.menu(false);window.page(id)}
 
-  window.fetchStats = async function() {
-    document.getElementById('status-text').textContent = 'Синхронизация...';
-    const { count: total } = await supabase.from('executors').select('*', { count: 'exact', head: true }).eq('is_approved', true);
-    const { count: pending } = await supabase.from('executors').select('*', { count: 'exact', head: true }).eq('is_approved', false);
-    document.getElementById('stat-total').textContent = total || 0;
-    document.getElementById('stat-pending').textContent = pending || 0;
-    if(total > 0) document.getElementById('stat-total').classList.remove('empty');
-    if(pending > 0) document.getElementById('stat-pending').classList.remove('empty');
-    document.getElementById('status-text').textContent = 'Данные обновлены.';
+  // --- 1. ГЛАВНАЯ СТРАНИЦА (СТАТИСТИКА ПО КАТЕГОРИЯМ) ---
+  window.fetchDashboardStats = async function() {
+    const container = document.getElementById('market-dashboard');
+    document.getElementById('status-text').textContent = 'Загрузка данных...';
+    
+    // Получаем всех исполнителей
+    const { data: executors, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
+    
+    if (error) { container.innerHTML = '<div class="card">Ошибка: ' + error.message + '</div>'; return; }
+
+    // Группируем данные
+    let stats = {};
+    for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
+
+    executors.forEach(ex => {
+        if (!stats[ex.service_id]) stats[ex.service_id] = { total: 0, online: 0, busy: 0, pending: 0 };
+        
+        if (!ex.is_approved) {
+            stats[ex.service_id].pending++;
+        } else {
+            stats[ex.service_id].total++;
+            if (ex.is_busy) stats[ex.service_id].busy++;
+            else if (ex.is_online) stats[ex.service_id].online++;
+        }
+    });
+
+    // Рендерим карточки
+    let html = '';
+    for (let key in stats) {
+        let s = stats[key];
+        // Показываем только те категории, где кто-то есть, или все для наглядности
+        if (s.total === 0 && s.pending === 0) continue; 
+
+        html += `
+        <div class="market-card">
+            <div class="market-title">${names[key] || key}</div>
+            <div class="market-stats"><span>Всего:</span> <span>${s.total}</span></div>
+            <div class="market-stats"><span>На линии:</span> <span class="val-green">${s.online}</span></div>
+            <div class="market-stats"><span>Занят:</span> <span class="val-amber">${s.busy}</span></div>
+            <div class="market-stats"><span>Ожидают:</span> <span class="val-red">${s.pending}</span></div>
+        </div>`;
+    }
+
+    if (html === '') {
+        html = '<div class="card" style="grid-column: 1/-1;"><p class="small">Пока нет зарегистрированных исполнителей.</p></div>';
+    }
+    
+    container.innerHTML = html;
+    document.getElementById('status-text').textContent = 'Данные актуальны.';
+  }
+
+  // --- 2. ТЕРМИНАЛ (JSON ЖУРНАЛЫ) ---
+  window.fetchTerminalLogs = async function() {
+      const { data: data1 } = await supabase.from('orders').select('*').eq('hunter', 'HUNTER_01').order('created_at', { ascending: false }).limit(10);
+      renderTerminal(data1, 'terminal-logs-1');
+
+      const { data: data2 } = await supabase.from('orders').select('*').eq('hunter', 'HUNTER_02').order('created_at', { ascending: false }).limit(10);
+      renderTerminal(data2, 'terminal-logs-2');
+  }
+
+  function renderTerminal(data, elementId) {
+      const terminal = document.getElementById(elementId);
+      if (!data || data.length === 0) {
+          terminal.textContent = "[]\n// Журнал пуст. Ожидание...";
+          return;
+      }
+      let jsonString = "[\n";
+      data.forEach((order, index) => {
+          const time = new Date(order.created_at).toLocaleTimeString('ru-RU');
+          const orderId = order.id.split('-')[0].toUpperCase();
+          const execId = order.executor_id ? order.executor_id.split('-')[0].toUpperCase() : null;
+          
+          jsonString += `  {\n`;
+          jsonString += `    "time": "<span class='json-string'>${time}</span>",\n`;
+          jsonString += `    "event": "<span class='json-key'>ORDER_CREATED</span>",\n`;
+          jsonString += `    "order_id": "<span class='json-number'>#${orderId}</span>",\n`;
+          jsonString += `    "client": "<span class='json-string'>${order.client_phone}</span>",\n`;
+          jsonString += `    "executor_id": ${execId ? `"<span class='json-string'>${execId}</span>"` : `<span class='json-string'>"WAITING"</span>`},\n`;
+          jsonString += `    "status": "<span class='json-string'>${order.status || 'NEW'}</span>"\n`;
+          jsonString += `  }${index < data.length - 1 ? ',' : ''}\n`;
+      });
+      jsonString += "]";
+      terminal.innerHTML = jsonString;
+  }
+
+  // --- 3. ОСТАЛЬНЫЕ ФУНКЦИИ (Поиск, Досье, Настройки, Добавление) ---
+  window.doSearch = async function() {
+      const q = document.getElementById('searchInput').value.trim();
+      const resDiv = document.getElementById('search-results');
+      if(!q) { resDiv.innerHTML = '<div class="card"><p class="small">Введите запрос.</p></div>'; return; }
+      resDiv.innerHTML = '<div class="card"><p class="small">Поиск...</p></div>';
+      const { data, error } = await supabase.from('executors').select('*').or(`id.eq.${q},phone.ilike.%${q}%,name.ilike.%${q}%`);
+      if(error) { resDiv.innerHTML = '<div class="card" style="color:red">Ошибка: ' + error.message + '</div>'; return; }
+      if(!data || data.length === 0) { resDiv.innerHTML = '<div class="card"><p class="small">Не найден.</p></div>'; return; }
+
+      resDiv.innerHTML = data.map(user => {
+        const regDate = new Date(user.created_at).toLocaleString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return `
+        <div class="dossier">
+            <div class="dossier-header">
+                <div><h3 class="dossier-title">${user.name}</h3><div style="font-size:14px; color:var(--blue); margin-top:4px;">${user.phone}</div></div>
+                <div class="dossier-id">ID: ${user.id.split('-')[0].toUpperCase()}</div>
+            </div>
+            <div class="dossier-stats">
+                <div class="stat-box"><div class="stat-val" style="color:var(--amber);">${user.rating || 15}</div><div class="stat-label">Рейтинг</div></div>
+                <div class="stat-box"><div class="stat-val">${user.completed_orders || 0}</div><div class="stat-label">Заказов</div></div>
+                <div class="stat-box"><div class="stat-val" style="color:${user.is_blocked ? 'var(--red)' : 'var(--green)'};">${user.is_blocked ? '🚫' : '✅'}</div><div class="stat-label">Статус</div></div>
+            </div>
+            <div class="dossier-info">
+                <div><b>Категория:</b> ${names[user.service_id] || user.service_id} ${user.variant_id ? '('+user.variant_id+')' : ''}</div>
+                ${user.plate_number ? `<div><b>Авто:</b> ${user.plate_number}</div>` : ''}
+                <div><b>Регистрация:</b> ${regDate}</div>
+            </div>
+            ${user.tech_passport ? `<div style="margin-bottom:15px;"><a href="${user.tech_passport}" target="_blank" class="btn secondary" style="display:inline-block; text-decoration:none; font-size:12px;">📄 Открыть техпаспорт</a></div>` : ''}
+            <div class="row" style="border-top: 1px solid #2c4570; padding-top: 15px;">
+                <button class="btn green" onclick="addCompletedOrder('${user.id}', ${user.completed_orders || 0})">+1 Выполнен заказ</button>
+                ${user.is_blocked ? `<button class="btn" onclick="toggleBlock('${user.id}', false)">Разблокировать</button>` : `<button class="btn red" onclick="toggleBlock('${user.id}', true)">В черный список</button>`}
+                <button class="btn secondary" onclick="deleteUser('${user.id}')">Удалить</button>
+            </div>
+        </div>`;
+      }).join('');
+  }
+
+  window.addCompletedOrder = async function(id, currentCount) {
+      const { error } = await supabase.from('executors').update({ completed_orders: currentCount + 1 }).eq('id', id);
+      if(!error) window.doSearch(); 
+  }
+  window.toggleBlock = async function(id, blockStatus) {
+      const { error } = await supabase.from('executors').update({ is_blocked: blockStatus }).eq('id', id);
+      if(!error) window.doSearch();
+  }
+  window.deleteUser = async function(id) {
+      if(!confirm("Удалить навсегда?")) return;
+      const { error } = await supabase.from('executors').delete().eq('id', id);
+      if(!error) window.doSearch();
   }
 
   window.fetchOrders = async function() {
@@ -130,85 +288,49 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
     listDiv.innerHTML = '<div class="card"><p class="small">Загрузка...</p></div>';
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase.from('orders').select('*').gte('created_at', yesterday).order('created_at', { ascending: false });
-    
-    if(error) { listDiv.innerHTML = '<div class="card">Ошибка: ' + error.message + '</div>'; return; }
-    if(!data || data.length === 0) { listDiv.innerHTML = '<div class="card"><p class="small">За последние 24 часа заказов не было.</p></div>'; return; }
-
-    listDiv.innerHTML = data.map(order => `
-      <div class="card" style="border-left: 4px solid var(--green);">
-        <h2>Заказ <span class="small">(${new Date(order.created_at).toLocaleString('ru-RU')})</span></h2>
-        <p class="small" style="margin-top:8px;">Клиент: <b style="color:var(--blue); font-size:16px;">${order.client_phone}</b></p>
-        <div class="row" style="margin-top:10px;">
-            <a href="tel:${order.client_phone}" class="btn green" style="text-decoration:none;">📞 Позвонить</a>
-        </div>
-      </div>
-    `).join('');
+    if(error) { listDiv.innerHTML = 'Ошибка: ' + error.message; return; }
+    if(!data || data.length === 0) { listDiv.innerHTML = '<div class="card"><p class="small">За 24 часа заказов нет.</p></div>'; return; }
+    listDiv.innerHTML = data.map(order => `<div class="card" style="border-left: 4px solid var(--green);"><h2>Заказ <span class="small">(${new Date(order.created_at).toLocaleString('ru-RU')})</span></h2><p class="small" style="margin-top:8px;">Клиент: <b style="color:var(--blue); font-size:16px;">${order.client_phone}</b></p><div class="row" style="margin-top:10px;"><a href="tel:${order.client_phone}" class="btn green" style="text-decoration:none;">📞 Позвонить</a></div></div>`).join('');
   }
 
-  // --- ДИНАМИЧЕСКИЕ НАСТРОЙКИ ---
   window.loadSettings = async function() {
     const container = document.getElementById('settings-container');
-    container.innerHTML = '<p class="small">Загрузка...</p>';
-    
     const { data, error } = await supabase.from('radar_settings').select('*');
-    
     if (error) { container.innerHTML = 'Ошибка загрузки: ' + error.message; return; }
-    
-    // Сортируем по названию для красоты
     data.sort((a, b) => (names[a.service_id] || a.service_id).localeCompare(names[b.service_id] || b.service_id));
-
     let html = '<div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; padding:0 10px;"><span>Услуга</span><span>Км / Сек</span></div>';
-    
     data.forEach(item => {
-        html += `
-        <div class="settings-row">
-            <div class="name">${names[item.service_id] || item.service_id}</div>
-            <div><input type="number" step="0.5" min="0.5" id="km-${item.service_id}" value="${item.radius_km}" placeholder="Км"></div>
-            <div><input type="number" step="1" min="1" id="sec-${item.service_id}" value="${item.timer_seconds}" placeholder="Сек"></div>
-        </div>
-        `;
+        html += `<div class="settings-row"><div class="name">${names[item.service_id] || item.service_id}</div><div><input type="number" step="0.5" min="0.5" id="km-${item.service_id}" value="${item.radius_km}"></div><div><input type="number" step="1" min="1" id="sec-${item.service_id}" value="${item.timer_seconds}"></div></div>`;
     });
     container.innerHTML = html;
   }
 
   window.saveAllSettings = async function() {
     const res = document.getElementById('settings-result');
-    res.innerHTML = '<div class="notice">Сохранение настроек в базу...</div>';
-    
+    res.innerHTML = '<div class="notice">Сохранение...</div>';
     const { data: currentSettings } = await supabase.from('radar_settings').select('service_id');
     let successCount = 0;
-
     for (let item of currentSettings) {
         const kmVal = document.getElementById(`km-${item.service_id}`).value;
         const secVal = document.getElementById(`sec-${item.service_id}`).value;
-        
-        const { error } = await supabase.from('radar_settings')
-            .update({ radius_km: kmVal, timer_seconds: secVal })
-            .eq('service_id', item.service_id);
-            
+        const { error } = await supabase.from('radar_settings').update({ radius_km: kmVal, timer_seconds: secVal }).eq('service_id', item.service_id);
         if (!error) successCount++;
     }
-    
-    res.innerHTML = `<div class="success">Успешно обновлено ${successCount} категорий!</div>`;
+    res.innerHTML = `<div class="success">Обновлено ${successCount} категорий!</div>`;
   }
 
   window.fetchApprovals = async function() {
     const listDiv = document.getElementById('pending-list');
     listDiv.innerHTML = '<div class="card"><p class="small">Загрузка...</p></div>';
     const { data, error } = await supabase.from('executors').select('*').eq('is_approved', false).order('created_at', { ascending: false });
-    if(error) { listDiv.innerHTML = '<div class="card">Ошибка: ' + error.message + '</div>'; return; }
+    if(error) { listDiv.innerHTML = 'Ошибка: ' + error.message; return; }
     if(!data || data.length === 0) { listDiv.innerHTML = '<div class="card"><p class="small">Нет новых заявок.</p></div>'; return; }
-
     listDiv.innerHTML = data.map(user => `
       <div class="card" style="border-left: 4px solid var(--amber);">
+        <div class="small" style="color:var(--muted);">ID: ${user.id.split('-')[0].toUpperCase()}</div>
         <h2>${user.name} <span class="small">(${user.phone})</span></h2>
         <p class="small">Категория: <b>${names[user.service_id] || user.service_id}</b></p>
-        ${user.plate_number ? `<p class="small" style="color:var(--blue)">Авто: ${user.plate_number}</p>` : ''}
-        ${user.tech_passport ? `<p class="small">Документы: <a href="${user.tech_passport}" target="_blank" style="color:var(--green)">Открыть фото</a></p>` : ''}
-        <div class="row" style="margin-top:15px;">
-          <button class="btn green" onclick="approveUser('${user.id}')">Одобрить</button>
-          <button class="btn red" onclick="deleteUser('${user.id}')">Отклонить</button>
-        </div>
+        <div class="row" style="margin-top:15px;"><button class="btn green" onclick="approveUser('${user.id}')">Одобрить</button><button class="btn red" onclick="deleteUser('${user.id}')">Удалить</button></div>
       </div>
     `).join('');
   }
@@ -218,77 +340,12 @@ main{padding:12px}.page{display:none}.page.active{display:block}h1{font-size:22p
     const { error } = await supabase.from('executors').update({ is_approved: true }).eq('id', id);
     if(error) alert(error.message); else window.fetchApprovals();
   }
-  window.deleteUser = async function(id) {
-    if(!confirm("Удалить?")) return;
-    const { error } = await supabase.from('executors').delete().eq('id', id);
-    if(error) alert(error.message); else window.fetchApprovals();
-  }
 
-  window.variants = function(){
-      let s=document.getElementById('service').value;
-      let sel=document.getElementById('variant');
-      let field=document.getElementById('variantField');
-      sel.innerHTML='';
-      let arr=vmap[s]||[];
-      field.classList.toggle('hidden',!arr.length);
-      arr.forEach(x=>{let o=document.createElement('option');o.textContent=x;sel.appendChild(o)});
-      document.getElementById('vehicleField').classList.toggle('hidden',!vehicleServices.includes(s));
-  }
+  window.variants = function(){ let s=document.getElementById('service').value; let sel=document.getElementById('variant'); let field=document.getElementById('variantField'); sel.innerHTML=''; let arr=vmap[s]||[]; field.classList.toggle('hidden',!arr.length); arr.forEach(x=>{let o=document.createElement('option');o.textContent=x;sel.appendChild(o)}); document.getElementById('vehicleField').classList.toggle('hidden',!vehicleServices.includes(s)); }
+  window.beginAdd = function(){ let s=document.getElementById('service').value; let phone=document.getElementById('phone').value.replace(/\D/g,''); let personName=document.getElementById('personName').value.trim(); let vehicleNumber=document.getElementById('vehicleNumber').value.trim(); let result=document.getElementById('result'); result.innerHTML=''; if(!s){result.textContent='Выбери услугу.';return} if(phone.length!==9){result.textContent='Введи ровно 9 цифр.';return} if(vehicleServices.includes(s) && !vehicleNumber){ result.textContent='Введи номер машины.';return } if(vehicleServices.includes(s)){ pendingAdd={s,variant:document.getElementById('variant').value,phone,personName,vehicleNumber}; document.getElementById('docQuestion').classList.remove('hidden'); document.getElementById('docButtons').classList.remove('hidden'); document.getElementById('addButtons').classList.add('hidden'); } else { saveToDatabase({s,variant:'',phone,personName,vehicleNumber:''}); } }
+  window.confirmDocs = function(yes){ document.getElementById('docQuestion').classList.add('hidden'); document.getElementById('docButtons').classList.add('hidden'); document.getElementById('addButtons').classList.remove('hidden'); if(yes&&pendingAdd){ saveToDatabase(pendingAdd); } else { document.getElementById('result').textContent='Отменено.'; pendingAdd=null; } }
+  window.saveToDatabase = async function(x){ let result = document.getElementById('result'); result.innerHTML = '<div class="notice">Сохранение...</div>'; let hunter = 'HUNTER_02'; if(['cargo','evacuator','manipulator'].includes(x.s)) hunter = 'HUNTER_01'; else if(['intercity','workers'].includes(x.s)) hunter = 'BOARD'; const { error } = await supabase.from('executors').insert([{ name: x.personName, phone: '+996' + x.phone, service_id: x.s, hunter: hunter, variant_id: x.variant, plate_number: x.vehicleNumber, is_approved: true, rating: 15, is_online: false, is_busy: false }]); if(error) { result.innerHTML = '<div class="card" style="color:red">Ошибка: ' + error.message + '</div>'; } else { result.innerHTML = '<div class="success">Успешно добавлен!</div>'; window.clearForm(); pendingAdd = null; } }
+  window.clearForm = function(){ document.getElementById('service').value=''; document.getElementById('phone').value=''; document.getElementById('personName').value=''; document.getElementById('vehicleNumber').value=''; document.getElementById('result').innerHTML=''; document.getElementById('docQuestion').classList.add('hidden'); document.getElementById('docButtons').classList.add('hidden'); document.getElementById('addButtons').classList.remove('hidden'); window.variants(); }
 
-  window.beginAdd = function(){
-      let s=document.getElementById('service').value;
-      let phone=document.getElementById('phone').value.replace(/\D/g,'');
-      let personName=document.getElementById('personName').value.trim();
-      let vehicleNumber=document.getElementById('vehicleNumber').value.trim();
-      let result=document.getElementById('result');
-      result.innerHTML='';
-      if(!s){result.textContent='Выбери услугу.';return}
-      if(phone.length!==9){result.textContent='Введи ровно 9 цифр.';return}
-      if(vehicleServices.includes(s) && !vehicleNumber){ result.textContent='Введи номер машины.';return }
-      
-      if(vehicleServices.includes(s)){
-          pendingAdd={s,variant:document.getElementById('variant').value,phone,personName,vehicleNumber};
-          document.getElementById('docQuestion').classList.remove('hidden');
-          document.getElementById('docButtons').classList.remove('hidden');
-          document.getElementById('addButtons').classList.add('hidden');
-      } else {
-          saveToDatabase({s,variant:'',phone,personName,vehicleNumber:''});
-      }
-  }
-
-  window.confirmDocs = function(yes){
-      document.getElementById('docQuestion').classList.add('hidden');
-      document.getElementById('docButtons').classList.add('hidden');
-      document.getElementById('addButtons').classList.remove('hidden');
-      if(yes&&pendingAdd){ saveToDatabase(pendingAdd); } else { document.getElementById('result').textContent='Отменено.'; pendingAdd=null; }
-  }
-
-  window.saveToDatabase = async function(x){
-      let result = document.getElementById('result');
-      result.innerHTML = '<div class="notice">Сохранение...</div>';
-      let hunter = 'HUNTER_02';
-      if(['cargo','evacuator','manipulator'].includes(x.s)) hunter = 'HUNTER_01';
-      else if(['intercity','workers'].includes(x.s)) hunter = 'BOARD';
-
-      const { error } = await supabase.from('executors').insert([{
-          name: x.personName, phone: '+996' + x.phone, service_id: x.s, hunter: hunter,
-          variant_id: x.variant, plate_number: x.vehicleNumber, is_approved: true, rating: 15, is_online: false, is_busy: false
-      }]);
-
-      if(error) { result.innerHTML = '<div class="notice" style="color:red">Ошибка: ' + error.message + '</div>'; } 
-      else {
-          result.innerHTML = '<div class="success">Успешно добавлен!</div>';
-          window.clearForm(); pendingAdd = null;
-      }
-  }
-
-  window.clearForm = function(){
-      document.getElementById('service').value=''; document.getElementById('phone').value='';
-      document.getElementById('personName').value=''; document.getElementById('vehicleNumber').value='';
-      document.getElementById('result').innerHTML=''; document.getElementById('docQuestion').classList.add('hidden');
-      document.getElementById('docButtons').classList.add('hidden'); document.getElementById('addButtons').classList.remove('hidden');
-      window.variants();
-  }
-
-  window.fetchStats();
+  window.fetchDashboardStats();
 </script></body></html>
