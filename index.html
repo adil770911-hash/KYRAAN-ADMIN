@@ -4,71 +4,88 @@ const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
 const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ⚠️ ВСТАВЬ СЮДА ССЫЛКУ ТВОЕГО КРАКЕНА С RENDER (без слэша в конце!)
-const RENDER_URL = 'https://kyraan-client-bot-1.onrender.com'; 
-
 let allExecutors = [];
 
-// 🛡️ ФУНКЦИЯ ЗАЩИТЫ ОТ XSS (Meta AI одобряет!)
+// 🛡️ Защита от XSS
 function escapeHTML(str) {
   if (!str) return '';
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag])
-  );
+  return str.replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[tag]));
 }
 
-// ====== ИНИЦИАЛИЗАЦИЯ ======
+// ====== ЗАГРУЗКА ДАННЫХ ======
 async function loadData() {
-  // 1. Загружаем исполнителей из Supabase
+  console.log("Загрузка данных из Supabase...");
+
+  // 1. Загружаем исполнителей
   const { data: execs, error: err1 } = await supabase.from('executors').select('*').order('created_at', { ascending: false });
   if (!err1 && execs) {
     allExecutors = execs;
-    renderExecutors(execs);
-    document.getElementById('stat-executors').innerText = execs.length;
-    document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
+    if (typeof renderExecutors === 'function') renderExecutors(execs);
+    
+    // Обновляем статистику, если элементы есть на странице
+    if (document.getElementById('stat-executors')) document.getElementById('stat-executors').innerText = execs.length;
+    if (document.getElementById('stat-online')) document.getElementById('stat-online').innerText = execs.filter(e => e.is_online).length;
+  } else {
+    console.error("Ошибка загрузки исполнителей:", err1);
   }
 
-  // 2. Загружаем заказы из Кракена (JSON)
-  try {
-    const response = await fetch(`${RENDER_URL}/api/orders`);
-    if (response.ok) {
-      const orders = await response.json();
-      renderOrders(orders);
-      document.getElementById('stat-orders').innerText = orders.length;
-      document.getElementById('stat-new-orders').innerText = orders.length; 
-      
+  // 2. Загружаем ЗАКАЗЫ (только новые и лишние)
+  const { data: orders, error: err2 } = await supabase
+    .from('orders')
+    .select('*')
+    .in('status', ['new', 'extra']) 
+    .order('created_at', { ascending: false });
+
+  if (!err2 && orders) {
+    renderOrders(orders);
+    
+    if (document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders.length;
+    if (document.getElementById('stat-new-orders')) document.getElementById('stat-new-orders').innerText = orders.length; 
+    
+    if (document.getElementById('sys-status')) {
       document.getElementById('sys-status').className = 'status ok';
-      document.getElementById('sys-status').innerText = 'Супервайзер: Онлайн';
+      document.getElementById('sys-status').innerText = 'База данных: Онлайн';
     }
-  } catch (err) {
-    console.error("Ошибка загрузки:", err);
-    document.getElementById('sys-status').className = 'status off';
-    document.getElementById('sys-status').innerText = 'Кракен спит...';
+  } else {
+    console.error("Ошибка загрузки заказов:", err2);
+    if (document.getElementById('sys-status')) {
+      document.getElementById('sys-status').className = 'status off';
+      document.getElementById('sys-status').innerText = 'Ошибка БД';
+    }
   }
 }
 
-// ====== ОТРИСОВКА ЗАКАЗОВ (С защитой XSS) ======
+// ====== ОТРИСОВКА ЗАКАЗОВ ======
 function renderOrders(orders) {
   const container = document.getElementById('orders-list');
-  if(!orders || orders.length === 0) { container.innerHTML = '<p class="small">Заказов пока нет.</p>'; return; }
+  if(!container) return; // Защита, если элемента нет
+
+  if(!orders || orders.length === 0) { 
+    container.innerHTML = '<p class="small">Заказов пока нет.</p>'; 
+    return; 
+  }
   
-  container.innerHTML = orders.map(o => `
-    <div class="order-item">
+  container.innerHTML = orders.map(o => {
+    // Подстраиваемся под твои колонки в Supabase
+    const serviceName = o.service_id || o.service || 'Услуга';
+    const tagName = o.hunter || o.tag || 'NEW';
+    const phone = o.client_phone || o.phone || 'Нет телефона';
+    const address = o.address || o.text || 'Адрес не указан';
+
+    return `
+    <div class="order-item" style="border-left: 3px solid #6366f1; padding-left: 10px; margin-bottom: 10px;">
       <div style="display:flex; justify-content:space-between;">
-        <b>${escapeHTML(o.service).toUpperCase()} [${escapeHTML(o.tag)}]</b>
+        <b>${escapeHTML(serviceName).toUpperCase()} [${escapeHTML(tagName)}]</b>
         <span class="status ok">NEW</span>
       </div>
-      <div class="small" style="margin-top:4px;">📞 ${escapeHTML(o.phone)}</div>
-      <div class="small" style="margin-top:4px; color: #a5b4fc;">📝 ${escapeHTML(o.text)}</div>
+      <div class="small" style="margin-top:4px;">📞 ${escapeHTML(phone)}</div>
+      <div class="small" style="margin-top:4px; color: #a5b4fc;">📍 ${escapeHTML(address)}</div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
-// (Остальные функции renderExecutors, filterExecutors, saveToSupabase, page, menu, go, variants, clearForm оставляем без изменений — они уже есть в твоем коде)
+// Запускаем при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadData);
 </script>
