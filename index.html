@@ -516,7 +516,7 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'boards') loadBoards(currentBoard);
     if(id === 'waves') loadWaves();
     if(id === 'whatsapp') loadWa();
-    if(id === 'payments') loadPaymentSettings(); // Загрузка страницы оплат
+    if(id === 'payments') loadPaymentSettings();
   }
   
   window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
@@ -754,7 +754,6 @@ input:focus, select:focus { border-color: var(--gold); }
 
   // --- СТРАНИЦА ОПЛАТЫ И ЧЕКОВ ---
   async function loadPaymentSettings() {
-    // 1. Загружаем QR-коды
     const { data } = await supabase.from('app_settings').select('*');
     if (data) {
         const h1 = data.find(x => x.setting_name === 'qr_hunter1');
@@ -769,8 +768,6 @@ input:focus, select:focus { border-color: var(--gold); }
             document.getElementById('qr-h2-preview').style.display = 'block';
         }
     }
-
-    // 2. Загружаем чеки на проверку
     loadReceipts();
   }
 
@@ -778,7 +775,6 @@ input:focus, select:focus { border-color: var(--gold); }
       const file = input.files[0];
       if (!file) return;
 
-      // Конвертируем картинку в Base64 (текст), чтобы не настраивать File Storage
       const reader = new FileReader();
       reader.onload = async (e) => {
           const base64String = e.target.result;
@@ -796,7 +792,6 @@ input:focus, select:focus { border-color: var(--gold); }
 
   async function loadReceipts() {
       const list = document.getElementById('receipts-list');
-      // Ищем заказы, где статус DONE и есть ссылка на чек (в адресе есть | ЧЕК:)
       const { data } = await supabase.from('orders')
           .select('*')
           .eq('status', 'DONE')
@@ -839,7 +834,6 @@ input:focus, select:focus { border-color: var(--gold); }
 
   window.approveReceipt = async function(orderId) {
       if (!confirm("Подтвердить, что деньги поступили?")) return;
-      // Просто убираем тег чека из адреса, чтобы заказ пропал из этого списка
       const { data } = await supabase.from('orders').select('address').eq('id', orderId).single();
       if (data) {
           const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Оплачено)';
@@ -850,7 +844,6 @@ input:focus, select:focus { border-color: var(--gold); }
 
   window.rejectReceipt = async function(orderId) {
       if (!confirm("Отклонить чек? Водитель увидит, что оплата не прошла (он сможет загрузить новый).")) return;
-      // Убираем тег чека, но пишем "Отклонено"
       const { data } = await supabase.from('orders').select('address').eq('id', orderId).single();
       if (data) {
           const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Чек отклонен)';
@@ -859,7 +852,7 @@ input:focus, select:focus { border-color: var(--gold); }
       }
   };
 
-  // --- ОСТАЛЬНЫЕ ФУНКЦИИ (Клиенты, Заказы, Одобрения) ---
+  // --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
   async function loadClients() {
     const list = document.getElementById('clients-stats');
     list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
@@ -921,6 +914,8 @@ input:focus, select:focus { border-color: var(--gold); }
           displayAddress = parts[0];
           receiptUrl = parts[1];
       }
+      
+      // Форматируем адрес для разных типов
       const parts = displayAddress.split(' | ');
       if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
       if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
@@ -934,10 +929,11 @@ input:focus, select:focus { border-color: var(--gold); }
         <div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div>
         <div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName} ${o.variant_id ? '('+o.variant_id+')' : ''}</div>
         <div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(displayAddress)}</div>
+        
         <div class="row-btn">
             <button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>
             ${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn blue" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : 
-              (isTaken && o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}
+              (o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}
         </div>
       </div>`;
     }).join('');
@@ -1245,4 +1241,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-        </html>
+          </html>
