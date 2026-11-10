@@ -1,321 +1,373 @@
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101010">
-<title>KYRAAN — Исполнитель</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#121212"><title>KYRAAN ADMIN</title>
 <style>
-:root{--bg:#101010;--panel:#1b1b1b;--line:#343434;--gold:#f5a623;--muted:#aaa;--green:#00c995;--red:#ff4444}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#f5f5f5;font:15px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:20px}
-header{position:sticky;top:0;z-index:10;background:#151515;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:12px}
-.brand{color:var(--gold);font-weight:900;letter-spacing:.16em;font-size:20px}
-header small{display:block;color:#bbb;font-size:12px}
-.header-icons{margin-left:auto;display:flex;align-items:center;gap:15px;font-size:20px}
-.bell-wrap{position:relative;cursor:pointer}
-.bell-badge{display:none;position:absolute;top:-5px;right:-8px;background:var(--red);color:#fff;font-size:10px;font-weight:bold;width:16px;height:16px;border-radius:50%;text-align:center;line-height:16px}
-main{max-width:760px;margin:auto;padding:16px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:15px}
-h1{font-size:23px;margin:8px 0 5px}h2{font-size:18px;margin:0 0 12px}
-p{color:var(--muted);line-height:1.5;margin:8px 0}
-.eyebrow{display:inline-block;background:#303030;border-radius:30px;padding:5px 10px;font-size:11px;color:#ddd}
-label{display:block;margin:13px 0 6px;font-size:13px;color:#ddd}
-input,select{width:100%;padding:13px;background:#101010;color:white;border:1px solid #484848;border-radius:10px;font:inherit}
-button{border:0;border-radius:11px;padding:13px 15px;font:inherit;font-weight:700;cursor:pointer;transition:0.2s}
-.primary{background:var(--gold);color:#17120a}.secondary{background:#333;color:white}.green{background:var(--green);color:#061b13}
-.red{background:var(--red);color:#fff}
-.full{width:100%;margin-top:14px}.hidden{display:none!important}
-.row{display:flex;gap:9px;align-items:center}.row>*{flex:1}
-.status{margin-left:auto;border-radius:20px;background:#303030;padding:6px 10px;font-size:11px;font-weight:bold}
-.status.on{background:#064b3b;color:#b7ffea}
-.status.busy{background:#70501c;color:#ffeebb}
-.order-card{background:#222;border:1px solid #444;border-radius:12px;padding:14px;margin-bottom:10px}
-.order-title{font-weight:bold;font-size:16px;color:white;margin-bottom:4px}
-.order-desc{font-size:13px;color:#bbb;margin-bottom:8px}
-footer{text-align:center;color:#777;font-size:11px;padding:12px 16px 24px}
-#notif-panel{display:none;position:fixed;top:60px;right:16px;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.8);max-height:400px;overflow-y:auto}
-.notif-header{padding:12px;border-bottom:1px solid var(--line);font-weight:bold;font-size:14px;display:flex;justify-content:space-between}
-#notif-list{padding:10px;font-size:13px;color:var(--muted);text-align:center}
-.notif-item{padding:8px 0;border-bottom:1px solid var(--line);color:var(--text);text-align:left}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #121212; --panel: #1E1E1E; --panel-hover: #252525; --line: #2A2A2A;
+  --text: #FFFFFF; --muted: #888888; --gold: #F5A623; --green: #00D09C;
+  --red: #FF3B30; --blue: #007AFF;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 75px; }
+
+/* --- БАННЕР ВЗЯТИЯ ЗАКАЗА (ЗЕЛЕНЫЙ) --- */
+#take-banner {
+    display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    z-index: 998; background: var(--green); color: #000; padding: 12px 20px;
+    border-radius: 12px; font-weight: 800; font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0, 208, 156, 0.4);
+    animation: slideDownGreen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center; width: 90%; max-width: 400px;
+}
+@keyframes slideDownGreen { from { top: -100px; opacity: 0; } to { top: 60px; opacity: 1; } }
+
+/* --- ТРЕВОГА (КРАСНАЯ) --- */
+#alarm-banner {
+    display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: var(--red); color: white; text-align: center; padding: 15px;
+    font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(255,59,48,0.5);
+    animation: flashRed 1s infinite;
+}
+@keyframes flashRed { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
+
+/* --- HEADER --- */
+header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 100; border-bottom: 1px solid var(--line); }
+.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; height: 60px; }
+.logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+.logo-icon { color: var(--gold); font-size: 24px; }
+.top-icons { display: flex; gap: 15px; font-size: 20px; color: var(--muted); align-items: center; }
+.bell-icon { position: relative; cursor: pointer; }
+.bell-badge { display: none; position: absolute; top: -5px; right: -8px; background: var(--red); color: white; font-size: 9px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; text-align: center; line-height: 16px; }
+
+/* Панель уведомлений */
+#notif-panel { display: none; position: fixed; top: 60px; right: 16px; width: 300px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); max-height: 400px; overflow-y: auto; }
+.notif-header { padding: 12px; border-bottom: 1px solid var(--line); font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; }
+#notif-list { padding: 10px; font-size: 13px; color: var(--muted); text-align: center; }
+.notif-item { padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--text); text-align: left; }
+
+/* --- MAIN CONTENT --- */
+main { padding-top: 60px; max-width: 600px; margin: 0 auto; }
+.page { display: none; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+h1 { font-size: 22px; margin: 16px 16px 12px; font-weight: 700; }
+p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 20px; padding: 0 16px; margin-bottom: 16px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { background: none; border: none; color: var(--muted); padding: 10px 0; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: 0.2s; }
+.tabs button.active { color: var(--text); border-bottom-color: var(--gold); }
+
+/* CMC Style List */
+.list-container { padding: 0 16px; }
+.cmc-item { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.cmc-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--panel); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 12px; flex-shrink: 0; }
+.cmc-info { flex: 1; min-width: 0; }
+.cmc-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmc-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cmc-right { text-align: right; flex-shrink: 0; margin-left: 10px; }
+.cmc-val { font-weight: 700; font-size: 15px; }
+.cmc-badge { font-size: 11px; padding: 3px 6px; border-radius: 6px; font-weight: 700; margin-top: 4px; display: inline-block; }
+.badge-green { background: rgba(0, 208, 156, 0.15); color: var(--green); }
+.badge-gold { background: rgba(245, 166, 35, 0.15); color: var(--gold); }
+.badge-red { background: rgba(255, 59, 48, 0.15); color: var(--red); }
+
+/* Portfolio & Cards */
+.fin-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 16px 16px; }
+.fin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.fin-title { font-weight: 700; font-size: 16px; }
+.fin-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+.fin-val { font-weight: 700; color: var(--green); }
+.fin-btn { background: rgba(245,166,35,0.1); color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 10px; border-radius: 10px; font-weight: 700; margin-top: 10px; cursor: pointer; }
+
+/* Terminal */
+.terminal-container { padding: 0 16px; }
+.terminal-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 11px; color: #00ff00; margin-bottom: 15px; height: 60vh; overflow-y: auto; }
+.terminal-box.term-2 { color: var(--gold); }
+.terminal-box.term-3 { color: #a78bfa; }
+.json-key { color: #568cff; }
+.json-str { color: var(--gold); }
+.json-num { color: var(--green); }
+.json-link { color: var(--green); text-decoration: none; font-weight: bold; border-bottom: 1px dotted var(--green); }
+
+/* Forms & Buttons */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 16px 16px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+input, select { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; color: white; padding: 12px; font-size: 14px; outline: none; }
+input:focus, select:focus { border-color: var(--gold); }
+.btn { background: var(--gold); color: #000; border: none; border-radius: 10px; padding: 12px; font-weight: 700; width: 100%; cursor: pointer; font-size: 14px; }
+.btn.sec { background: var(--line); color: white; }
+.btn.green { background: var(--green); color: #000; }
+.row-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hidden { display: none !important; }
+
+/* Drawer */
+.drawer-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(2px); }
+.drawer-bg.open { display: block; }
+.drawer { position: absolute; top: 0; left: 0; bottom: 0; width: 280px; background: var(--bg); border-right: 1px solid var(--line); padding: 20px; transform: translateX(-100%); transition: 0.3s; display: flex; flex-direction: column; overflow-y: auto; }
+.drawer-bg.open .drawer { transform: translateX(0); }
+.drawer h2 { font-size: 20px; margin: 0 0 15px; color: var(--gold); }
+.menu-btn { background: none; border: none; color: var(--text); text-align: left; padding: 12px 0; font-size: 15px; font-weight: 500; border-bottom: 1px solid var(--line); cursor: pointer; }
+.menu-btn:active { color: var(--gold); }
+
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0E0E0E; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 10px); }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted); font-size: 10px; font-weight: 600; cursor: pointer; background: none; border: none; padding: 0; }
+.nav-item.active { color: var(--gold); }
+.nav-icon { font-size: 20px; }
+
+/* Dossier */
+.dossier { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+.dossier-head { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 12px; }
+.dossier-name { font-size: 20px; font-weight: 800; margin: 0; }
+.dossier-phone { color: var(--gold); font-size: 14px; margin-top: 4px; }
+.dossier-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.d-stat { background: var(--bg); padding: 10px; border-radius: 10px; text-align: center; }
+.d-val { font-size: 18px; font-weight: 800; color: var(--green); }
+.d-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; }
 </style>
 </head>
 <body>
+
+<div id="take-banner"></div>
+<div id="alarm-banner" onclick="page('orders')">
+    ⚠️ ВНИМАНИЕ: ЕСТЬ ЗАКАЗ, КОТОРЫЙ ВИСИТ БОЛЕЕ 1 МИНУТЫ!<br>
+    <span style="font-size: 11px; font-weight: normal;">Нажмите, чтобы перейти к заказам</span>
+</div>
+
 <header>
-  <div><div class="brand">KYRAAN</div><small>КАБИНЕТ ИСПОЛНИТЕЛЯ</small></div>
-  <div class="header-icons">
-    <div class="bell-wrap" onclick="toggleNotifications()">
-      🔔 <span id="bell-badge" class="bell-badge">0</span>
+  <div class="top-bar">
+    <div class="logo"><span class="logo-icon">◈</span> KYRAAN ADMIN</div>
+    <div class="top-icons">
+      <span onclick="page('dossier')">🔍</span>
+      <div class="bell-icon" onclick="toggleNotifications()">
+        🔔 <span id="bell-badge" class="bell-badge">0</span>
+      </div>
+      <span onclick="menu(true)">☰</span>
     </div>
-    <span class="status" id="headerStatus">Не в сети</span>
   </div>
 </header>
 
 <div id="notif-panel">
   <div class="notif-header">
     <span>Уведомления</span>
-    <span style="cursor:pointer;" onclick="document.getElementById('notif-panel').style.display='none'">✖</span>
+    <span style="cursor: pointer;" onclick="document.getElementById('notif-panel').style.display='none'">✖</span>
   </div>
   <div id="notif-list">Нет новых уведомлений</div>
 </div>
 
 <main>
-  <section class="card" id="loginScreen">
-    <span class="eyebrow">ВХОД</span>
-    <h1>Добро пожаловать</h1>
-    <p>Введите номер телефона, указанный при регистрации у Админа.</p>
-    <label for="loginPhone">Номер телефона</label>
-    <input id="loginPhone" type="tel" placeholder="+996 700 000 000">
-    <button class="primary full" id="loginBtn">Войти в кабинет</button>
-    <button class="secondary full" id="goToRegisterBtn" style="margin-top:10px;">Я новый исполнитель (Регистрация)</button>
+  <section id="page-market" class="page active">
+    <h1>Рынок</h1>
+    <div class="tabs">
+      <button class="active" onclick="filterMarket('all', this)">Все</button>
+      <button onclick="filterMarket('HUNTER_01', this)">Спецтехника</button>
+      <button onclick="filterMarket('HUNTER_02', this)">Бытовые</button>
+      <button onclick="filterMarket('BOARD', this)">Доски</button>
+    </div>
+    <div class="list-container" id="market-list"></div>
   </section>
+
+  <section id="page-alpha" class="page"><h1>Альфа (Спецтехника)</h1><div class="list-container" id="alpha-list"></div></section>
+  <section id="page-search" class="page"><h1>Искать (Бытовые)</h1><div class="list-container" id="search-list"></div></section>
+
+  <section id="page-portfolio" class="page">
+    <h1>Портфель</h1>
+    <div class="fin-card">
+      <div class="fin-header"><div class="fin-title" style="color: var(--gold);">HUNTER 01 — Спецтехника</div></div>
+      <div class="fin-row"><span>Переведено за сутки</span> <span class="fin-val">0 сом</span></div>
+      <div class="fin-row"><span>Ожидаем оплату</span> <span style="color: var(--red); font-weight: 700;">100 сом/заказ</span></div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-header"><div class="fin-title" style="color: var(--blue);">HUNTER 02 — Бытовые услуги</div></div>
+      <div class="fin-row"><span>Переведено за сутки</span> <span class="fin-val">0 сом</span></div>
+      <div class="fin-row"><span>Ожидаем оплату</span> <span style="color: var(--red); font-weight: 700;">100 сом/заказ</span></div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-header"><div class="fin-title" style="color: var(--green);">Межгород Такси</div></div>
+      <div class="fin-row"><span>Подписка</span> <span class="fin-val">100 сом / 30 дней</span></div>
+      <div class="fin-row"><span>Остальные доски</span> <span style="color: var(--green); font-weight: 700;">Бесплатно</span></div>
+    </div>
+  </section>
+
+  <section id="page-clients" class="page">
+    <h1>Зарегистрированные клиенты</h1>
+    <p class="sub">База абонентов из клиентских окон</p>
+    <div class="list-container" id="clients-stats"></div>
+  </section>
+
+  <section id="page-orders" class="page"><h1>Заказы (24ч)</h1><div class="list-container" id="orders-list"></div></section>
+  <section id="page-approvals" class="page"><h1>Новые исполнители</h1><div class="list-container" id="approvals-list"></div></section>
   
-  <section class="card hidden" id="registration">
-    <span class="eyebrow">САМОСТОЯТЕЛЬНАЯ РЕГИСТРАЦИЯ</span>
-    <h1>Разнорабочий</h1>
-    <p style="color:var(--gold); font-weight:bold; font-size:13px;">Внимание! Спецтехника (Hunter 1), Бытовые услуги (Hunter 2) и Такси регистрируются только через Админа.</p>
-    
-    <div id="extra">
-      <label for="personName">Ваше имя</label>
-      <input id="personName" type="text" placeholder="Например, Азамат">
-      
-      <label for="phone">Телефон / WhatsApp</label>
-      <input id="phone" type="tel" placeholder="+996...">
-
-      <button class="primary full" id="submit">Отправить заявку Админу</button>
-      <button class="secondary full" onclick="location.reload()" style="margin-top:10px;">Назад ко входу</button>
+  <section id="page-dossier" class="page">
+    <h1>Поиск / Досье</h1>
+    <div style="padding: 0 16px; margin-bottom: 16px;">
+      <input type="text" id="dossier-query" placeholder="ID, Имя или Телефон..." onkeypress="if(event.key==='Enter') searchDossier()" style="margin-bottom: 10px;">
+      <button class="btn" onclick="searchDossier()">Найти</button>
     </div>
+    <div class="list-container" id="dossier-results"></div>
   </section>
 
-  <section class="card hidden" id="pending">
-    <span class="eyebrow">ЗАЯВКА</span><h1>Заявка отправлена</h1>
-    <p id="pendingText"></p>
-    <div class="note" style="background:#302719; border:1px solid #70501c; padding:11px; border-radius:10px; color:#eee; font-size:13px;">Ваша заявка на проверке у администратора.</div>
-    <button class="secondary full" onclick="localStorage.clear(); location.reload();">Вернуться ко входу</button>
+  <section id="page-term-1" class="page">
+    <h1>Журнал Спецтехники</h1><p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
+    <div class="terminal-container"><div class="terminal-box"><div id="term-1">[]</div></div></div>
+  </section>
+  <section id="page-term-2" class="page">
+    <h1>Журнал Бытовых услуг</h1><p class="sub">Нажми на номер (📞), чтобы позвонить.</p>
+    <div class="terminal-container"><div class="terminal-box term-2"><div id="term-2">[]</div></div></div>
+  </section>
+  <section id="page-term-3" class="page">
+    <h1>Журнал Досок (BOARD)</h1><p class="sub">Заказы из Такси, Рабочих и Маркета.</p>
+    <div class="terminal-container"><div class="terminal-box term-3"><div id="term-3">[]</div></div></div>
   </section>
 
-  <section class="hidden" id="cabinet">
-    <!-- ШАПКА КАБИНЕТА -->
+  <section id="page-boards" class="page">
+    <h1>Доски объявлений</h1>
+    <div class="tabs" style="margin-bottom: 10px;">
+      <button class="active" id="tab-taxi" onclick="switchBoard('intercity', this)">Такси</button>
+      <button id="tab-workers" onclick="switchBoard('workers', this)">Разнорабочие</button>
+      <button id="tab-market" onclick="switchBoard('market', this)">Маркет</button>
+    </div>
+    <div class="list-container" id="boards-list"></div>
+  </section>
+
+  <section id="page-add" class="page">
+    <h1>Добавить вручную</h1>
     <div class="card">
-      <span class="eyebrow">КАБИНЕТ ИСПОЛНИТЕЛЯ</span>
-      <h1 id="cabinetName">Исполнитель</h1>
-      <p id="cabinetService" style="color:var(--gold); font-weight:bold; font-size:14px;"></p>
-      
-      <!-- БЛОК ПОДПИСКИ (Для Такси) -->
-      <div id="subInfo" class="hidden" style="margin: 15px 0; padding: 12px; border-radius: 10px; background: #222; border: 1px solid #444;"></div>
-
-      <!-- Кнопка онлайн (Для Hunter 1 и 2) -->
-      <div class="row" id="onlineRow" style="margin-top:15px;">
-        <button class="secondary" id="toggleOnline">Выйти на линию</button>
-        <span class="status" id="cabinetStatus">Не в сети</span>
-      </div>
-      
-      <button class="secondary full" onclick="localStorage.clear(); location.reload();" style="margin-top:20px; background:#3a1c1c; color:#ff8888;">Выйти из аккаунта</button>
-    </div>
-
-    <!-- ===== СЕКЦИЯ ЗАКАЗОВ (Hunter 1 и 2) ===== -->
-    <div id="hunterSection" class="hidden">
-      <div id="activeOrderCard" class="hidden">
-        <div class="card" style="border-color:var(--gold);">
-          <span class="eyebrow" style="background:var(--gold); color:#000;">У ВАС АКТИВНЫЙ ЗАКАЗ</span>
-          <h2 id="activeOrderTitle" style="margin-top:10px;"></h2>
-          <p id="activeOrderAddress" style="color:white; font-size:15px;"></p>
-          
-          <a id="activeOrderCall" href="#" class="primary full" style="display:block; text-align:center; text-decoration:none; margin-top:10px;">📞 Позвонить клиенту</a>
-          <button class="green full" id="finishOrderBtn" style="margin-top:10px;">✅ Завершить заказ</button>
-
-          <div id="paymentSection" class="hidden" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #555;">
-              <p style="color: var(--red); font-weight: bold; font-size: 14px;">⚠️ Для перехода на следующий заказ, отправьте чек об оплате на 100 сом.</p>
-              <label for="receiptPhoto">Фото чека (100 сом):</label>
-              <input id="receiptPhoto" type="file" accept="image/*" style="padding:10px; background:#333; margin-bottom:10px;">
-              <button class="primary full" id="confirmFinishBtn">Отправить чек и завершить</button>
-              <button class="secondary full" id="cancelFinishBtn" style="margin-top:5px; background:transparent; border:1px solid #555; color:#aaa;">Отмена</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="ordersListWrap" class="hidden">
-        <div style="display:flex;justify-content:space-between;margin:16px 0 9px;"><strong style="font-size:16px;">Доступные заказы</strong><span id="ordersCount" style="font-size:12px;color:var(--muted);">0</span></div>
-        <div id="ordersList"></div>
-      </div>
-    </div>
-
-    <!-- ===== СЕКЦИЯ ТАКСИ (Публикация поездок) ===== -->
-    <div id="taxiSection" class="hidden">
-      <div class="card">
-        <h2>🚖 Опубликовать поездку</h2>
-        <p style="font-size:13px;">Ваша поездка появится на доске «Межгород такси».</p>
-        
-        <label for="taxiRoute">Маршрут</label>
-        <select id="taxiRoute">
-          <option value="Ош — Бишкек">Ош — Бишкек</option>
-          <option value="Бишкек — Ош">Бишкек — Ош</option>
-          <option value="Бишкек — Алматы">Бишкек — Алматы</option>
-          <option value="Алматы — Бишкек">Алматы — Бишкек</option>
-          <option value="Ош — Джалал-Абад">Ош — Джалал-Абад</option>
+      <div class="field">
+        <label>Категория</label>
+        <select id="add-service" onchange="updateAddVariant()">
+          <option value="">Выберите...</option>
+          <optgroup label="HUNTER 01 · Спецтехника">
+            <option value="evacuator">Эвакуатор</option>
+            <option value="manipulator">Манипулятор</option>
+            <option value="cargo">Грузоперевозки</option>
+          </optgroup>
+          <optgroup label="HUNTER 02 · Бытовые">
+            <option value="plumber">Сантехник</option>
+            <option value="electrician">Электрик</option>
+            <option value="cleaning">Клининг</option>
+            <option value="welder">Сварщик</option>
+            <option value="fridge">Ремонт холод.</option>
+            <option value="washer">Ремонт стир.</option>
+            <option value="tv">Телемастер</option>
+            <option value="hour">Мастер на час</option>
+          </optgroup>
+          <optgroup label="Доски">
+            <option value="intercity">Межгород такси</option>
+            <option value="workers">Разнорабочие</option>
+          </optgroup>
         </select>
-        
-        <label for="taxiCar">Машина (марка, цвет)</label>
-        <input id="taxiCar" type="text" placeholder="Sprinter, белый">
-        
-        <label for="taxiDeparture">Дата и время выезда</label>
-        <input id="taxiDeparture" type="datetime-local">
-        
-        <label for="taxiSeats">Свободных мест</label>
-        <input id="taxiSeats" type="number" min="1" max="20" value="4">
-        
-        <button class="primary full" id="publishTripBtn">Опубликовать поездку</button>
       </div>
-
-      <div class="card">
-        <h2>Мои поездки</h2>
-        <div id="myTripsList"></div>
+      <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
+      <div class="field"><label>Имя</label><input type="text" id="add-name"></div>
+      <div class="field">
+        <label>Телефон (+996)</label>
+        <input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500">
       </div>
-    </div>
-
-    <!-- ===== СЕКЦИЯ РАЗНОРАБОЧИХ ===== -->
-    <div id="workersSection" class="hidden">
-      <div class="card">
-        <h2>👷 Моя анкета</h2>
-        <p style="font-size:13px;">Ваша анкета видна на доске «Разнорабочие» (бесплатно).</p>
-        
-        <label for="workerName">Имя</label>
-        <input id="workerName" type="text" placeholder="Азамат">
-        
-        <label for="workerSkill">Специальность</label>
-        <select id="workerSkill">
-          <option value="Грузчик">Грузчик</option>
-          <option value="Разнорабочий">Разнорабочий</option>
-          <option value="Каменщик">Каменщик</option>
-          <option value="Штукатур">Штукатур</option>
-          <option value="Плиточник">Плиточник</option>
-          <option value="Другое">Другое</option>
-        </select>
-        
-        <label for="workerCity">Город</label>
-        <input id="workerCity" type="text" placeholder="Бишкек">
-        
-        <button class="primary full" id="updateWorkerBtn">Обновить анкету</button>
+      <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle" placeholder="01 KG 123 ABC"></div>
+      <div class="row-btn" style="margin-top: 20px;">
+        <button class="btn" onclick="submitAdd()">Добавить</button>
+        <button class="btn sec" onclick="page('market')">Отмена</button>
       </div>
+      <div id="add-result" class="sub" style="margin-top: 10px; text-align: center;"></div>
     </div>
   </section>
 </main>
-<footer>KYRAAN · Исполнитель</footer>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-market" onclick="page('market')"><span class="nav-icon">📊</span> Рынок</button>
+  <button class="nav-item" id="nav-alpha" onclick="page('alpha')"><span class="nav-icon">🚜</span> Альфа</button>
+  <button class="nav-item" id="nav-search" onclick="page('search')"><span class="nav-icon">🔍</span> Искать</button>
+  <button class="nav-item" id="nav-portfolio" onclick="page('portfolio')"><span class="nav-icon">💼</span> Портфель</button>
+  <button class="nav-item" onclick="menu(true)"><span class="nav-icon">☰</span> Меню</button>
+</nav>
+
+<div class="drawer-bg" id="drawer" onclick="if(event.target===this)menu(false)">
+  <aside class="drawer">
+    <h2>KYRAAN MENU</h2>
+    <button class="menu-btn" onclick="page('clients')">👥 Клиенты (Абоненты)</button>
+    <button class="menu-btn" onclick="page('term-1')">💻 Журнал Спецтехники</button>
+    <button class="menu-btn" onclick="page('term-2')">💻 Журнал Бытовые</button>
+    <button class="menu-btn" onclick="page('term-3')">💻 Журнал Досок</button>
+    <button class="menu-btn" onclick="page('orders')">🧾 Заказы (24ч)</button>
+    <button class="menu-btn" onclick="page('approvals')">👤 Новые исполнители</button>
+    <button class="menu-btn" onclick="page('dossier')">🗂 Поиск / Досье</button>
+    <button class="menu-btn" onclick="page('boards')">📋 Доски объявлений</button>
+    <button class="menu-btn" onclick="page('add')">➕ Добавить вручную</button>
+  </aside>
+</div>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-  
   const supabaseUrl = 'https://eevkhnenjrskpupvtkgi.supabase.co';
   const supabaseKey = 'sb_publishable_6tNocMb7Mv9HqcjVaKxDDQ_PfK1DkXe';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const labels={workers:"Разнорабочий", cargo:"Грузоперевозки",evacuator:"Эвакуатор",manipulator:"Манипулятор",plumber:"Сантехник",cleaning:"Клининг",welder:"Сварщик",electrician:"Электрик",fridge:"Ремонт холодильников",washer:"Ремонт стиральных машин",tv:"Телемастер",hour:"Мастер на час",intercity:"Межгород такси"};
-  
-  const HUNTER_TYPES = ['cargo','evacuator','manipulator','plumber','cleaning','welder','electrician','fridge','washer','tv','hour'];
-  const BOARD_TAXI = ['intercity'];
-  const BOARD_WORKERS = ['workers'];
+  function escapeHTML(str) { if(!str) return ''; return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
+  function safeParam(str) { if (!str) return "''"; return JSON.stringify(str).replace(/"/g, '&quot;'); }
 
-  let currentExecutor = null;
-  let realtimeChannel = null;
+  const names = { 
+      'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки', 
+      'intercity': 'Такси', 'plumber': 'Сантехник', 'electrician': 'Электрик', 
+      'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.', 
+      'washer': 'Ремонт стир.', 'tv': 'Телемастер', 'hour': 'Мастер на час', 
+      'handyman': 'Мастер на час', 'workers': 'Разнорабочие', 'market': 'Маркет' 
+  };
+  
+  const hunters = { 
+      'evacuator': 'HUNTER_01', 'manipulator': 'HUNTER_01', 'cargo': 'HUNTER_01', 
+      'plumber': 'HUNTER_02', 'electrician': 'HUNTER_02', 'cleaning': 'HUNTER_02', 
+      'welder': 'HUNTER_02', 'fridge': 'HUNTER_02', 'washer': 'HUNTER_02', 
+      'tv': 'HUNTER_02', 'hour': 'HUNTER_02', 'handyman': 'HUNTER_02',
+      'intercity': 'BOARD', 'workers': 'BOARD', 'market': 'BOARD' 
+  };
+  
+  const vmap = { 
+      'cargo': ['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'], 
+      'evacuator': ['Sprinter','Sprinter+прицеп','Atego','Atego+прицеп'], 
+      'manipulator': ['3т','5т','8т','10т'] 
+  };
+  
+  const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
+
+  // --- УВЕДОМЛЕНИЯ И ЗВУК ---
   let unreadCount = 0;
   let notifications = [];
-  const $ = id => document.getElementById(id);
 
-  document.body.addEventListener('click', () => {
-      try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
-  }, { once: true });
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    const savedId = localStorage.getItem('kyraan_executor_id');
-    if (savedId) {
-      const { data } = await supabase.from('executors').select('*').eq('id', savedId).single();
-      if (data) {
-        currentExecutor = data;
-        showCabinet();
-      } else {
-        localStorage.clear();
-      }
-    }
-  });
-
-  $("loginBtn").addEventListener("click", async () => {
-    let phone = $("loginPhone").value.replace(/\D/g, '');
-    if (phone.length < 9) return alert("Введите корректный номер");
-    if (!phone.startsWith('996')) phone = '996' + phone.replace(/^0/, '');
-    phone = '+' + phone;
-
-    const btn = $("loginBtn");
-    btn.textContent = "Поиск...";
-
-    const { data, error } = await supabase.from('executors').select('*').eq('phone', phone).single();
-
-    if (error || !data) {
-      btn.textContent = "Войти в кабинет";
-      alert("Номер не найден. Если вы регистрировались через Админа, проверьте номер.");
-    } else if (!data.is_approved) {
-      btn.textContent = "Войти в кабинет";
-      $("loginScreen").classList.add("hidden");
-      $("pending").classList.remove("hidden");
-      $("pendingText").textContent = `Ваша заявка (${labels[data.service_id] || data.service_id}) еще не одобрена Админом.`;
-    } else {
-      localStorage.setItem('kyraan_executor_id', data.id);
-      currentExecutor = data;
-      showCabinet();
-    }
-  });
-
-  $("goToRegisterBtn").addEventListener("click", () => {
-    $("loginScreen").classList.add("hidden");
-    $("registration").classList.remove("hidden");
-  });
-
-  $("submit").addEventListener("click", async (e) => {
-    e.preventDefault();
-    const personName = $("personName").value.trim() || 'Исполнитель';
-    const phone = $("phone").value.trim();
-    if (!phone) return alert("Укажите телефон");
-
-    let formattedPhone = phone.replace(/\D/g, '');
-    if (!formattedPhone.startsWith('996')) formattedPhone = '996' + formattedPhone.replace(/^0/, '');
-    formattedPhone = '+' + formattedPhone;
-
-    $("submit").textContent = "Отправка...";
-
-    const { data, error } = await supabase.from('executors').insert([{
-      name: personName, phone: formattedPhone, service_id: 'workers', hunter: 'BOARD',
-      variant_id: 'Разнорабочий', is_approved: false, rating: 15, is_online: false, is_busy: false
-    }]).select().single();
-
-    if (error) {
-      alert('Ошибка: ' + error.message);
-      $("submit").textContent = "Отправить заявку Админу";
-    } else {
-      localStorage.setItem('kyraan_executor_id', data.id);
-      $("registration").classList.add("hidden");
-      $("pending").classList.remove("hidden");
-      $("pendingText").textContent = `Ваша заявка отправлена Админу. Ожидайте одобрения.`;
-    }
-  });
+  window.playBell = function() {
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+          osc.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
+  }
 
   window.playAlarm = function() {
       if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
       try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          const ctx = new AudioContext();
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
           const osc = ctx.createOscillator();
           osc.type = 'square';
           osc.frequency.setValueAtTime(800, ctx.currentTime);
           osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.5);
           osc.connect(ctx.destination);
           osc.start(); osc.stop(ctx.currentTime + 0.5);
-      } catch(e) { console.log('Нет звука', e); }
-
-      if (Notification.permission === "granted") {
-          new Notification("🚨 НОВЫЙ ЗАКАЗ!", {
-              body: "Откройте приложение KYRAAN и примите заказ.",
-              vibrate: [500, 200, 500, 200, 500],
-              requireInteraction: true
-          });
-      }
+      } catch(e) {}
+      document.getElementById('alarm-banner').style.display = 'block';
   }
 
   window.toggleNotifications = function() {
@@ -329,7 +381,7 @@ footer{text-align:center;color:#777;font-size:11px;padding:12px 16px 24px}
 
   window.addNotification = function(text) {
       notifications.unshift(text);
-      if (notifications.length > 10) notifications.pop();
+      if (notifications.length > 15) notifications.pop();
       
       unreadCount++;
       const badge = document.getElementById('bell-badge');
@@ -337,425 +389,408 @@ footer{text-align:center;color:#777;font-size:11px;padding:12px 16px 24px}
       badge.style.display = 'block';
 
       const list = document.getElementById('notif-list');
-      list.style.textAlign = 'left';
       list.innerHTML = notifications.map(n => `<div class="notif-item">${n}</div>`).join('');
       
-      playAlarm();
+      window.playBell();
   }
 
-  function showCabinet() {
-    $("loginScreen").classList.add("hidden");
-    $("registration").classList.add("hidden");
-    $("pending").classList.add("hidden");
-    $("cabinet").classList.remove("hidden");
+  document.addEventListener('click', (e) => {
+      const panel = document.getElementById('notif-panel');
+      const bell = e.target.closest('.bell-icon');
+      if (panel && panel.style.display === 'block' && !panel.contains(e.target) && !bell) {
+          panel.style.display = 'none';
+      }
+  });
+
+  document.body.addEventListener('click', () => {
+      try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
+  }, { once: true });
+
+  // --- REALTIME СЛУШАТЕЛИ ---
+  supabase.channel('admin-alerts')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+        const newOrder = payload.new;
+        if (newOrder.hunter === 'CLIENT' && newOrder.status === 'REGISTERED') {
+            window.addNotification(`👤 Новый клиент: ${newOrder.client_phone}`);
+            if(document.getElementById('page-clients').classList.contains('active')) loadClients();
+        } else if (!newOrder.executor_id && !newOrder.assigned_executor_id) {
+            const shortId = newOrder.id.split('-')[0].toUpperCase();
+            const sName = names[newOrder.service_id] || newOrder.service_id;
+            window.addNotification(`🔔 Новый заказ #${shortId} (${sName})`);
+            
+            setTimeout(async () => {
+                const { data } = await supabase.from('orders').select('executor_id').eq('id', newOrder.id).single();
+                if (data && !data.executor_id) window.playAlarm();
+            }, 60000);
+        }
+    }).subscribe();
+
+  window.page = function(id) {
+    menu(false);
+    if(id === 'orders') document.getElementById('alarm-banner').style.display = 'none';
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    let btn = document.getElementById('nav-' + id);
+    if(btn) btn.classList.add('active');
     
-    $("cabinetName").textContent = currentExecutor.name;
-    $("cabinetService").textContent = labels[currentExecutor.service_id] || currentExecutor.service_id;
-    
-    if (HUNTER_TYPES.includes(currentExecutor.service_id)) {
-      $("hunterSection").classList.remove("hidden");
-      $("onlineRow").classList.remove("hidden");
-      $("taxiSection").classList.add("hidden");
-      $("workersSection").classList.add("hidden");
-      updateStatusUI();
-      loadOrders();
-      setupRealtime();
-      
-    } else if (BOARD_TAXI.includes(currentExecutor.service_id)) {
-      $("hunterSection").classList.add("hidden");
-      $("onlineRow").classList.add("hidden");
-      $("taxiSection").classList.remove("hidden");
-      $("workersSection").classList.add("hidden");
-      $("headerStatus").textContent = "Таксист";
-      $("headerStatus").className = "status";
-      updateSubInfo();
-      loadMyTrips();
-      
-    } else if (BOARD_WORKERS.includes(currentExecutor.service_id)) {
-      $("hunterSection").classList.add("hidden");
-      $("onlineRow").classList.add("hidden");
-      $("taxiSection").classList.add("hidden");
-      $("workersSection").classList.remove("hidden");
-      $("headerStatus").textContent = "Рабочий";
-      $("headerStatus").className = "status";
-      loadWorkerProfile();
-    }
+    window.scrollTo(0,0);
+    if(id === 'market') loadMarket();
+    if(id === 'alpha') loadMonitor('HUNTER_01', 'alpha-list');
+    if(id === 'search') loadMonitor('HUNTER_02', 'search-list');
+    if(id === 'orders') loadOrders();
+    if(id === 'clients') loadClients();
+    if(id === 'approvals') loadApprovals();
+    if(id === 'term-1') loadTerminal('HUNTER_01', 'term-1');
+    if(id === 'term-2') loadTerminal('HUNTER_02', 'term-2');
+    if(id === 'term-3') loadTerminal('BOARD', 'term-3');
+    if(id === 'boards') loadBoards(currentBoard);
+  }
+  
+  window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
+
+  window.copyOrder = function(orderId, serviceName, address) {
+      const shortId = orderId.split('-')[0].toUpperCase();
+      const text = `🔔 НОВЫЙ ЗАКАЗ #${shortId}\nУслуга: ${serviceName}\n📍 ${address || 'Адрес уточняется'}`;
+      navigator.clipboard.writeText(text).then(() => alert("✅ Скопировано!\n\n" + text));
   }
 
-  // ============================ ТАКСИ (ПОДПИСКА + ПОЕЗДКИ) ============================
-  function updateSubInfo() {
-    $("subInfo").classList.remove("hidden");
-    
-    let subUntil;
-    if (currentExecutor.sub_until) {
-        subUntil = new Date(currentExecutor.sub_until);
-    } else {
-        subUntil = new Date(new Date(currentExecutor.created_at).getTime() + 30 * 24 * 60 * 60 * 1000);
+  // --- ЗАГРУЗКА ДАННЫХ ---
+  let marketData = []; let currentFilter = 'all';
+  async function loadMarket() {
+    const list = document.getElementById('market-list'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
+    if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
+    let stats = {}; for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
+    data.forEach(ex => { if (!stats[ex.service_id]) return; if (!ex.is_approved) stats[ex.service_id].pending++; else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; } });
+    marketData = stats; renderMarketList();
+  }
+  
+  window.filterMarket = function(type, btn) { currentFilter = type; document.querySelectorAll('#page-market .tabs button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); renderMarketList(); }
+  
+  function renderMarketList() {
+    const list = document.getElementById('market-list'); let html = '';
+    for (let key in names) {
+        let s = marketData[key]; let h = hunters[key] || 'HUNTER_02';
+        if (currentFilter !== 'all' && currentFilter !== h) continue;
+        if (currentFilter === 'all' && key === 'intercity') html += `<div style="padding: 15px 0 5px; font-size:12px; color:var(--muted); font-weight:700;">ДОСКИ ОБЪЯВЛЕНИЙ</div>`;
+        let icon = icons[key] || '🔧'; let badgeClass = s.online > 0 ? 'badge-green' : 'badge-gold';
+        html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Всего: ${s.total} · Ожидают: ${s.pending}</div></div><div class="cmc-right"><div class="cmc-val">${s.online} <span style="font-size:10px; color:#888;">на линии</span></div><div class="cmc-badge ${badgeClass}">${s.busy} занято</div></div></div>`;
     }
-    
-    const now = new Date();
-    
-    if (subUntil < now) {
-        $("subInfo").innerHTML = `
-            <div style="color:var(--red); font-weight:bold; margin-bottom:10px;">
-                ⚠️ Подписка истекла!<br>Оплатите 100 сом для продления на 30 дней.
-            </div>
-            <input type="file" id="subReceipt" accept="image/*" style="margin-bottom:10px; background:#333; padding:10px; border-radius:8px;">
-            <button class="primary full" id="paySubBtn">Оплатить 100 сом</button>
-        `;
-        setTimeout(() => {
-          const pBtn = document.getElementById('publishTripBtn');
-          if (pBtn) { pBtn.disabled = true; pBtn.textContent = "Подписка истекла"; }
-        }, 50);
-        
-        document.getElementById('paySubBtn').addEventListener('click', paySubscription);
-    } else {
-        const daysLeft = Math.ceil((subUntil - now) / (1000 * 60 * 60 * 24));
-        $("subInfo").innerHTML = `
-            <div style="color:var(--green); font-weight:bold;">
-                ✅ Подписка активна. Осталось дней: ${daysLeft}
-            </div>
-        `;
-    }
+    list.innerHTML = html;
   }
 
-  async function paySubscription() {
-    const file = document.getElementById('subReceipt').files[0];
-    if (!file) return alert("Прикрепите фото чека об оплате!");
-    
-    const btn = document.getElementById('paySubBtn');
-    btn.textContent = "Загрузка...";
-    btn.disabled = true;
-    
-    try {
-        const fileName = `receipts/sub_${Date.now()}_${currentExecutor.id}.jpg`;
-        await supabase.storage.from('kyraan_docs').upload(fileName, file);
-        const { data: urlData } = supabase.storage.from('kyraan_docs').getPublicUrl(fileName);
-        
-        const newDate = new Date();
-        newDate.setDate(newDate.getDate() + 30);
-        
-        await supabase.from('executors').update({
-            sub_until: newDate.toISOString(),
-            tech_passport: urlData.publicUrl 
-        }).eq('id', currentExecutor.id);
-        
-        currentExecutor.sub_until = newDate.toISOString();
-        alert("✅ Оплата принята! Подписка продлена на 30 дней.");
-        updateSubInfo();
-        const pBtn = document.getElementById('publishTripBtn');
-        if (pBtn) { pBtn.disabled = false; pBtn.textContent = "Опубликовать поездку"; }
-    } catch (e) {
-        alert("Ошибка: " + e.message);
-        btn.textContent = "Оплатить 100 сом";
-        btn.disabled = false;
-    }
-  }
+  async function loadClients() {
+    const list = document.getElementById('clients-stats');
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
 
-  async function loadMyTrips() {
-    const { data, error } = await supabase.from('taxi_trips')
-      .select('*')
-      .eq('phone1', currentExecutor.phone)
-      .order('departure_at', { ascending: false });
-      
-    const list = document.getElementById('myTripsList');
-    
+    const { data, error } = await supabase.from('orders').select('*').eq('hunter', 'CLIENT').order('created_at', { ascending: false });
+
     if (error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
-    if (!data || data.length === 0) { 
-      list.innerHTML = '<p style="text-align:center;">У вас пока нет опубликованных поездок.</p>'; 
-      return; 
-    }
-    
-    list.innerHTML = data.map(t => `
-      <div class="order-card">
-        <div class="order-title">${t.route}</div>
-        <div class="order-desc">🚗 ${t.car} · 👥 ${t.seats} мест</div>
-        <div class="order-desc">🕐 ${new Date(t.departure_at).toLocaleString('ru-RU')}</div>
-        <button class="secondary full" style="margin-top:0; color:var(--red);" onclick="deleteTrip('${t.id}')">Удалить</button>
+    if (!data || data.length === 0) { list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted);">Пока нет зарегистрированных клиентов.</div>'; return; }
+
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const today = data.filter(c => c.created_at >= todayStart).length;
+    const week = data.filter(c => c.created_at >= weekAgo).length;
+    const month = data.filter(c => c.created_at >= monthAgo).length;
+
+    let html = `
+      <div class="fin-card">
+        <div class="fin-header"><div class="fin-title" style="color: var(--green);">Статистика регистраций</div></div>
+        <div class="fin-row"><span>Всего клиентов</span> <span class="fin-val" style="font-size: 20px;">${data.length}</span></div>
+        <div class="fin-row"><span>За сегодня</span> <span class="fin-val">${today}</span></div>
+        <div class="fin-row"><span>За неделю</span> <span class="fin-val">${week}</span></div>
+        <div class="fin-row"><span>За месяц</span> <span class="fin-val">${month}</span></div>
+      </div>
+      <h2 style="margin: 16px 0 8px; font-size: 16px;">Список абонентов</h2>
+      <div style="background: var(--panel); border-radius: 16px; padding: 0 16px;">
+    `;
+
+    html += data.map(u => `
+      <div class="cmc-item">
+        <div class="cmc-icon">👤</div>
+        <div class="cmc-info">
+          <div class="cmc-name">${escapeHTML(u.address || 'Без имени')}</div>
+          <div class="cmc-sub">${escapeHTML(u.client_phone)}</div>
+        </div>
+        <div class="cmc-right">
+          <div style="font-size:10px; color:var(--muted);">${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>
+        </div>
       </div>
     `).join('');
+
+    html += `</div>`;
+    list.innerHTML = html;
   }
-
-  window.deleteTrip = async function(id) {
-    if (!confirm("Удалить эту поездку?")) return;
-    const { error } = await supabase.from('taxi_trips').delete().eq('id', id);
-    if (error) alert('Ошибка: ' + error.message);
-    else { loadMyTrips(); alert('Удалено'); }
-  }
-
-  $("publishTripBtn").addEventListener("click", async () => {
-    const route = $("taxiRoute").value;
-    const car = $("taxiCar").value.trim();
-    const departure = $("taxiDeparture").value;
-    const seats = parseInt($("taxiSeats").value) || 4;
-    
-    if (!car) return alert("Укажите машину");
-    if (!departure) return alert("Укажите дату и время");
-    
-    $("publishTripBtn").textContent = "Публикация...";
-    $("publishTripBtn").disabled = true;
-    
-    const { error } = await supabase.from('taxi_trips').insert([{
-      route: route,
-      driver_name: currentExecutor.name,
-      phone1: currentExecutor.phone,
-      car: car,
-      departure_at: new Date(departure).toISOString(),
-      seats: seats,
-      status: 'active',
-      is_direct: true
-    }]);
-    
-    $("publishTripBtn").textContent = "Опубликовать поездку";
-    $("publishTripBtn").disabled = false;
-    
-    if (error) {
-      alert("Ошибка: " + error.message);
-    } else {
-      $("taxiCar").value = "";
-      $("taxiDeparture").value = "";
-      alert("✅ Поездка опубликована!");
-      loadMyTrips();
-    }
-  });
-
-  // ============================ РАЗНОРАБОЧИЕ ============================
-  async function loadWorkerProfile() {
-    const { data } = await supabase.from('workers_listings')
-      .select('*')
-      .eq('phone1', currentExecutor.phone)
-      .limit(1);
-      
-    if (data && data.length > 0) {
-      $("workerName").value = data[0].author_name || currentExecutor.name;
-      $("workerSkill").value = data[0].skill || 'Разнорабочий';
-      $("workerCity").value = data[0].city || '';
-    }
-  }
-
-  $("updateWorkerBtn").addEventListener("click", async () => {
-    const name = $("workerName").value.trim();
-    const skill = $("workerSkill").value;
-    const city = $("workerCity").value.trim();
-    
-    if (!name) return alert("Введите имя");
-    
-    $("updateWorkerBtn").textContent = "Сохранение...";
-    $("updateWorkerBtn").disabled = true;
-    
-    const { data: existing } = await supabase.from('workers_listings')
-      .select('id')
-      .eq('phone1', currentExecutor.phone)
-      .limit(1);
-    
-    let error;
-    
-    if (existing && existing.length > 0) {
-      const res = await supabase.from('workers_listings').update({
-        author_name: name, skill: skill, city: city, title: skill
-      }).eq('id', existing[0].id);
-      error = res.error;
-    } else {
-      const res = await supabase.from('workers_listings').insert([{
-        author_name: name, phone1: currentExecutor.phone,
-        skill: skill, title: skill, city: city, status: 'active'
-      }]);
-      error = res.error;
-    }
-    
-    $("updateWorkerBtn").textContent = "Обновить анкету";
-    $("updateWorkerBtn").disabled = false;
-    
-    if (error) alert("Ошибка: " + error.message);
-    else alert("✅ Анкета сохранена!");
-  });
-
-  // ============================ HUNTER 1 и 2 (ЗАКАЗЫ) ============================
-  function updateStatusUI() {
-    const isOnline = currentExecutor.is_online;
-    const isBusy = currentExecutor.is_busy;
-    
-    $("headerStatus").textContent = isBusy ? "Выполняет заказ" : (isOnline ? "На линии" : "Не в сети");
-    $("headerStatus").className = "status " + (isBusy ? "busy" : (isOnline ? "on" : ""));
-    
-    $("cabinetStatus").textContent = isBusy ? "Занят" : (isOnline ? "На линии" : "Не в сети");
-    $("cabinetStatus").className = "status " + (isBusy ? "busy" : (isOnline ? "on" : ""));
-    
-    $("toggleOnline").textContent = isOnline ? "Уйти с линии" : "Выйти на линию";
-    $("toggleOnline").className = isOnline ? "red" : "secondary";
-    $("toggleOnline").disabled = isBusy;
-    
-    if (isBusy) {
-      $("activeOrderCard").classList.remove("hidden");
-      $("ordersListWrap").classList.add("hidden");
-      loadActiveOrder();
-    } else {
-      $("activeOrderCard").classList.add("hidden");
-      $("ordersListWrap").classList.remove("hidden");
-      $("paymentSection").classList.add("hidden");
-      $("finishOrderBtn").classList.remove("hidden");
-      $("receiptPhoto").value = "";
-    }
-  }
-
-  $("toggleOnline").addEventListener("click", async () => {
-    const newState = !currentExecutor.is_online;
-    
-    if (newState && Notification.permission === "default") {
-        await Notification.requestPermission();
-    }
-
-    const { error } = await supabase.from('executors').update({ is_online: newState }).eq('id', currentExecutor.id);
-    if (!error) {
-      currentExecutor.is_online = newState;
-      updateStatusUI();
-      if (newState) loadOrders(); 
-      else $("ordersList").innerHTML = '<p style="text-align:center;">Вы не на линии.</p>';
-    }
-  });
 
   async function loadOrders() {
-    if (!currentExecutor.is_online) {
-      $("ordersList").innerHTML = '<p style="text-align:center;">Вы не на линии. Заказы скрыты.</p>';
-      return;
-    }
+    const list = document.getElementById('orders-list'); list.innerHTML = 'Загрузка...';
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase.from('orders').select('*').neq('hunter', 'CLIENT').gte('created_at', yesterday).order('created_at', { ascending: false });
+    if(!data || data.length === 0) { list.innerHTML = 'Заказов нет.'; return; }
     
-    const { data, error } = await supabase.from('orders')
-      .select('*')
-      .eq('service_id', currentExecutor.service_id)
-      .is('executor_id', null)
-      .order('created_at', { ascending: false });
+    list.innerHTML = data.map(o => {
+      const shortId = o.id.split('-')[0].toUpperCase();
+      const sName = names[o.service_id] || o.service_id || o.hunter;
+      const execId = o.executor_id || o.assigned_executor_id;
+      const isTaken = !!execId;
+      
+      let displayAddress = o.address || 'Адрес не указан';
+      let receiptUrl = null;
+      
+      // Ищем чек в адресе
+      if (displayAddress.includes('| ЧЕК: ')) {
+          const parts = displayAddress.split('| ЧЕК: ');
+          displayAddress = parts[0];
+          receiptUrl = parts[1];
+      }
 
-    if (error) { $("ordersList").innerHTML = "Ошибка: " + error.message; return; }
-    
-    $("ordersCount").textContent = data.length;
-    
-    if (data.length === 0) {
-      $("ordersList").innerHTML = '<p style="text-align:center;">Пока нет новых заказов по вашей специальности.</p>';
-      return;
-    }
+      // Парсим адрес для рабочих и маркета
+      const parts = displayAddress.split(' | ');
+      if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
+      if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
 
-    $("ordersList").innerHTML = data.map(o => `
-      <div class="order-card">
-        <div class="order-title">Заказ #${o.id.split('-')[0].toUpperCase()}</div>
-        <div class="order-desc">📍 ${o.address || 'Адрес уточняется'}</div>
-        <button class="primary full" style="margin-top:0;" onclick="takeOrder('${o.id}')">Принять заказ</button>
+      return `
+      <div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${isTaken ? 'var(--green)' : 'var(--red)'};">
+        <div style="display:flex; justify-content:space-between;">
+            <div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div>
+            <div style="font-size:11px; color:${isTaken ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">${isTaken ? '✅ ВЗЯТ' : '⏳ ЖДЕТ'}</div>
+        </div>
+        <div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div>
+        <div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName} ${o.variant_id ? '('+o.variant_id+')' : ''}</div>
+        <div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(displayAddress)}</div>
+        
+        <div class="row-btn">
+            <button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>
+            ${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn" style="background: var(--blue); color: #fff; padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : 
+              (isTaken && o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadApprovals() {
+    const list = document.getElementById('approvals-list'); list.innerHTML = 'Загрузка...';
+    const { data } = await supabase.from('executors').select('*').eq('is_approved', false).order('created_at', { ascending: false });
+    if(!data || data.length === 0) { list.innerHTML = 'Нет новых заявок.'; return; }
+    list.innerHTML = data.map(u => `
+      <div class="card" style="padding:12px; margin:0 0 10px 0;">
+        <div style="font-size:11px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div>
+        <div style="font-size:16px; font-weight:700;">${escapeHTML(u.name)}</div>
+        <div style="font-size:14px; color:var(--muted); margin-bottom:8px;">${escapeHTML(u.phone)} · ${names[u.service_id] || u.service_id}</div>
+        <div class="row-btn"><button class="btn" onclick="approveExec('${u.id}')">Одобрить</button><button class="btn sec" style="color:var(--red);" onclick="deleteExec('${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)})">Удалить</button></div>
       </div>
     `).join('');
   }
+  
+  window.approveExec = async function(id) { 
+      await supabase.from('executors').update({ is_approved: true }).eq('id', id); 
+      loadApprovals(); 
+  }
 
-  window.takeOrder = async (orderId) => {
-    if (currentExecutor.is_busy) return alert("Сначала завершите текущий заказ!");
-    
-    $("ordersList").innerHTML = '<p style="text-align:center;">Берем заказ...</p>';
-    
-    const { data, error } = await supabase.from('orders')
-      .update({ executor_id: currentExecutor.id, status: 'TAKEN' })
-      .eq('id', orderId)
-      .is('executor_id', null) 
-      .select();
-
-    if (error) {
-      alert("Ошибка: " + error.message);
-      loadOrders();
-    } else if (!data || data.length === 0) {
-      alert("Упс! Этот заказ только что забрал кто-то другой.");
-      loadOrders();
-    } else {
-      await supabase.from('executors').update({ is_busy: true }).eq('id', currentExecutor.id);
-      currentExecutor.is_busy = true;
-      updateStatusUI();
-    }
+  window.deleteExec = async function(id, name, phone) {
+      if (!confirm(`Удалить заявку?\n\n${name}\n${phone}`)) return;
+      try {
+          const { error } = await supabase.from('executors').delete().eq('id', id);
+          if (error) throw error;
+          await supabase.from('audit_log').insert([{ actor: 'ADMIN', action: 'DELETE_REQ', details: { id, name, phone } }]);
+          loadApprovals();
+      } catch (err) { alert('Ошибка: ' + err.message); }
   };
 
-  async function loadActiveOrder() {
-    const { data } = await supabase.from('orders')
-      .select('*')
-      .eq('executor_id', currentExecutor.id)
-      .neq('status', 'DONE')
-      .single();
-      
-    if (data) {
-      $("activeOrderTitle").textContent = `Заказ #${data.id.split('-')[0].toUpperCase()}`;
-      $("activeOrderAddress").textContent = `📍 ${data.address || 'Адрес уточняется'}`;
-      $("activeOrderCall").href = `tel:${data.client_phone}`;
+  async function loadTerminal(hunterType, elementId) {
+    const el = document.getElementById(elementId); el.innerHTML = 'Загрузка...';
+    const { data: orders } = await supabase.from('orders').select('*').eq('hunter', hunterType).neq('hunter', 'CLIENT').order('created_at', { ascending: false }).limit(20);
+    if(!orders || orders.length === 0) { el.innerHTML = '[]\n// Журнал пуст.'; return; }
+
+    const execIds = orders.map(o => o.executor_id || o.assigned_executor_id).filter(Boolean); 
+    let execPhones = {};
+    if (execIds.length > 0) { 
+        const { data: execs } = await supabase.from('executors').select('id, phone').in('id', execIds); 
+        if (execs) execs.forEach(e => execPhones[e.id] = e.phone); 
     }
+
+    let html = "[\n";
+    orders.forEach((o, i) => {
+        const execId = o.executor_id || o.assigned_executor_id;
+        let exId = execId ? execId.split('-')[0].toUpperCase() : 'WAITING';
+        let exPhone = execId && execPhones[execId] ? execPhones[execId] : null;
+        let clientLink = o.client_phone ? `<a href='tel:${o.client_phone}' class='json-link'>📞 ${o.client_phone}</a>` : 'NO_PHONE';
+        let execLink = exPhone ? `<a href='tel:${exPhone}' class='json-link'>📞 ${exId}</a>` : `<span class='json-key'>${exId}</span>`;
+        
+        html += `  {\n    "time": "<span class='json-str'>${new Date(o.created_at).toLocaleTimeString('ru-RU')}</span>",\n    "order_id": "<span class='json-num'>#${o.id.split('-')[0].toUpperCase()}</span>",\n    "address": "<span class='json-str'>${escapeHTML(o.address || 'Не указан')}</span>",\n    "client": "${clientLink}",\n    "executor": "${execLink}"\n  }${i < orders.length-1 ? ',' : ''}\n`;
+    });
+    html += "]"; el.innerHTML = html;
   }
 
-  $("finishOrderBtn").addEventListener("click", () => {
-      $("finishOrderBtn").classList.add("hidden");
-      $("paymentSection").classList.remove("hidden");
-  });
+  let currentBoard = 'intercity';
+  window.switchBoard = function(type, btn) { 
+      currentBoard = type; 
+      document.querySelectorAll('#page-boards .tabs button').forEach(x => x.classList.remove('active')); 
+      btn.classList.add('active'); 
+      loadBoards(type); 
+  }
 
-  $("cancelFinishBtn").addEventListener("click", () => {
-      $("paymentSection").classList.add("hidden");
-      $("finishOrderBtn").classList.remove("hidden");
-      $("receiptPhoto").value = "";
-  });
-
-  $("confirmFinishBtn").addEventListener("click", async () => {
-    const file = $("receiptPhoto").files[0];
-    if (!file) return alert("⚠️ Прикрепите фото чека на 100 сом!");
-
-    $("confirmFinishBtn").textContent = "Загрузка чека...";
-    $("confirmFinishBtn").disabled = true;
-
-    try {
-        const fileName = `receipts/order_${Date.now()}_${currentExecutor.id}.jpg`;
-        const { error: uploadError } = await supabase.storage.from('kyraan_docs').upload(fileName, file);
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage.from('kyraan_docs').getPublicUrl(fileName);
-        const receiptUrl = urlData.publicUrl;
-
-        const { data: order } = await supabase.from('orders')
-            .select('id, address')
-            .eq('executor_id', currentExecutor.id)
-            .neq('status', 'DONE')
-            .single();
-
-        if (order) {
-            await supabase.from('orders').update({
-                status: 'DONE',
-                address: `${order.address || 'Адрес не указан'} | ЧЕК: ${receiptUrl}`
-            }).eq('id', order.id);
-        }
-
-        await supabase.from('executors').update({ is_busy: false }).eq('id', currentExecutor.id);
-        currentExecutor.is_busy = false;
-
-        $("paymentSection").classList.add("hidden");
-        $("finishOrderBtn").classList.remove("hidden");
-        $("confirmFinishBtn").textContent = "Отправить чек и завершить";
-        $("confirmFinishBtn").disabled = false;
-        $("receiptPhoto").value = "";
-
-        updateStatusUI();
-        loadOrders();
-        alert("✅ Чек отправлен! Заказ завершен.");
-
-    } catch (err) {
-        alert("Ошибка при загрузке чека: " + err.message);
-        $("confirmFinishBtn").textContent = "Отправить чек и завершить";
-        $("confirmFinishBtn").disabled = false;
-    }
-  });
-
-  function setupRealtime() {
-    if (realtimeChannel) return; 
+  async function loadBoards(type) {
+    const list = document.getElementById('boards-list'); list.innerHTML = 'Загрузка...';
+    const table = type === 'intercity' ? 'taxi_trips' : type === 'workers' ? 'workers_listings' : 'market_listings';
+    const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
     
-    realtimeChannel = supabase.channel('executor-orders')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-          const newOrder = payload.new;
-          if (newOrder.service_id === currentExecutor.service_id && !newOrder.executor_id) {
-              window.addNotification(`🔔 Новый заказ #${newOrder.id.split('-')[0].toUpperCase()}`);
-              if (currentExecutor.is_online && !currentExecutor.is_busy) {
-                  loadOrders();
-              }
-          }
-      }).subscribe();
+    if (error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
+    if (!data || data.length === 0) { list.innerHTML = 'Нет опубликованных объявлений.'; return; }
+
+    if (type === 'intercity') {
+        list.innerHTML = data.map(u => `
+          <div class="cmc-item">
+            <div class="cmc-icon">🚖</div>
+            <div class="cmc-info">
+              <div class="cmc-name">${escapeHTML(u.driver_name)} · ${escapeHTML(u.car)}</div>
+              <div class="cmc-sub">${escapeHTML(u.route)} · ${u.seats || 0} мест</div>
+              <div class="cmc-sub">🕐 ${u.departure_at ? new Date(u.departure_at).toLocaleString('ru-RU') : 'Время не указано'}</div>
+            </div>
+            <div class="cmc-right">
+              <button class="btn sec" style="padding:6px 12px; font-size:12px; margin-bottom:4px; color:var(--red);" onclick="hideBoardAd('${u.id}', '${table}')">Скрыть</button>
+              <a href="tel:${u.phone1}" class="btn" style="padding:6px 12px; font-size:12px; text-decoration:none; display:inline-block;">📞</a>
+            </div>
+          </div>`).join('');
+    } else if (type === 'workers') {
+        list.innerHTML = data.map(u => `
+          <div class="cmc-item">
+            <div class="cmc-icon">👷</div>
+            <div class="cmc-info">
+              <div class="cmc-name">${escapeHTML(u.author_name)} · ${escapeHTML(u.skill || 'Без навыка')}</div>
+              <div class="cmc-sub">${escapeHTML(u.city || 'Город не указан')}</div>
+            </div>
+            <div class="cmc-right">
+              <button class="btn sec" style="padding:6px 12px; font-size:12px; margin-bottom:4px; color:var(--red);" onclick="hideBoardAd('${u.id}', '${table}')">Скрыть</button>
+              <a href="tel:${u.phone1}" class="btn" style="padding:6px 12px; font-size:12px; text-decoration:none; display:inline-block;">📞</a>
+            </div>
+          </div>`).join('');
+    } else if (type === 'market') {
+        list.innerHTML = data.map(u => {
+          const priceText = u.is_negotiable ? 'Договорная' : `${u.price || 'Не указана'} ${u.currency || ''}`.trim();
+          return `
+          <div class="cmc-item">
+            <div class="cmc-icon">🛒</div>
+            <div class="cmc-info">
+              <div class="cmc-name">${escapeHTML(u.title)}</div>
+              <div class="cmc-sub">${escapeHTML(u.city)} · ${escapeHTML(priceText)}</div>
+            </div>
+            <div class="cmc-right">
+              <button class="btn sec" style="padding:6px 12px; font-size:12px; margin-bottom:4px; color:var(--red);" onclick="hideBoardAd('${u.id}', '${table}')">Скрыть</button>
+              <a href="tel:${u.phone}" class="btn" style="padding:6px 12px; font-size:12px; text-decoration:none; display:inline-block;">📞</a>
+            </div>
+          </div>`;
+        }).join('');
+    }
   }
 
+  window.hideBoardAd = async function(id, table) { 
+    if (!confirm('Удалить это объявление навсегда?')) return;
+    const { error } = await supabase.from(table).delete().eq('id', id);
+    if (error) alert('Ошибка удаления: ' + error.message);
+    else loadBoards(currentBoard);
+  }
+
+  window.searchDossier = async function() {
+    const q = document.getElementById('dossier-query').value.trim(); 
+    const res = document.getElementById('dossier-results');
+    if(!q) return; 
+    res.innerHTML = 'Поиск...';
+    let cleanPhone = q.replace(/[^0-9]/g, '');
+    let searchTerm = q;
+    if (cleanPhone.length === 10 && cleanPhone.startsWith('0')) searchTerm = '996' + cleanPhone.substring(1);
+    else if (cleanPhone.length === 9) searchTerm = '996' + cleanPhone;
+    else if (cleanPhone.length > 9) searchTerm = cleanPhone;
+    const sanitize = s => String(s).replace(/[,()%_]/g, ' ').trim();
+    const qSafe = sanitize(q);
+    const termSafe = sanitize(searchTerm);
+    if (!qSafe) return;
+
+    const { data, error } = await supabase.from('executors').select('*').or(`phone.ilike.%${termSafe}%,name.ilike.%${qSafe}%`);
+    if (error) { res.innerHTML = 'Ошибка: ' + error.message; return; }
+    if(!data || data.length === 0) { res.innerHTML = '<div style="padding: 20px; color: var(--muted); text-align:center;">Не найден.</div>'; return; }
+
+    res.innerHTML = data.map(u => {
+      let subInfoHtml = '';
+      if (u.service_id === 'intercity') {
+          let subUntil = u.sub_until ? new Date(u.sub_until) : new Date(new Date(u.created_at).getTime() + 30 * 24 * 60 * 60 * 1000);
+          const daysLeft = Math.ceil((subUntil - new Date()) / (1000 * 60 * 60 * 24));
+          if (daysLeft > 0) subInfoHtml = `<div style="color:var(--green); font-weight:bold; margin-top:4px;">Такси: Подписка ${daysLeft} дн.</div>`;
+          else subInfoHtml = `<div style="color:var(--red); font-weight:bold; margin-top:4px;">Такси: Подписка истекла</div>`;
+      }
+
+      return `
+      <div class="dossier">
+        <div class="dossier-head"><div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="dossier-name">${escapeHTML(u.name || 'Без имени')}</h2><div class="dossier-phone">${escapeHTML(u.phone)}</div></div><div style="background:var(--bg); padding:4px 8px; border-radius:6px; font-size:10px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div></div></div>
+        <div class="dossier-stats"><div class="d-stat"><div class="d-val" style="color:var(--gold);">${u.rating ?? 15}</div><div class="d-lbl">Рейтинг</div></div><div class="d-stat"><div class="d-val">${u.completed_orders || 0}</div><div class="d-lbl">Заказов</div></div><div class="d-stat"><div class="d-val" style="color:${u.is_blacklisted ? 'var(--red)' : 'var(--green)'};">${u.is_blacklisted ? '🚫' : '✅'}</div><div class="d-lbl">Статус</div></div></div>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:16px;"><div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>${u.vehicle_number || u.plate_number ? `<div><b>Авто:</b> ${escapeHTML(u.vehicle_number || u.plate_number)}</div>` : ''}<div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>${subInfoHtml}</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <button class="btn" onclick="adminAction('BLOCK', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, ${!u.is_active})">${!u.is_active ? '✅ Разблок' : '⛔ Блок'}</button>
+            <button class="btn sec" style="color:var(--red);" onclick="adminAction('DELETE', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, false)">🗑 Удалить</button>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  window.adminAction = async function(actionType, id, name, phone, currentBlocked) {
+      let confirmMsg = ''; let dbUpdate = {}; let logAction = '';
+      if (actionType === 'BLOCK') { 
+          confirmMsg = currentBlocked ? `Разблокировать ${name}?` : `Заблокировать ${name}?`; 
+          dbUpdate = currentBlocked ? { is_active: true, is_blacklisted: false } : { is_active: false, is_blacklisted: true }; 
+          logAction = currentBlocked ? 'UNBLOCK' : 'BLOCK'; 
+      } else if (actionType === 'DELETE') { 
+          confirmMsg = `ВНИМАНИЕ! Удалить ${name} навсегда?`; 
+          logAction = 'DELETE';
+      }
+      if (!confirm(confirmMsg)) return;
+      try {
+          if (actionType === 'DELETE') { 
+              const { error } = await supabase.from('executors').delete().eq('id', id); 
+              if (error) throw error;
+          } else { 
+              const { error } = await supabase.from('executors').update(dbUpdate).eq('id', id); 
+              if (error) throw error;
+          }
+          await supabase.from('audit_log').insert([{ actor: 'ADMIN', action: logAction, details: { target_id: id, target_name: name, target_phone: phone } }]);
+          alert(`Действие выполнено.`); searchDossier();
+      } catch (err) { alert('Ошибка: ' + err.message); }
+  }
+
+  window.updateAddVariant = function() {
+    let s = document.getElementById('add-service').value; let vf = document.getElementById('add-variant-field'); let v = document.getElementById('add-variant'); let carf = document.getElementById('add-vehicle-field');
+    v.innerHTML = ''; let arr = vmap[s] || []; vf.classList.toggle('hidden', arr.length === 0);
+    arr.forEach(x => { let o = document.createElement('option'); o.textContent = x; v.appendChild(o); });
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); carf.classList.toggle('hidden', !needCar);
+  }
+
+  window.submitAdd = async function() {
+    let s = document.getElementById('add-service').value; 
+    let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); 
+    let name = document.getElementById('add-name').value.trim(); 
+    let car = document.getElementById('add-vehicle').value.trim(); 
+    let res = document.getElementById('add-result');
+    
+    if(!s || phone.length !== 9) { res.style.color = 'var(--red)'; res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s);
+    if(needCar && !car) { res.style.color = 'var(--red)'; res.textContent = 'Введите номер автомобиля!'; return; }
+    
+    const fullPhone = '+996' + phone;
+    const { data: existing } = await supabase.from('executors').select('id').eq('phone', fullPhone).maybeSingle();
+    if (existing) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: этот номер уже зарегистрирован!'; return; }
+
+    let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
+    const { error } = await supabase.from('executors').insert([{ name: name, phone: fullPhone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true }]);
+    if(error) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: ' + error.message; } 
+    else { res.style.color = 'var(--green)'; res.innerHTML = 'Успешно добавлен!'; setTimeout(() => page('market'), 1000); }
+  }
+
+  loadMarket();
 </script>
 </body>
-  </html>
+        </html>
