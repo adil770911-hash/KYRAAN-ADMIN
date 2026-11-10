@@ -29,7 +29,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter
     display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999;
     background: var(--red); color: white; text-align: center; padding: 15px;
     font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(255,59,48,0.5);
-    animation: flashRed 1s infinite;
+    animation: flashRed 1s infinite; cursor: pointer;
 }
 @keyframes flashRed { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
 
@@ -126,9 +126,9 @@ input:focus, select:focus { border-color: var(--gold); }
 <body>
 
 <div id="take-banner"></div>
-<div id="alarm-banner" onclick="page('orders')">
+<div id="alarm-banner" onclick="page('whatsapp')">
     ⚠️ ВНИМАНИЕ: ЕСТЬ ЗАКАЗ, КОТОРЫЙ ВИСИТ БОЛЕЕ 1 МИНУТЫ!<br>
-    <span style="font-size: 11px; font-weight: normal;">Нажмите, чтобы перейти к заказам</span>
+    <span style="font-size: 11px; font-weight: normal;">Нажмите, чтобы перейти в WhatsApp-журнал</span>
 </div>
 
 <header>
@@ -227,6 +227,25 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="boards-list"></div>
   </section>
 
+  <!-- НОВАЯ СТРАНИЦА: НАСТРОЙКИ ВОЛН -->
+  <section id="page-waves" class="page">
+    <h1>Настройки волн</h1>
+    <p class="sub">Радиусы и время ожидания по каждой услуге.</p>
+    <div class="list-container" id="waves-list"></div>
+  </section>
+
+  <!-- НОВАЯ СТРАНИЦА: WHATSAPP-ЖУРНАЛ -->
+  <section id="page-whatsapp" class="page">
+    <h1>📱 WhatsApp-журнал</h1>
+    <p class="sub">Заказы, висящие более 1 минуты. Скопируйте код и отправьте в группу.</p>
+    <div class="tabs" style="margin-bottom: 10px;">
+      <button class="active" onclick="switchWa('HUNTER_01', this)">Спецтехника</button>
+      <button onclick="switchWa('HUNTER_02', this)">Бытовые</button>
+      <button onclick="switchWa('BOARD', this)">Доски</button>
+    </div>
+    <div class="list-container" id="wa-list"></div>
+  </section>
+
   <section id="page-add" class="page">
     <h1>Добавить вручную</h1>
     <div class="card">
@@ -257,7 +276,13 @@ input:focus, select:focus { border-color: var(--gold); }
       
       <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
       
-      <div class="field"><label>Имя</label><input type="text" id="add-name" placeholder="Азамат"></div>
+      <div class="field">
+        <label>Имя</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="add-name" placeholder="Азамат" style="flex:1;">
+          <button type="button" class="btn sec" style="width:auto; padding:0 14px;" onclick="pickFromContacts()" title="Из контактов">📇</button>
+        </div>
+      </div>
       
       <div class="field">
         <label>Телефон (+996)</label>
@@ -300,6 +325,10 @@ input:focus, select:focus { border-color: var(--gold); }
   <aside class="drawer">
     <h2>KYRAAN MENU</h2>
     <button class="menu-btn" onclick="page('clients')">👥 Клиенты (Абоненты)</button>
+    
+    <button class="menu-btn" onclick="page('waves')" style="color: var(--gold);">⚙️ Настройки волн</button>
+    <button class="menu-btn" onclick="page('whatsapp')" style="color: var(--green);">📱 WhatsApp-журнал</button>
+
     <button class="menu-btn" onclick="page('term-1')">💻 Журнал Спецтехники</button>
     <button class="menu-btn" onclick="page('term-2')">💻 Журнал Бытовые</button>
     <button class="menu-btn" onclick="page('term-3')">💻 Журнал Досок</button>
@@ -342,7 +371,7 @@ input:focus, select:focus { border-color: var(--gold); }
       'manipulator': ['3т','5т','8т','10т'] 
   };
   
-  const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
+  const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷', 'plumber':'🔧', 'electrician':'⚡', 'cleaning':'🧹', 'welder':'🔨', 'fridge':'❄️', 'washer':'🌀', 'tv':'📺', 'hour':'⏰' };
 
   // --- УВЕДОМЛЕНИЯ ---
   let unreadCount = 0;
@@ -425,14 +454,20 @@ input:focus, select:focus { border-color: var(--gold); }
             
             setTimeout(async () => {
                 const { data } = await supabase.from('orders').select('executor_id').eq('id', newOrder.id).single();
-                if (data && !data.executor_id) window.playAlarm();
+                if (data && !data.executor_id) {
+                    window.playAlarm();
+                    window.addNotification(`⚠️ Заказ #${shortId} висит >1 мин. Проверьте WhatsApp-журнал.`);
+                }
             }, 60000);
         }
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema:'public', table: 'orders' }, payload => {
+        if (document.getElementById('page-whatsapp').classList.contains('active')) loadWa();
     }).subscribe();
 
   window.page = function(id) {
     menu(false);
-    if(id === 'orders') document.getElementById('alarm-banner').style.display = 'none';
+    if(id === 'orders' || id === 'whatsapp') document.getElementById('alarm-banner').style.display = 'none';
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
@@ -450,6 +485,8 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'term-2') loadTerminal('HUNTER_02', 'term-2');
     if(id === 'term-3') loadTerminal('BOARD', 'term-3');
     if(id === 'boards') loadBoards(currentBoard);
+    if(id === 'waves') loadWaves();
+    if(id === 'whatsapp') loadWa();
   }
   
   window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
@@ -486,19 +523,204 @@ input:focus, select:focus { border-color: var(--gold); }
   }
 
   async function loadMonitor(hunterType, elementId) {
-    const list = document.getElementById(elementId); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
-    const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved').eq('hunter', hunterType);
+    const list = document.getElementById(elementId); 
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    
+    const { data, error } = await supabase.from('executors')
+      .select('id, name, phone, service_id, is_online, is_busy, is_approved')
+      .eq('hunter', hunterType);
+      
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
+    
     let stats = {};
-    for (let key in names) { if (hunters[key] === hunterType) stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
-    data.forEach(ex => { if (!stats[ex.service_id]) return; if (!ex.is_approved) stats[ex.service_id].pending++; else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; } });
+    for (let key in names) { 
+        if (hunters[key] === hunterType) {
+            stats[key] = { total: 0, online: 0, busy: 0, pending: 0, drivers: [] }; 
+        }
+    }
+    
+    data.forEach(ex => { 
+        if (!stats[ex.service_id]) return; 
+        if (!ex.is_approved) {
+            stats[ex.service_id].pending++;
+        } else { 
+            stats[ex.service_id].total++; 
+            if (ex.is_busy) stats[ex.service_id].busy++; 
+            else if (ex.is_online) stats[ex.service_id].online++; 
+            stats[ex.service_id].drivers.push(ex);
+        } 
+    });
+    
     let html = '';
     for (let key in stats) {
-        let s = stats[key]; let icon = icons[key] || '🔧';
-        html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Зарег: ${s.total} · Ожид: ${s.pending}</div></div><div class="cmc-right" style="display:flex; gap:15px; text-align:right;"><div><div style="font-weight:700; color:var(--green);">${s.online}</div><div style="font-size:10px; color:#888;">линия</div></div><div><div style="font-weight:700; color:var(--gold);">${s.busy}</div><div style="font-size:10px; color:#888;">заказ</div></div></div></div>`;
+        let s = stats[key]; 
+        let icon = icons[key] || '🔧';
+        
+        let driversHtml = '';
+        if (s.drivers.length > 0) {
+            driversHtml = `<div id="drivers-box-${key}" style="display:none; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:10px;">`;
+            s.drivers.sort((a,b) => (b.is_online ? 1:0) - (a.is_online ? 1:0)).forEach(d => {
+                let statusDot = d.is_busy ? '🔴' : (d.is_online ? '🟢' : '⚪️');
+                driversHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--line);">
+                        <div>
+                            <div style="font-size:14px; font-weight:600;">${statusDot} ${escapeHTML(d.name || 'Без имени')}</div>
+                            <div style="font-size:12px; color:var(--muted);">${escapeHTML(d.phone)}</div>
+                        </div>
+                        <a href="tel:${d.phone}" class="btn sec" style="width:auto; padding:6px 12px; font-size:12px; text-decoration:none;">📞 Позвонить</a>
+                    </div>
+                `;
+            });
+            driversHtml += `</div>`;
+        }
+
+        html += `
+        <div class="cmc-item" style="flex-direction:column; align-items:stretch; padding-bottom:10px;">
+            <div style="display:flex; align-items:center; width:100%;">
+                <div class="cmc-icon">${icon}</div>
+                <div class="cmc-info">
+                    <div class="cmc-name">${names[key]}</div>
+                    <div class="cmc-sub">Зарег: ${s.total} · Ожид: ${s.pending}</div>
+                </div>
+                <div class="cmc-right" style="display:flex; gap:15px; text-align:right;">
+                    <div style="cursor:pointer;" onclick="toggleDrivers('${key}')">
+                        <div style="font-weight:700; color:var(--green); text-decoration:underline;">${s.online}</div>
+                        <div style="font-size:10px; color:#888;">линия</div>
+                    </div>
+                    <div style="cursor:pointer;" onclick="toggleDrivers('${key}')">
+                        <div style="font-weight:700; color:var(--gold); text-decoration:underline;">${s.busy}</div>
+                        <div style="font-size:10px; color:#888;">заказ</div>
+                    </div>
+                </div>
+            </div>
+            ${driversHtml}
+        </div>`;
     }
     list.innerHTML = html || '<div style="padding:20px; text-align:center; color:#888;">Нет данных</div>';
   }
+
+  window.toggleDrivers = function(key) {
+      const box = document.getElementById('drivers-box-' + key);
+      if (box) {
+          box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      }
+  }
+
+  // --- НАСТРОЙКИ ВОЛН ---
+  async function loadWaves() {
+    const list = document.getElementById('waves-list');
+    list.innerHTML = 'Загрузка...';
+    const { data } = await supabase.from('wave_settings').select('*');
+    const map = {}; (data || []).forEach(s => map[s.service_id] = s);
+
+    let html = '';
+    for (let key in names) {
+      const s = map[key] || { radius_1_km: 5, seconds_1: 15, radius_2_km: 10, seconds_2: 40, wave_size: 3, enabled: true };
+      html += `<div class="card" style="padding:12px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="font-weight:700;">${names[key]}</div>
+          <label style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted);">
+            <input type="checkbox" id="en-${key}" ${s.enabled?'checked':''} style="width:auto;">Вкл
+          </label>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; font-size:11px;">
+          <div><label>R1, км</label><input type="number" id="r1-${key}" value="${s.radius_1_km}"></div>
+          <div><label>C1, сек</label><input type="number" id="c1-${key}" value="${s.seconds_1}"></div>
+          <div><label>R2, км</label><input type="number" id="r2-${key}" value="${s.radius_2_km}"></div>
+          <div><label>C2, сек</label><input type="number" id="c2-${key}" value="${s.seconds_2}"></div>
+          <div><label>Размер</label><input type="number" id="sz-${key}" value="${s.wave_size}"></div>
+        </div>
+      </div>`;
+    }
+    html += `<button class="btn green" onclick="saveWaves()">💾 Сохранить всё</button>`;
+    list.innerHTML = html;
+  }
+
+  window.saveWaves = async function() {
+    const rows = [];
+    for (let key in names) {
+      if (!document.getElementById('r1-' + key)) continue;
+      rows.push({
+        service_id: key,
+        radius_1_km: parseFloat(document.getElementById('r1-' + key).value) || 5,
+        seconds_1:   parseInt(document.getElementById('c1-' + key).value)  || 15,
+        radius_2_km: parseFloat(document.getElementById('r2-' + key).value) || 10,
+        seconds_2:   parseInt(document.getElementById('c2-' + key).value)  || 40,
+        wave_size:   parseInt(document.getElementById('sz-' + key).value) || 3,
+        enabled:     document.getElementById('en-' + key).checked,
+        updated_at:  new Date().toISOString()
+      });
+    }
+    const { error } = await supabase.from('wave_settings').upsert(rows);
+    alert(error ? 'Ошибка: ' + error.message : '✅ Сохранено');
+  };
+
+  // --- WHATSAPP ЖУРНАЛ ---
+  let waHunter = 'HUNTER_01';
+  window.switchWa = function(h, btn) {
+    waHunter = h;
+    document.querySelectorAll('#page-whatsapp .tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadWa();
+  };
+
+  async function loadWa() {
+    const list = document.getElementById('wa-list');
+    list.innerHTML = 'Загрузка...';
+    const oneMinAgo = new Date(Date.now() - 60000).toISOString();
+    const { data } = await supabase.from('orders')
+      .select('*')
+      .eq('hunter', waHunter)
+      .is('executor_id', null)
+      .is('assigned_executor_id', null)
+      .lt('created_at', oneMinAgo)
+      .order('created_at', { ascending: true });
+
+    if (!data || data.length === 0) {
+      list.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Пусто. Все заказы разобраны.</div>';
+      return;
+    }
+
+    const colors = { evacuator:'#FF3B30', manipulator:'#F5A623', cargo:'#007AFF', intercity:'#a78bfa',
+      plumber:'#00D09C', electrician:'#00D09C', cleaning:'#00D09C', welder:'#00D09C',
+      fridge:'#00D09C', washer:'#00D09C', tv:'#00D09C', hour:'#00D09C' };
+    const icos = { evacuator:'🚛', manipulator:'🏗', cargo:'📦', intercity:'🚖',
+      plumber:'🔧', electrician:'⚡', cleaning:'🧹', welder:'🔨',
+      fridge:'❄️', washer:'🌀', tv:'📺', hour:'⏰' };
+
+    list.innerHTML = data.map(o => {
+      const shortId = o.id.split('-')[0].toUpperCase().slice(0,4);
+      const sName = names[o.service_id] || o.service_id;
+      const color = colors[o.service_id] || '#888';
+      const icon = icos[o.service_id] || '🔧';
+      const waited = Math.floor((Date.now() - new Date(o.created_at).getTime()) / 60000);
+      const address = (o.address || 'Адрес не указан').split('| ЧЕК:')[0];
+      const copyText = `${icon} #${shortId} · ${sName}${o.variant_id ? ' · ' + o.variant_id : ''} · ${address}`;
+
+      return `<div class="card" style="padding:12px; margin-bottom:10px; border-left:4px solid ${color};">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <div style="background:${color}; color:#000; padding:3px 10px; border-radius:6px; font-weight:800; font-size:12px;">${icon} ${sName.toUpperCase()}</div>
+          <div style="font-size:11px; color:var(--red); font-weight:700;">ЖДЁТ ${waited} МИН</div>
+        </div>
+        <div style="font-size:18px; font-weight:800; letter-spacing:1px; margin:6px 0;">#${shortId}</div>
+        <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">📍 ${escapeHTML(address)}</div>
+        <button class="btn" onclick="copyWaCode(${JSON.stringify(copyText).replace(/"/g,'&quot;')}, '${o.id}')">📋 Скопировать код</button>
+      </div>`;
+    }).join('');
+  }
+
+  window.copyWaCode = async function(text, orderId) {
+    try {
+      await navigator.clipboard.writeText(text);
+      await supabase.from('orders').update({ whatsapp_sent_at: new Date().toISOString() }).eq('id', orderId);
+      if (navigator.vibrate) navigator.vibrate(50);
+      window.addNotification(`📋 Скопировано: ${text.split('·')[0].trim()}`);
+      const b = document.getElementById('take-banner');
+      b.textContent = '✅ Скопировано — вставьте в WhatsApp';
+      b.style.display = 'block';
+      setTimeout(() => b.style.display = 'none', 2000);
+    } catch(e) { alert('Не удалось скопировать: ' + e.message); }
+  };
 
   async function loadClients() {
     const list = document.getElementById('clients-stats');
@@ -742,7 +964,6 @@ input:focus, select:focus { border-color: var(--gold); }
           else subInfoHtml = `<div style="color:var(--red); font-weight:bold; margin-top:4px;">Такси: Подписка истекла</div>`;
       }
 
-      // Фото машины и техпаспорт
       let photosHtml = '';
       if (u.car_photo || u.tech_passport || u.plate_number || u.vehicle_number) {
           photosHtml = `<div style="margin-top:6px; font-size:12px;">`;
@@ -814,6 +1035,27 @@ input:focus, select:focus { border-color: var(--gold); }
     passportf.classList.toggle('hidden', !needCar);
   }
 
+  window.pickFromContacts = async function() {
+    if (!('contacts' in navigator && 'ContactsManager' in window)) {
+      alert('Выбор из контактов работает только в Chrome на Android (по HTTPS). Введите вручную.');
+      return;
+    }
+    try {
+      const contacts = await navigator.contacts.select(['name','tel'], { multiple: false });
+      if (!contacts || contacts.length === 0) return;
+      const c = contacts[0];
+      const nm = (c.name && c.name[0]) || '';
+      const tel = (c.tel && c.tel[0]) || '';
+      let d = tel.replace(/\D/g, '');
+      if (d.startsWith('996')) d = d.slice(3);
+      if (d.length === 10 && d.startsWith('0')) d = d.slice(1);
+      if (nm) document.getElementById('add-name').value = nm;
+      if (d.length === 9) document.getElementById('add-phone').value = d;
+    } catch(e) {
+      if (e.name !== 'AbortError') alert('Ошибка: ' + e.message);
+    }
+  };
+
   window.submitAdd = async function() {
     let s = document.getElementById('add-service').value; 
     let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); 
@@ -849,7 +1091,6 @@ input:focus, select:focus { border-color: var(--gold); }
         is_active: true 
     };
 
-    // Для Такси: автоматическая подписка на 30 дней
     if (s === 'intercity') {
         const subDate = new Date();
         subDate.setDate(subDate.getDate() + 30);
@@ -874,4 +1115,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-  </html>
+            </html>
