@@ -77,7 +77,6 @@ p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 .fin-title { font-weight: 700; font-size: 16px; }
 .fin-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
 .fin-val { font-weight: 700; color: var(--green); }
-.fin-btn { background: rgba(245,166,35,0.1); color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 10px; border-radius: 10px; font-weight: 700; margin-top: 10px; cursor: pointer; }
 
 .terminal-container { padding: 0 16px; }
 .terminal-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 11px; color: #00ff00; margin-bottom: 15px; height: 60vh; overflow-y: auto; }
@@ -97,6 +96,7 @@ input:focus, select:focus { border-color: var(--gold); }
 .btn.sec { background: var(--line); color: white; }
 .btn.green { background: var(--green); color: #000; }
 .btn.blue { background: var(--blue); color: #fff; }
+.btn.red { background: var(--red); color: #fff; }
 .row-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hidden { display: none !important; }
 
@@ -246,6 +246,33 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="wa-list"></div>
   </section>
 
+  <!-- НОВАЯ СТРАНИЦА: ОПЛАТА И ЧЕКИ -->
+  <section id="page-payments" class="page">
+    <h1>💳 Оплата и Чеки</h1>
+    <p class="sub">Загрузите QR-коды для водителей и проверьте их чеки.</p>
+    
+    <div class="card" style="margin-top: 10px;">
+      <h2 style="font-size: 16px; margin-bottom: 10px;">1. QR-коды для водителей</h2>
+      
+      <div class="field">
+        <label>QR-код: Спецтехника (Hunter 1)</label>
+        <input type="file" id="qr-h1-input" accept="image/*" onchange="uploadQR('qr_hunter1', this)">
+        <img id="qr-h1-preview" style="max-width: 100px; margin-top: 10px; border-radius: 8px; display: none;">
+      </div>
+      
+      <div class="field">
+        <label>QR-код: Бытовые и Такси (Hunter 2)</label>
+        <input type="file" id="qr-h2-input" accept="image/*" onchange="uploadQR('qr_hunter2', this)">
+        <img id="qr-h2-preview" style="max-width: 100px; margin-top: 10px; border-radius: 8px; display: none;">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h2 style="font-size: 16px; margin-bottom: 10px;">2. Чеки на проверку</h2>
+      <div id="receipts-list">Загрузка...</div>
+    </div>
+  </section>
+
   <section id="page-add" class="page">
     <h1>Добавить вручную</h1>
     <div class="card">
@@ -328,6 +355,7 @@ input:focus, select:focus { border-color: var(--gold); }
     
     <button class="menu-btn" onclick="page('waves')" style="color: var(--gold);">⚙️ Настройки волн</button>
     <button class="menu-btn" onclick="page('whatsapp')" style="color: var(--green);">📱 WhatsApp-журнал</button>
+    <button class="menu-btn" onclick="page('payments')" style="color: var(--blue);">💳 Оплата и Чеки</button>
 
     <button class="menu-btn" onclick="page('term-1')">💻 Журнал Спецтехники</button>
     <button class="menu-btn" onclick="page('term-2')">💻 Журнал Бытовые</button>
@@ -463,6 +491,7 @@ input:focus, select:focus { border-color: var(--gold); }
     })
     .on('postgres_changes', { event: 'UPDATE', schema:'public', table: 'orders' }, payload => {
         if (document.getElementById('page-whatsapp').classList.contains('active')) loadWa();
+        if (document.getElementById('page-payments').classList.contains('active')) loadReceipts();
     }).subscribe();
 
   window.page = function(id) {
@@ -487,6 +516,7 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'boards') loadBoards(currentBoard);
     if(id === 'waves') loadWaves();
     if(id === 'whatsapp') loadWa();
+    if(id === 'payments') loadPaymentSettings(); // Загрузка страницы оплат
   }
   
   window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
@@ -722,12 +752,118 @@ input:focus, select:focus { border-color: var(--gold); }
     } catch(e) { alert('Не удалось скопировать: ' + e.message); }
   };
 
+  // --- СТРАНИЦА ОПЛАТЫ И ЧЕКОВ ---
+  async function loadPaymentSettings() {
+    // 1. Загружаем QR-коды
+    const { data } = await supabase.from('app_settings').select('*');
+    if (data) {
+        const h1 = data.find(x => x.setting_name === 'qr_hunter1');
+        const h2 = data.find(x => x.setting_name === 'qr_hunter2');
+        
+        if (h1 && h1.setting_value) {
+            document.getElementById('qr-h1-preview').src = h1.setting_value;
+            document.getElementById('qr-h1-preview').style.display = 'block';
+        }
+        if (h2 && h2.setting_value) {
+            document.getElementById('qr-h2-preview').src = h2.setting_value;
+            document.getElementById('qr-h2-preview').style.display = 'block';
+        }
+    }
+
+    // 2. Загружаем чеки на проверку
+    loadReceipts();
+  }
+
+  window.uploadQR = async function(key, input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      // Конвертируем картинку в Base64 (текст), чтобы не настраивать File Storage
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const base64String = e.target.result;
+          const { error } = await supabase.from('app_settings').update({ setting_value: base64String }).eq('setting_name', key);
+          
+          if (error) {
+              alert('Ошибка загрузки: ' + error.message);
+          } else {
+              alert('✅ QR-код успешно обновлен!');
+              loadPaymentSettings();
+          }
+      };
+      reader.readAsDataURL(file);
+  };
+
+  async function loadReceipts() {
+      const list = document.getElementById('receipts-list');
+      // Ищем заказы, где статус DONE и есть ссылка на чек (в адресе есть | ЧЕК:)
+      const { data } = await supabase.from('orders')
+          .select('*')
+          .eq('status', 'DONE')
+          .like('address', '%| ЧЕК: %')
+          .order('created_at', { ascending: false });
+
+      if (!data || data.length === 0) {
+          list.innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Нет чеков на проверку. Все отлично!</div>';
+          return;
+      }
+
+      list.innerHTML = data.map(o => {
+          const shortId = o.id.split('-')[0].toUpperCase();
+          const addressParts = o.address.split('| ЧЕК: ');
+          const cleanAddress = addressParts[0];
+          const receiptUrl = addressParts[1];
+          const sName = names[o.service_id] || o.service_id;
+
+          return `
+            <div class="card" style="padding:12px; margin-bottom:10px; border-left:3px solid var(--blue);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <div style="font-weight:bold; color:var(--blue);">Заказ #${shortId}</div>
+                    <div style="font-size:11px; color:#888;">${new Date(o.created_at).toLocaleDateString('ru-RU')}</div>
+                </div>
+                <div style="font-size:12px; margin-bottom:8px;">Водитель: ${sName} · Адрес: ${escapeHTML(cleanAddress)}</div>
+                
+                <a href="${receiptUrl}" target="_blank" style="display:block; margin-bottom:10px;">
+                    <img src="${receiptUrl}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; border:1px solid #444;">
+                    <div style="text-align:center; font-size:12px; color:var(--gold); margin-top:4px;">👆 Нажмите, чтобы открыть в полном размере</div>
+                </a>
+
+                <div class="row-btn">
+                    <button class="btn green" onclick="approveReceipt('${o.id}')">✅ Оплата получена</button>
+                    <button class="btn sec red" onclick="rejectReceipt('${o.id}')">❌ Фейк / Отклонить</button>
+                </div>
+            </div>
+          `;
+      }).join('');
+  }
+
+  window.approveReceipt = async function(orderId) {
+      if (!confirm("Подтвердить, что деньги поступили?")) return;
+      // Просто убираем тег чека из адреса, чтобы заказ пропал из этого списка
+      const { data } = await supabase.from('orders').select('address').eq('id', orderId).single();
+      if (data) {
+          const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Оплачено)';
+          await supabase.from('orders').update({ address: cleanAddress }).eq('id', orderId);
+          loadReceipts();
+      }
+  };
+
+  window.rejectReceipt = async function(orderId) {
+      if (!confirm("Отклонить чек? Водитель увидит, что оплата не прошла (он сможет загрузить новый).")) return;
+      // Убираем тег чека, но пишем "Отклонено"
+      const { data } = await supabase.from('orders').select('address').eq('id', orderId).single();
+      if (data) {
+          const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Чек отклонен)';
+          await supabase.from('orders').update({ address: cleanAddress }).eq('id', orderId);
+          loadReceipts();
+      }
+  };
+
+  // --- ОСТАЛЬНЫЕ ФУНКЦИИ (Клиенты, Заказы, Одобрения) ---
   async function loadClients() {
     const list = document.getElementById('clients-stats');
     list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
-
     const { data, error } = await supabase.from('orders').select('*').eq('hunter', 'CLIENT').order('created_at', { ascending: false });
-
     if (error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
     if (!data || data.length === 0) { list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted);">Пока нет зарегистрированных клиентов.</div>'; return; }
 
@@ -751,7 +887,6 @@ input:focus, select:focus { border-color: var(--gold); }
       <h2 style="margin: 16px 0 8px; font-size: 16px;">Список абонентов</h2>
       <div style="background: var(--panel); border-radius: 16px; padding: 0 16px;">
     `;
-
     html += data.map(u => `
       <div class="cmc-item">
         <div class="cmc-icon">👤</div>
@@ -764,7 +899,6 @@ input:focus, select:focus { border-color: var(--gold); }
         </div>
       </div>
     `).join('');
-
     html += `</div>`;
     list.innerHTML = html;
   }
@@ -780,16 +914,13 @@ input:focus, select:focus { border-color: var(--gold); }
       const sName = names[o.service_id] || o.service_id || o.hunter;
       const execId = o.executor_id || o.assigned_executor_id;
       const isTaken = !!execId;
-      
       let displayAddress = o.address || 'Адрес не указан';
       let receiptUrl = null;
-      
       if (displayAddress.includes('| ЧЕК: ')) {
           const parts = displayAddress.split('| ЧЕК: ');
           displayAddress = parts[0];
           receiptUrl = parts[1];
       }
-
       const parts = displayAddress.split(' | ');
       if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
       if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
@@ -803,7 +934,6 @@ input:focus, select:focus { border-color: var(--gold); }
         <div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div>
         <div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName} ${o.variant_id ? '('+o.variant_id+')' : ''}</div>
         <div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(displayAddress)}</div>
-        
         <div class="row-btn">
             <button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>
             ${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn blue" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : 
@@ -1115,4 +1245,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-            </html>
+        </html>
