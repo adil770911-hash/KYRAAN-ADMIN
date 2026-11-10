@@ -15,7 +15,6 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 75px; }
 
-/* --- БАННЕР ВЗЯТИЯ ЗАКАЗА (ЗЕЛЕНЫЙ) --- */
 #take-banner {
     display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
     z-index: 998; background: var(--green); color: #000; padding: 12px 20px;
@@ -26,7 +25,6 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter
 }
 @keyframes slideDownGreen { from { top: -100px; opacity: 0; } to { top: 60px; opacity: 1; } }
 
-/* --- ТРЕВОГА (КРАСНАЯ) --- */
 #alarm-banner {
     display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999;
     background: var(--red); color: white; text-align: center; padding: 15px;
@@ -35,7 +33,6 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter
 }
 @keyframes flashRed { 0%, 100% { background: var(--red); } 50% { background: #ff6b60; } }
 
-/* --- HEADER --- */
 header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 100; border-bottom: 1px solid var(--line); }
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; height: 60px; }
 .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
@@ -44,13 +41,11 @@ header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-in
 .bell-icon { position: relative; cursor: pointer; }
 .bell-badge { display: none; position: absolute; top: -5px; right: -8px; background: var(--red); color: white; font-size: 9px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; text-align: center; line-height: 16px; }
 
-/* Панель уведомлений */
 #notif-panel { display: none; position: fixed; top: 60px; right: 16px; width: 300px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); max-height: 400px; overflow-y: auto; }
 .notif-header { padding: 12px; border-bottom: 1px solid var(--line); font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; }
 #notif-list { padding: 10px; font-size: 13px; color: var(--muted); text-align: center; }
 .notif-item { padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--text); text-align: left; }
 
-/* --- MAIN CONTENT --- */
 main { padding-top: 60px; max-width: 600px; margin: 0 auto; }
 .page { display: none; animation: fadeIn 0.3s ease; }
 .page.active { display: block; }
@@ -59,13 +54,11 @@ main { padding-top: 60px; max-width: 600px; margin: 0 auto; }
 h1 { font-size: 22px; margin: 16px 16px 12px; font-weight: 700; }
 p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 
-/* Tabs */
 .tabs { display: flex; gap: 20px; padding: 0 16px; margin-bottom: 16px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tabs button { background: none; border: none; color: var(--muted); padding: 10px 0; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: 0.2s; }
 .tabs button.active { color: var(--text); border-bottom-color: var(--gold); }
 
-/* CMC Style List */
 .list-container { padding: 0 16px; }
 .cmc-item { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .cmc-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--panel); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 12px; flex-shrink: 0; }
@@ -79,7 +72,6 @@ p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 .badge-gold { background: rgba(245, 166, 35, 0.15); color: var(--gold); }
 .badge-red { background: rgba(255, 59, 48, 0.15); color: var(--red); }
 
-/* Portfolio & Cards */
 .fin-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 16px 16px; }
 .fin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .fin-title { font-weight: 700; font-size: 16px; }
@@ -87,7 +79,6 @@ p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 .fin-val { font-weight: 700; color: var(--green); }
 .fin-btn { background: rgba(245,166,35,0.1); color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 10px; border-radius: 10px; font-weight: 700; margin-top: 10px; cursor: pointer; }
 
-/* Terminal */
 .terminal-container { padding: 0 16px; }
 .terminal-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 11px; color: #00ff00; margin-bottom: 15px; height: 60vh; overflow-y: auto; }
 .terminal-box.term-2 { color: var(--gold); }
@@ -97,7 +88,6 @@ p.sub { font-size: 12px; color: var(--muted); margin: 0 16px 16px; }
 .json-num { color: var(--green); }
 .json-link { color: var(--green); text-decoration: none; font-weight: bold; border-bottom: 1px dotted var(--green); }
 
-/* Forms & Buttons */
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 16px 16px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
@@ -106,10 +96,10 @@ input:focus, select:focus { border-color: var(--gold); }
 .btn { background: var(--gold); color: #000; border: none; border-radius: 10px; padding: 12px; font-weight: 700; width: 100%; cursor: pointer; font-size: 14px; }
 .btn.sec { background: var(--line); color: white; }
 .btn.green { background: var(--green); color: #000; }
+.btn.blue { background: var(--blue); color: #fff; }
 .row-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hidden { display: none !important; }
 
-/* Drawer */
 .drawer-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(2px); }
 .drawer-bg.open { display: block; }
 .drawer { position: absolute; top: 0; left: 0; bottom: 0; width: 280px; background: var(--bg); border-right: 1px solid var(--line); padding: 20px; transform: translateX(-100%); transition: 0.3s; display: flex; flex-direction: column; overflow-y: auto; }
@@ -118,13 +108,11 @@ input:focus, select:focus { border-color: var(--gold); }
 .menu-btn { background: none; border: none; color: var(--text); text-align: left; padding: 12px 0; font-size: 15px; font-weight: 500; border-bottom: 1px solid var(--line); cursor: pointer; }
 .menu-btn:active { color: var(--gold); }
 
-/* Bottom Nav */
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0E0E0E; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 10px); }
 .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted); font-size: 10px; font-weight: 600; cursor: pointer; background: none; border: none; padding: 0; }
 .nav-item.active { color: var(--gold); }
 .nav-icon { font-size: 20px; }
 
-/* Dossier */
 .dossier { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
 .dossier-head { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 12px; }
 .dossier-name { font-size: 20px; font-weight: 800; margin: 0; }
@@ -194,7 +182,7 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="fin-card">
       <div class="fin-header"><div class="fin-title" style="color: var(--green);">Межгород Такси</div></div>
       <div class="fin-row"><span>Подписка</span> <span class="fin-val">100 сом / 30 дней</span></div>
-      <div class="fin-row"><span>Остальные доски</span> <span style="color: var(--green); font-weight: 700;">Бесплатно</span></div>
+      <div class="fin-row"><span>Первые 30 дней</span> <span style="color: var(--green); font-weight: 700;">Бесплатно</span></div>
     </div>
   </section>
 
@@ -246,12 +234,12 @@ input:focus, select:focus { border-color: var(--gold); }
         <label>Категория</label>
         <select id="add-service" onchange="updateAddVariant()">
           <option value="">Выберите...</option>
-          <optgroup label="HUNTER 01 · Спецтехника">
+          <optgroup label="HUNTER 01 · Спецтехника (через WhatsApp)">
             <option value="evacuator">Эвакуатор</option>
             <option value="manipulator">Манипулятор</option>
             <option value="cargo">Грузоперевозки</option>
           </optgroup>
-          <optgroup label="HUNTER 02 · Бытовые">
+          <optgroup label="HUNTER 02 · Бытовые (самостоятельно)">
             <option value="plumber">Сантехник</option>
             <option value="electrician">Электрик</option>
             <option value="cleaning">Клининг</option>
@@ -261,19 +249,36 @@ input:focus, select:focus { border-color: var(--gold); }
             <option value="tv">Телемастер</option>
             <option value="hour">Мастер на час</option>
           </optgroup>
-          <optgroup label="Доски">
-            <option value="intercity">Межгород такси</option>
-            <option value="workers">Разнорабочие</option>
+          <optgroup label="Доски (через WhatsApp)">
+            <option value="intercity">Межгород такси (подписка 30 дней)</option>
           </optgroup>
         </select>
       </div>
+      
       <div class="field hidden" id="add-variant-field"><label>Подкатегория</label><select id="add-variant"></select></div>
-      <div class="field"><label>Имя</label><input type="text" id="add-name"></div>
+      
+      <div class="field"><label>Имя</label><input type="text" id="add-name" placeholder="Азамат"></div>
+      
       <div class="field">
         <label>Телефон (+996)</label>
         <input type="tel" id="add-phone" inputmode="numeric" placeholder="700 700 500">
       </div>
-      <div class="field hidden" id="add-vehicle-field"><label>Номер авто</label><input type="text" id="add-vehicle" placeholder="01 KG 123 ABC"></div>
+      
+      <div class="field hidden" id="add-vehicle-field">
+        <label>Номер авто</label>
+        <input type="text" id="add-vehicle" placeholder="01 KG 123 ABC">
+      </div>
+
+      <div class="field hidden" id="add-photo-field">
+        <label>Ссылка на фото машины (необязательно)</label>
+        <input type="text" id="add-car-photo" placeholder="https://...">
+      </div>
+      
+      <div class="field hidden" id="add-passport-field">
+        <label>Ссылка на техпаспорт (необязательно)</label>
+        <input type="text" id="add-tech-passport" placeholder="https://...">
+      </div>
+
       <div class="row-btn" style="margin-top: 20px;">
         <button class="btn" onclick="submitAdd()">Добавить</button>
         <button class="btn sec" onclick="page('market')">Отмена</button>
@@ -339,7 +344,7 @@ input:focus, select:focus { border-color: var(--gold); }
   
   const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷' };
 
-  // --- УВЕДОМЛЕНИЯ И ЗВУК ---
+  // --- УВЕДОМЛЕНИЯ ---
   let unreadCount = 0;
   let notifications = [];
 
@@ -406,7 +411,7 @@ input:focus, select:focus { border-color: var(--gold); }
       try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); } catch(e) {}
   }, { once: true });
 
-  // --- REALTIME СЛУШАТЕЛИ ---
+  // --- REALTIME ---
   supabase.channel('admin-alerts')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
         const newOrder = payload.new;
@@ -455,7 +460,7 @@ input:focus, select:focus { border-color: var(--gold); }
       navigator.clipboard.writeText(text).then(() => alert("✅ Скопировано!\n\n" + text));
   }
 
-  // --- ЗАГРУЗКА ДАННЫХ ---
+  // --- ЗАГРУЗКИ ---
   let marketData = []; let currentFilter = 'all';
   async function loadMarket() {
     const list = document.getElementById('market-list'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
@@ -478,6 +483,21 @@ input:focus, select:focus { border-color: var(--gold); }
         html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Всего: ${s.total} · Ожидают: ${s.pending}</div></div><div class="cmc-right"><div class="cmc-val">${s.online} <span style="font-size:10px; color:#888;">на линии</span></div><div class="cmc-badge ${badgeClass}">${s.busy} занято</div></div></div>`;
     }
     list.innerHTML = html;
+  }
+
+  async function loadMonitor(hunterType, elementId) {
+    const list = document.getElementById(elementId); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved').eq('hunter', hunterType);
+    if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
+    let stats = {};
+    for (let key in names) { if (hunters[key] === hunterType) stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
+    data.forEach(ex => { if (!stats[ex.service_id]) return; if (!ex.is_approved) stats[ex.service_id].pending++; else { stats[ex.service_id].total++; if (ex.is_busy) stats[ex.service_id].busy++; else if (ex.is_online) stats[ex.service_id].online++; } });
+    let html = '';
+    for (let key in stats) {
+        let s = stats[key]; let icon = icons[key] || '🔧';
+        html += `<div class="cmc-item"><div class="cmc-icon">${icon}</div><div class="cmc-info"><div class="cmc-name">${names[key]}</div><div class="cmc-sub">Зарег: ${s.total} · Ожид: ${s.pending}</div></div><div class="cmc-right" style="display:flex; gap:15px; text-align:right;"><div><div style="font-weight:700; color:var(--green);">${s.online}</div><div style="font-size:10px; color:#888;">линия</div></div><div><div style="font-weight:700; color:var(--gold);">${s.busy}</div><div style="font-size:10px; color:#888;">заказ</div></div></div></div>`;
+    }
+    list.innerHTML = html || '<div style="padding:20px; text-align:center; color:#888;">Нет данных</div>';
   }
 
   async function loadClients() {
@@ -542,14 +562,12 @@ input:focus, select:focus { border-color: var(--gold); }
       let displayAddress = o.address || 'Адрес не указан';
       let receiptUrl = null;
       
-      // Ищем чек в адресе
       if (displayAddress.includes('| ЧЕК: ')) {
           const parts = displayAddress.split('| ЧЕК: ');
           displayAddress = parts[0];
           receiptUrl = parts[1];
       }
 
-      // Парсим адрес для рабочих и маркета
       const parts = displayAddress.split(' | ');
       if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
       if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
@@ -566,7 +584,7 @@ input:focus, select:focus { border-color: var(--gold); }
         
         <div class="row-btn">
             <button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>
-            ${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn" style="background: var(--blue); color: #fff; padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : 
+            ${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn blue" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : 
               (isTaken && o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}
         </div>
       </div>`;
@@ -724,11 +742,26 @@ input:focus, select:focus { border-color: var(--gold); }
           else subInfoHtml = `<div style="color:var(--red); font-weight:bold; margin-top:4px;">Такси: Подписка истекла</div>`;
       }
 
+      // Фото машины и техпаспорт
+      let photosHtml = '';
+      if (u.car_photo || u.tech_passport || u.plate_number || u.vehicle_number) {
+          photosHtml = `<div style="margin-top:6px; font-size:12px;">`;
+          if (u.plate_number || u.vehicle_number) photosHtml += `<div style="color:var(--text);"><b>Авто:</b> ${escapeHTML(u.plate_number || u.vehicle_number)}</div>`;
+          if (u.car_photo) photosHtml += `<div><a href="${u.car_photo}" target="_blank" style="color:var(--blue);">📸 Фото машины</a></div>`;
+          if (u.tech_passport) photosHtml += `<div><a href="${u.tech_passport}" target="_blank" style="color:var(--blue);">📄 Техпаспорт</a></div>`;
+          photosHtml += `</div>`;
+      }
+
       return `
       <div class="dossier">
         <div class="dossier-head"><div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="dossier-name">${escapeHTML(u.name || 'Без имени')}</h2><div class="dossier-phone">${escapeHTML(u.phone)}</div></div><div style="background:var(--bg); padding:4px 8px; border-radius:6px; font-size:10px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div></div></div>
         <div class="dossier-stats"><div class="d-stat"><div class="d-val" style="color:var(--gold);">${u.rating ?? 15}</div><div class="d-lbl">Рейтинг</div></div><div class="d-stat"><div class="d-val">${u.completed_orders || 0}</div><div class="d-lbl">Заказов</div></div><div class="d-stat"><div class="d-val" style="color:${u.is_blacklisted ? 'var(--red)' : 'var(--green)'};">${u.is_blacklisted ? '🚫' : '✅'}</div><div class="d-lbl">Статус</div></div></div>
-        <div style="font-size:13px; color:var(--muted); margin-bottom:16px;"><div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>${u.vehicle_number || u.plate_number ? `<div><b>Авто:</b> ${escapeHTML(u.vehicle_number || u.plate_number)}</div>` : ''}<div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>${subInfoHtml}</div>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:16px;">
+          <div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>
+          ${photosHtml}
+          <div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>
+          ${subInfoHtml}
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
             <button class="btn" onclick="adminAction('BLOCK', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, ${!u.is_active})">${!u.is_active ? '✅ Разблок' : '⛔ Блок'}</button>
             <button class="btn sec" style="color:var(--red);" onclick="adminAction('DELETE', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, false)">🗑 Удалить</button>
@@ -763,10 +796,22 @@ input:focus, select:focus { border-color: var(--gold); }
   }
 
   window.updateAddVariant = function() {
-    let s = document.getElementById('add-service').value; let vf = document.getElementById('add-variant-field'); let v = document.getElementById('add-variant'); let carf = document.getElementById('add-vehicle-field');
-    v.innerHTML = ''; let arr = vmap[s] || []; vf.classList.toggle('hidden', arr.length === 0);
+    let s = document.getElementById('add-service').value; 
+    let vf = document.getElementById('add-variant-field'); 
+    let v = document.getElementById('add-variant'); 
+    let carf = document.getElementById('add-vehicle-field');
+    let photof = document.getElementById('add-photo-field');
+    let passportf = document.getElementById('add-passport-field');
+    
+    v.innerHTML = ''; 
+    let arr = vmap[s] || []; 
+    vf.classList.toggle('hidden', arr.length === 0);
     arr.forEach(x => { let o = document.createElement('option'); o.textContent = x; v.appendChild(o); });
-    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); carf.classList.toggle('hidden', !needCar);
+    
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); 
+    carf.classList.toggle('hidden', !needCar);
+    photof.classList.toggle('hidden', !needCar);
+    passportf.classList.toggle('hidden', !needCar);
   }
 
   window.submitAdd = async function() {
@@ -774,9 +819,12 @@ input:focus, select:focus { border-color: var(--gold); }
     let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); 
     let name = document.getElementById('add-name').value.trim(); 
     let car = document.getElementById('add-vehicle').value.trim(); 
+    let carPhoto = document.getElementById('add-car-photo').value.trim();
+    let techPassport = document.getElementById('add-tech-passport').value.trim();
     let res = document.getElementById('add-result');
     
     if(!s || phone.length !== 9) { res.style.color = 'var(--red)'; res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
+    
     let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s);
     if(needCar && !car) { res.style.color = 'var(--red)'; res.textContent = 'Введите номер автомобиля!'; return; }
     
@@ -784,13 +832,46 @@ input:focus, select:focus { border-color: var(--gold); }
     const { data: existing } = await supabase.from('executors').select('id').eq('phone', fullPhone).maybeSingle();
     if (existing) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: этот номер уже зарегистрирован!'; return; }
 
-    let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
-    const { error } = await supabase.from('executors').insert([{ name: name, phone: fullPhone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true }]);
-    if(error) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: ' + error.message; } 
-    else { res.style.color = 'var(--green)'; res.innerHTML = 'Успешно добавлен!'; setTimeout(() => page('market'), 1000); }
+    let hunter = hunters[s] || 'HUNTER_02'; 
+    let variant = document.getElementById('add-variant').value;
+    
+    let insertData = { 
+        name: name, 
+        phone: fullPhone, 
+        service_id: s, 
+        hunter: hunter, 
+        variant_id: variant, 
+        plate_number: car, 
+        is_approved: true, 
+        rating: 15, 
+        is_online: false, 
+        is_busy: false, 
+        is_active: true 
+    };
+
+    // Для Такси: автоматическая подписка на 30 дней
+    if (s === 'intercity') {
+        const subDate = new Date();
+        subDate.setDate(subDate.getDate() + 30);
+        insertData.sub_until = subDate.toISOString();
+    }
+
+    if (carPhoto) insertData.car_photo = carPhoto;
+    if (techPassport) insertData.tech_passport = techPassport;
+
+    const { error } = await supabase.from('executors').insert([insertData]);
+    
+    if(error) { 
+        res.style.color = 'var(--red)'; 
+        res.textContent = 'Ошибка: ' + error.message; 
+    } else { 
+        res.style.color = 'var(--green)'; 
+        res.innerHTML = '✅ Успешно добавлен!'; 
+        setTimeout(() => page('market'), 1500); 
+    }
   }
 
   loadMarket();
 </script>
 </body>
-        </html>
+  </html>
