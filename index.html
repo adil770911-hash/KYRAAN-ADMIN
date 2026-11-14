@@ -338,6 +338,26 @@ input:focus, select:focus { border-color: var(--gold); }
       <div id="add-result" class="sub" style="margin-top: 10px; text-align: center;"></div>
     </div>
   </section>
+
+  <!-- НОВАЯ СТРАНИЦА: ТЕРМИНАЛ ЗАКАЗЧИКОВ -->
+  <section id="page-client-orders" class="page">
+    <h1>📥 Терминал Заказчиков</h1>
+    <p class="sub">Входящие заявки от клиентов. Распределите их на нужный пул исполнителей.</p>
+    <div class="list-container" id="client-orders-list">
+        <div style="text-align:center; padding:20px; color:#888;">Сканируем входящие...</div>
+    </div>
+  </section>
+
+  <!-- НОВАЯ СТРАНИЦА: ВНЕШНИЙ ТЕРМИНАЛ (СПРОС) -->
+  <section id="page-ext-term" class="page">
+    <h1>🌐 Внешний Терминал</h1>
+    <p class="sub">Сырой спрос с Lalafo, Google, Instagram, Telegram. Тапни на текст — откроется объявление.</p>
+    <div class="terminal-container">
+      <div class="terminal-box" style="color: #a78bfa; height: 72vh;">
+        <div id="ext-term-body">// Сканируем эфир...</div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <nav class="bottom-nav">
@@ -353,6 +373,10 @@ input:focus, select:focus { border-color: var(--gold); }
     <h2>KYRAAN MENU</h2>
     <button class="menu-btn" onclick="page('clients')">👥 Клиенты (Абоненты)</button>
     
+    <!-- НОВЫЕ КНОПКИ В МЕНЮ -->
+    <button class="menu-btn" onclick="page('client-orders')" style="color: var(--gold);">📥 Терминал Заказчиков</button>
+    <button class="menu-btn" onclick="page('ext-term')" style="color: #a78bfa;">🌐 Внешний Терминал (Спрос)</button>
+
     <button class="menu-btn" onclick="page('waves')" style="color: var(--gold);">⚙️ Настройки волн</button>
     <button class="menu-btn" onclick="page('whatsapp')" style="color: var(--green);">📱 WhatsApp-журнал</button>
     <button class="menu-btn" onclick="page('payments')" style="color: var(--blue);">💳 Оплата и Чеки</button>
@@ -472,6 +496,22 @@ input:focus, select:focus { border-color: var(--gold); }
   supabase.channel('admin-alerts')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
         const newOrder = payload.new;
+
+        // 1. Внешний спрос (Лиды)
+        if (newOrder.hunter === 'LEAD') {
+            window.addNotification(`🌐 Новый спрос: ${(newOrder.client_phone || '').slice(0, 30)}...`);
+            if(document.getElementById('page-ext-term').classList.contains('active')) loadExtTerminal();
+            return;
+        }
+
+        // 2. Новые заказы от клиентов
+        if (newOrder.hunter === 'CLIENT' && newOrder.status !== 'REGISTERED') {
+            window.addNotification(`📥 Новый заказ от клиента! Проверьте Терминал.`);
+            if(document.getElementById('page-client-orders').classList.contains('active')) loadClientOrders();
+            return; 
+        }
+
+        // 3. Твоя старая логика
         if (newOrder.hunter === 'CLIENT' && newOrder.status === 'REGISTERED') {
             window.addNotification(`👤 Новый клиент: ${newOrder.client_phone}`);
             if(document.getElementById('page-clients').classList.contains('active')) loadClients();
@@ -517,6 +557,10 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'waves') loadWaves();
     if(id === 'whatsapp') loadWa();
     if(id === 'payments') loadPaymentSettings();
+    
+    // НОВЫЕ СТРАНИЦЫ
+    if(id === 'client-orders') loadClientOrders();
+    if(id === 'ext-term') loadExtTerminal();
   }
   
   window.menu = function(open) { document.getElementById('drawer').classList.toggle('open', open); }
@@ -915,7 +959,6 @@ input:focus, select:focus { border-color: var(--gold); }
           receiptUrl = parts[1];
       }
       
-      // Форматируем адрес для разных типов
       const parts = displayAddress.split(' | ');
       if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
       if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
@@ -1238,7 +1281,161 @@ input:focus, select:focus { border-color: var(--gold); }
     }
   }
 
+  // ==========================================
+  // НОВАЯ ЛОГИКА: ТЕРМИНАЛ ЗАКАЗЧИКОВ
+  // ==========================================
+  async function loadClientOrders() {
+    const list = document.getElementById('client-orders-list');
+    
+    const { data, error } = await supabase.from('orders')
+        .select('*')
+        .eq('hunter', 'CLIENT')
+        .neq('status', 'REGISTERED')
+        .order('created_at', { ascending: true });
+
+    if (error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
+    if (!data || data.length === 0) { 
+        list.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Нет новых заказов от клиентов.</div>'; 
+        return; 
+    }
+
+    list.innerHTML = data.map(o => {
+        const shortId = o.id.split('-')[0].toUpperCase().slice(0, 4);
+        const sName = names[o.service_id] || o.service_id || 'Не указана';
+        const phone = o.client_phone || 'Нет телефона';
+        
+        return `
+        <div class="card" style="padding:14px; margin-bottom:10px; border-left:3px solid var(--gold);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <div style="font-weight:800; font-size:16px;">#${shortId}</div>
+                <div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div>
+            </div>
+            <div style="font-size:14px; font-weight:700; margin-bottom:4px;">Услуга: ${sName}</div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">📍 ${escapeHTML(o.address || 'Адрес не указан')}</div>
+            <div style="font-size:12px; margin-bottom:12px; background:var(--bg); padding:8px; border-radius:6px;">
+                📞 <b>Клиент:</b> <a href="tel:${phone}" style="color:var(--blue);">${escapeHTML(phone)}</a>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:1fr; gap:6px;">
+                <button class="btn" style="background:var(--gold); font-size:13px; padding:10px;" onclick="distributeOrder('${o.id}', 'HUNTER_01')">🚜 Отправить Спецтехнике</button>
+                <button class="btn" style="background:var(--blue); font-size:13px; padding:10px;" onclick="distributeOrder('${o.id}', 'HUNTER_02')">🔧 Отправить Бытовым</button>
+                <button class="btn" style="background:var(--green); font-size:13px; padding:10px;" onclick="distributeOrder('${o.id}', 'BOARD')">🚖 На Доску (Такси/Рабочие)</button>
+            </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.distributeOrder = async function(orderId, targetHunter) {
+      if (!confirm('Отправить этот заказ исполнителям?')) return;
+      
+      const { error } = await supabase.from('orders')
+          .update({ hunter: targetHunter })
+          .eq('id', orderId);
+
+      if (error) {
+          alert('Ошибка: ' + error.message);
+      } else {
+          alert('✅ Заказ переброшен! Через 1 минуту он появится в WhatsApp-журнале.');
+          loadClientOrders();
+          loadMarket(); 
+      }
+  }
+
+  // ==========================================
+  // НОВАЯ ЛОГИКА: ВНЕШНИЙ ТЕРМИНАЛ (СПРОС)
+  // ==========================================
+  const SVC_MAP = {
+    evacuator:   { name: 'Эвакуатор',            group: 'СПЕЦТЕХНИКА' },
+    manipulator: { name: 'Манипулятор',          group: 'СПЕЦТЕХНИКА' },
+    cargo:       { name: 'Грузоперевозки',       group: 'СПЕЦТЕХНИКА' },
+    plumber:     { name: 'Сантехник',            group: 'БЫТОВЫЕ' },
+    electrician: { name: 'Электрик',             group: 'БЫТОВЫЕ' },
+    cleaning:    { name: 'Клининг',              group: 'БЫТОВЫЕ' },
+    welder:      { name: 'Сварщик',              group: 'БЫТОВЫЕ' },
+    fridge:      { name: 'Ремонт холодильника',  group: 'БЫТОВЫЕ' },
+    washer:      { name: 'Ремонт стиральной',    group: 'БЫТОВЫЕ' },
+    tv:          { name: 'Телемастер',           group: 'БЫТОВЫЕ' },
+    hour:        { name: 'Мастер на час',        group: 'БЫТОВЫЕ' }
+  };
+
+  async function loadExtTerminal() {
+    const el = document.getElementById('ext-term-body');
+    el.innerHTML = '// Сканируем эфир...';
+
+    const { data } = await supabase.from('orders')
+      .select('*')
+      .eq('hunter', 'LEAD')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (!data || data.length === 0) {
+      el.innerHTML = '[]\n// Агент пока ничего не нашёл.\n// Проверь, что GAS запускается по триггеру.';
+      return;
+    }
+
+    const grouped = { 'СПЕЦТЕХНИКА': {}, 'БЫТОВЫЕ': {} };
+
+    data.forEach(o => {
+      const svc = SVC_MAP[o.service_id] || { name: o.service_id || 'Неизвестно', group: 'БЫТОВЫЕ' };
+      if (!grouped[svc.group]) grouped[svc.group] = {};
+      if (!grouped[svc.group][svc.name]) grouped[svc.group][svc.name] = [];
+      grouped[svc.group][svc.name].push(o);
+    });
+
+    let html = '[\n';
+    let firstGroup = true;
+
+    for (const groupName in grouped) {
+      if (!firstGroup) html += ',\n';
+      firstGroup = false;
+
+      html += `  "<span style="color:#F5A623; font-weight:bold;">${groupName}</span>": {\n`;
+
+      const services = grouped[groupName];
+      let firstSvc = true;
+
+      for (const svcName in services) {
+        if (!firstSvc) html += ',\n';
+        firstSvc = false;
+
+        const items = services[svcName];
+        html += `    "<span style="color:#00D09C; font-weight:bold;">${svcName}</span> (<span style="color:#007AFF;">${items.length}</span>)": [\n`;
+
+        items.slice(0, 5).forEach((o, i) => {  
+          const time = new Date(o.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+          const source = o.variant_id || 'Lalafo';
+          
+          let sourceColor = '#007AFF';
+          if (source === 'Lalafo') sourceColor = '#FF3B30';
+          if (source === 'Instagram') sourceColor = '#E1306C';
+          if (source === 'Telegram') sourceColor = '#0088cc';
+          if (source === 'VK') sourceColor = '#4C75A3';
+          if (source === 'Facebook') sourceColor = '#1877F2';
+
+          const title = (o.client_phone || '').replace(/[<>]/g, '').slice(0, 70);
+          
+          html += `      <span style="color:#888;">${time}</span> ` +
+                  `[<span style="color:${sourceColor}; font-weight:bold;">${source}</span>] ` +
+                  `<a href="${o.address}" target="_blank" class="json-link">${escapeHTML(title)}</a>` +
+                  (i < Math.min(items.length, 5) - 1 ? ',' : '') + '\n';
+        });
+
+        if (items.length > 5) {
+          html += `      <span style="color:#555;">... и ещё ${items.length - 5}</span>\n`;
+        }
+
+        html += `    ]`;
+      }
+
+      html += `\n  }`;
+    }
+
+    html += '\n]';
+    el.innerHTML = html;
+  }
+
+  // Инициализация
   loadMarket();
 </script>
 </body>
-        </html>
+      </html>
