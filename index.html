@@ -373,7 +373,6 @@ input:focus, select:focus { border-color: var(--gold); }
     <h2>KYRAAN MENU</h2>
     <button class="menu-btn" onclick="page('clients')">👥 Клиенты (Абоненты)</button>
     
-    <!-- НОВЫЕ КНОПКИ В МЕНЮ -->
     <button class="menu-btn" onclick="page('client-orders')" style="color: var(--gold);">📥 Терминал Заказчиков</button>
     <button class="menu-btn" onclick="page('ext-term')" style="color: #a78bfa;">🌐 Внешний Терминал (Спрос)</button>
 
@@ -1382,7 +1381,7 @@ input:focus, select:focus { border-color: var(--gold); }
       grouped[svc.group][svc.name].push(o);
     });
 
-    let html = '[\n';
+    let html = `<button class="btn sec" style="margin-bottom: 10px; padding: 5px 10px; font-size: 11px; width: auto;" onclick="clearTerminal()">🗑 Очистить старые</button>\n[\n`;
     let firstGroup = true;
 
     for (const groupName in grouped) {
@@ -1409,14 +1408,28 @@ input:focus, select:focus { border-color: var(--gold); }
           if (source === 'Lalafo') sourceColor = '#FF3B30';
           if (source === 'Instagram') sourceColor = '#E1306C';
           if (source === 'Telegram') sourceColor = '#0088cc';
-          if (source === 'VK') sourceColor = '#4C75A3';
-          if (source === 'Facebook') sourceColor = '#1877F2';
 
-          const title = (o.client_phone || '').replace(/[<>]/g, '').slice(0, 70);
+          const rawText = (o.client_phone || '').replace(/[<>]/g, '');
           
+          // Ищем телефон в тексте (наши скрипты присылают его в начале: 📞 +996...)
+          const phoneMatch = rawText.match(/\+?996\d{9}/);
+          let phoneHtml = '';
+          let cleanTitle = rawText;
+          
+          if (phoneMatch) {
+              const phone = phoneMatch[0];
+              phoneHtml = `<a href="tel:${phone}" style="color:#00ff00; font-weight:bold; text-decoration:none;">📞 ${phone}</a> `;
+              cleanTitle = rawText.replace(phone, '').replace('📞', '').trim(); // Убираем номер из текста
+          }
+
+          // Определяем, куда отправлять
+          const targetHunter = SVC_MAP[o.service_id]?.group === 'СПЕЦТЕХНИКА' ? 'HUNTER_01' : 'HUNTER_02';
+
           html += `      <span style="color:#888;">${time}</span> ` +
                   `[<span style="color:${sourceColor}; font-weight:bold;">${source}</span>] ` +
-                  `<a href="${o.address}" target="_blank" class="json-link">${escapeHTML(title)}</a>` +
+                  `${phoneHtml}` +
+                  `<a href="${o.address}" target="_blank" class="json-link">${escapeHTML(cleanTitle.slice(0, 50))}</a> ` +
+                  `<button style="background:var(--green); border:none; color:#000; border-radius:4px; padding:2px 6px; font-size:10px; cursor:pointer;" onclick="takeLead('${o.id}', '${targetHunter}')">В работу</button>` +
                   (i < Math.min(items.length, 5) - 1 ? ',' : '') + '\n';
         });
 
@@ -1434,8 +1447,31 @@ input:focus, select:focus { border-color: var(--gold); }
     el.innerHTML = html;
   }
 
+  // НОВАЯ ФУНКЦИЯ: Взять наводку в работу
+  window.takeLead = async function(id, targetHunter) {
+      if (!confirm('Отправить эту наводку в работу?')) return;
+      const { error } = await supabase.from('orders').update({ hunter: targetHunter }).eq('id', id);
+      if (error) {
+          alert('Ошибка: ' + error.message);
+      } else {
+          alert('✅ Наводка переброшена в журнал!');
+          loadExtTerminal(); // Обновляем терминал
+      }
+  }
+
+  // НОВАЯ ФУНКЦИЯ: Очистка терминала от старых записей
+  window.clearTerminal = async function() {
+      if (!confirm('Удалить ВСЕ наводки из терминала? Это действие необратимо.')) return;
+      const { error } = await supabase.from('orders').delete().eq('hunter', 'LEAD');
+      if (error) {
+          alert('Ошибка: ' + error.message);
+      } else {
+          loadExtTerminal();
+      }
+  }
+
   // Инициализация
   loadMarket();
 </script>
 </body>
-      </html>
+                                                      </html>
