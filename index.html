@@ -155,6 +155,16 @@ input:focus, select:focus { border-color: var(--gold); }
 <main>
   <section id="page-market" class="page active">
     <h1>Рынок</h1>
+    
+    <!-- НОВАЯ КАРТОЧКА: СЧЕТЧИК КЛИЕНТОВ -->
+    <div class="fin-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--green); background: linear-gradient(135deg, #1f2a24 0%, #151b17 100%);">
+        <div>
+            <div style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px;">Зарегистрировано в приложении</div>
+            <div style="font-weight: 800; font-size: 18px; color: #fff;">👥 Заказчики</div>
+        </div>
+        <div style="font-weight: 900; font-size: 32px; color: var(--green);" id="total-clients-count">0</div>
+    </div>
+
     <div class="tabs">
       <button class="active" onclick="filterMarket('all', this)">Все</button>
       <button onclick="filterMarket('HUNTER_01', this)">Спецтехника</button>
@@ -519,6 +529,9 @@ input:focus, select:focus { border-color: var(--gold); }
         if (newOrder.hunter === 'CLIENT' && newOrder.status === 'REGISTERED') {
             window.addNotification(`👤 Новый клиент: ${newOrder.client_phone}`);
             if(document.getElementById('page-clients').classList.contains('active')) loadClients();
+            // Обновляем счетчик клиентов при регистрации нового
+            const c = document.getElementById('total-clients-count');
+            if (c) c.textContent = Number(c.textContent) + 1;
         } else if (!newOrder.executor_id && !newOrder.assigned_executor_id) {
             const shortId = newOrder.id.split('-')[0].toUpperCase();
             const sName = names[newOrder.service_id] || newOrder.service_id;
@@ -578,6 +591,14 @@ input:focus, select:focus { border-color: var(--gold); }
   let marketData = []; let currentFilter = 'all';
   async function loadMarket() {
     const list = document.getElementById('market-list'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
+    
+    // 1. Считаем клиентов
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('hunter', 'CLIENT').eq('status', 'REGISTERED').then(({ count, error }) => {
+        const el = document.getElementById('total-clients-count');
+        if (el) el.textContent = count || 0;
+    });
+
+    // 2. Считаем исполнителей
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
     let stats = {}; for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
@@ -719,7 +740,6 @@ input:focus, select:focus { border-color: var(--gold); }
       
       if (!orders || orders.length === 0) { list.innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Нет чеков на проверку. Все отлично!</div>'; return; }
 
-      // Собираем данные исполнителей, чтобы показать имя и кнопку позвонить
       const execIds = [...new Set(orders.map(o => o.executor_id).filter(Boolean))];
       let execMap = {};
       if (execIds.length > 0) {
@@ -976,4 +996,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-  </html>
+    </html>
