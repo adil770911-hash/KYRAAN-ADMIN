@@ -227,14 +227,12 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="boards-list"></div>
   </section>
 
-  <!-- СТРАНИЦА: НАСТРОЙКИ ВОЛН -->
   <section id="page-waves" class="page">
     <h1>Настройки волн</h1>
     <p class="sub">Радиусы и время ожидания по каждой услуге.</p>
     <div class="list-container" id="waves-list"></div>
   </section>
 
-  <!-- СТРАНИЦА: WHATSAPP-ЖУРНАЛ -->
   <section id="page-whatsapp" class="page">
     <h1>📱 WhatsApp-журнал</h1>
     <p class="sub">Заказы, висящие более 1 минуты. Скопируйте код и отправьте в группу.</p>
@@ -246,31 +244,49 @@ input:focus, select:focus { border-color: var(--gold); }
     <div class="list-container" id="wa-list"></div>
   </section>
 
-  <!-- СТРАНИЦА: ОПЛАТА И ЧЕКИ -->
-  <section id="page-payments" class="page">
-    <h1>💳 Оплата и Чеки</h1>
-    <p class="sub">Загрузите QR-коды для водителей и проверьте их чеки.</p>
+  <!-- НОВАЯ СТРАНИЦА: QR-КОД СПЕЦТЕХНИКИ -->
+  <section id="page-qr-h1" class="page">
+    <h1 style="color: var(--gold);">🚜 QR-код Спецтехники</h1>
+    <p class="sub">Загрузите QR-код для водителей HUNTER 01 (Эвакуаторы, Манипуляторы, Грузоперевозки).</p>
     
-    <div class="card" style="margin-top: 10px;">
-      <h2 style="font-size: 16px; margin-bottom: 10px;">1. QR-коды для водителей</h2>
-      
+    <div class="card" style="text-align: center;">
       <div class="field">
-        <label>QR-код: Спецтехника (Hunter 1)</label>
+        <label>Выберите картинку (QR-код)</label>
         <input type="file" id="qr-h1-input" accept="image/*" onchange="uploadQR('qr_hunter1', this)">
-        <img id="qr-h1-preview" style="max-width: 100px; margin-top: 10px; border-radius: 8px; display: none;">
       </div>
       
-      <div class="field">
-        <label>QR-код: Бытовые и Такси (Hunter 2)</label>
-        <input type="file" id="qr-h2-input" accept="image/*" onchange="uploadQR('qr_hunter2', this)">
-        <img id="qr-h2-preview" style="max-width: 100px; margin-top: 10px; border-radius: 8px; display: none;">
+      <div style="margin-top: 20px;">
+        <p style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Текущий QR-код:</p>
+        <img id="qr-h1-preview" style="max-width: 100%; height: auto; border-radius: 12px; border: 2px solid var(--gold); display: none; margin: 0 auto;">
+        <p id="qr-h1-empty" style="color: var(--red); font-weight: bold; padding: 20px; background: var(--bg); border-radius: 12px;">QR-код еще не загружен</p>
       </div>
     </div>
+  </section>
 
-    <div class="card" style="margin-top: 20px;">
-      <h2 style="font-size: 16px; margin-bottom: 10px;">2. Чеки на проверку</h2>
-      <div id="receipts-list">Загрузка...</div>
+  <!-- НОВАЯ СТРАНИЦА: QR-КОД БЫТОВЫХ -->
+  <section id="page-qr-h2" class="page">
+    <h1 style="color: var(--blue);">🔧 QR-код Бытовых</h1>
+    <p class="sub">Загрузите QR-код для мастеров HUNTER 02 (Сантехники, Электрики, Клининг и др.).</p>
+    
+    <div class="card" style="text-align: center;">
+      <div class="field">
+        <label>Выберите картинку (QR-код)</label>
+        <input type="file" id="qr-h2-input" accept="image/*" onchange="uploadQR('qr_hunter2', this)">
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <p style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Текущий QR-код:</p>
+        <img id="qr-h2-preview" style="max-width: 100%; height: auto; border-radius: 12px; border: 2px solid var(--blue); display: none; margin: 0 auto;">
+        <p id="qr-h2-empty" style="color: var(--red); font-weight: bold; padding: 20px; background: var(--bg); border-radius: 12px;">QR-код еще не загружен</p>
+      </div>
     </div>
+  </section>
+
+  <!-- НОВАЯ СТРАНИЦА: ПРОВЕРКА ЧЕКОВ -->
+  <section id="page-receipts" class="page">
+    <h1 style="color: var(--green);">🧾 Чеки на проверку</h1>
+    <p class="sub">Водители загружают чеки после завершения заказа. Подтвердите оплату.</p>
+    <div class="list-container" id="receipts-list">Загрузка...</div>
   </section>
 
   <section id="page-add" class="page">
@@ -339,7 +355,6 @@ input:focus, select:focus { border-color: var(--gold); }
     </div>
   </section>
 
-  <!-- НОВАЯ СТРАНИЦА: ТЕРМИНАЛ ЗАКАЗЧИКОВ -->
   <section id="page-client-orders" class="page">
     <h1>📥 Терминал Заказчиков</h1>
     <p class="sub">Входящие заявки от клиентов. Распределите их на нужный пул исполнителей.</p>
@@ -348,7 +363,6 @@ input:focus, select:focus { border-color: var(--gold); }
     </div>
   </section>
 
-  <!-- НОВАЯ СТРАНИЦА: ВНЕШНИЙ ТЕРМИНАЛ (СПРОС) -->
   <section id="page-ext-term" class="page">
     <h1>🌐 Внешний Терминал</h1>
     <p class="sub">Сырой спрос с Lalafo, Google, Instagram, Telegram. Тапни на текст — откроется объявление.</p>
@@ -378,7 +392,11 @@ input:focus, select:focus { border-color: var(--gold); }
 
     <button class="menu-btn" onclick="page('waves')" style="color: var(--gold);">⚙️ Настройки волн</button>
     <button class="menu-btn" onclick="page('whatsapp')" style="color: var(--green);">📱 WhatsApp-журнал</button>
-    <button class="menu-btn" onclick="page('payments')" style="color: var(--blue);">💳 Оплата и Чеки</button>
+
+    <!-- НОВОЕ РАЗДЕЛЕННОЕ МЕНЮ -->
+    <button class="menu-btn" onclick="page('qr-h1')" style="color: var(--gold);">🚜 QR-код Спецтехники</button>
+    <button class="menu-btn" onclick="page('qr-h2')" style="color: var(--blue);">🔧 QR-код Бытовых</button>
+    <button class="menu-btn" onclick="page('receipts')" style="color: var(--green);">🧾 Проверка чеков</button>
 
     <button class="menu-btn" onclick="page('term-1')">💻 Журнал Спецтехники</button>
     <button class="menu-btn" onclick="page('term-2')">💻 Журнал Бытовые</button>
@@ -496,21 +514,18 @@ input:focus, select:focus { border-color: var(--gold); }
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
         const newOrder = payload.new;
 
-        // 1. Внешний спрос (Лиды)
         if (newOrder.hunter === 'LEAD') {
             window.addNotification(`🌐 Новый спрос: ${(newOrder.client_phone || '').slice(0, 30)}...`);
             if(document.getElementById('page-ext-term').classList.contains('active')) loadExtTerminal();
             return;
         }
 
-        // 2. Новые заказы от клиентов
         if (newOrder.hunter === 'CLIENT' && newOrder.status !== 'REGISTERED') {
             window.addNotification(`📥 Новый заказ от клиента! Проверьте Терминал.`);
             if(document.getElementById('page-client-orders').classList.contains('active')) loadClientOrders();
             return; 
         }
 
-        // 3. Твоя старая логика
         if (newOrder.hunter === 'CLIENT' && newOrder.status === 'REGISTERED') {
             window.addNotification(`👤 Новый клиент: ${newOrder.client_phone}`);
             if(document.getElementById('page-clients').classList.contains('active')) loadClients();
@@ -530,7 +545,7 @@ input:focus, select:focus { border-color: var(--gold); }
     })
     .on('postgres_changes', { event: 'UPDATE', schema:'public', table: 'orders' }, payload => {
         if (document.getElementById('page-whatsapp').classList.contains('active')) loadWa();
-        if (document.getElementById('page-payments').classList.contains('active')) loadReceipts();
+        if (document.getElementById('page-receipts').classList.contains('active')) loadReceipts();
     }).subscribe();
 
   window.page = function(id) {
@@ -555,9 +570,9 @@ input:focus, select:focus { border-color: var(--gold); }
     if(id === 'boards') loadBoards(currentBoard);
     if(id === 'waves') loadWaves();
     if(id === 'whatsapp') loadWa();
-    if(id === 'payments') loadPaymentSettings();
+    if(id === 'receipts') loadReceipts();
+    if(id === 'qr-h1' || id === 'qr-h2') loadQRPreviews();
     
-    // НОВЫЕ СТРАНИЦЫ
     if(id === 'client-orders') loadClientOrders();
     if(id === 'ext-term') loadExtTerminal();
   }
@@ -795,23 +810,38 @@ input:focus, select:focus { border-color: var(--gold); }
     } catch(e) { alert('Не удалось скопировать: ' + e.message); }
   };
 
-  // --- СТРАНИЦА ОПЛАТЫ И ЧЕКОВ ---
-  async function loadPaymentSettings() {
+  // --- СТРАНИЦА ОПЛАТЫ И ЧЕКОВ (ТЕПЕРЬ РАЗДЕЛЕНО) ---
+  async function loadQRPreviews() {
     const { data } = await supabase.from('app_settings').select('*');
+    
     if (data) {
         const h1 = data.find(x => x.setting_name === 'qr_hunter1');
         const h2 = data.find(x => x.setting_name === 'qr_hunter2');
         
+        // Отрисовка Hunter 1
+        const h1Img = document.getElementById('qr-h1-preview');
+        const h1Empty = document.getElementById('qr-h1-empty');
         if (h1 && h1.setting_value) {
-            document.getElementById('qr-h1-preview').src = h1.setting_value;
-            document.getElementById('qr-h1-preview').style.display = 'block';
+            h1Img.src = h1.setting_value;
+            h1Img.style.display = 'block';
+            h1Empty.style.display = 'none';
+        } else {
+            h1Img.style.display = 'none';
+            h1Empty.style.display = 'block';
         }
+
+        // Отрисовка Hunter 2
+        const h2Img = document.getElementById('qr-h2-preview');
+        const h2Empty = document.getElementById('qr-h2-empty');
         if (h2 && h2.setting_value) {
-            document.getElementById('qr-h2-preview').src = h2.setting_value;
-            document.getElementById('qr-h2-preview').style.display = 'block';
+            h2Img.src = h2.setting_value;
+            h2Img.style.display = 'block';
+            h2Empty.style.display = 'none';
+        } else {
+            h2Img.style.display = 'none';
+            h2Empty.style.display = 'block';
         }
     }
-    loadReceipts();
   }
 
   window.uploadQR = async function(key, input) {
@@ -821,13 +851,17 @@ input:focus, select:focus { border-color: var(--gold); }
       const reader = new FileReader();
       reader.onload = async (e) => {
           const base64String = e.target.result;
-          const { error } = await supabase.from('app_settings').update({ setting_value: base64String }).eq('setting_name', key);
+          
+          const { error } = await supabase.from('app_settings').upsert({ 
+              setting_name: key, 
+              setting_value: base64String 
+          });
           
           if (error) {
               alert('Ошибка загрузки: ' + error.message);
           } else {
               alert('✅ QR-код успешно обновлен!');
-              loadPaymentSettings();
+              loadQRPreviews();
           }
       };
       reader.readAsDataURL(file);
@@ -835,6 +869,7 @@ input:focus, select:focus { border-color: var(--gold); }
 
   async function loadReceipts() {
       const list = document.getElementById('receipts-list');
+      list.innerHTML = 'Загрузка...';
       const { data } = await supabase.from('orders')
           .select('*')
           .eq('status', 'DONE')
@@ -1280,9 +1315,6 @@ input:focus, select:focus { border-color: var(--gold); }
     }
   }
 
-  // ==========================================
-  // НОВАЯ ЛОГИКА: ТЕРМИНАЛ ЗАКАЗЧИКОВ
-  // ==========================================
   async function loadClientOrders() {
     const list = document.getElementById('client-orders-list');
     
@@ -1340,9 +1372,6 @@ input:focus, select:focus { border-color: var(--gold); }
       }
   }
 
-  // ==========================================
-  // НОВАЯ ЛОГИКА: ВНЕШНИЙ ТЕРМИНАЛ (СПРОС)
-  // ==========================================
   const SVC_MAP = {
     evacuator:   { name: 'Эвакуатор',            group: 'СПЕЦТЕХНИКА' },
     manipulator: { name: 'Манипулятор',          group: 'СПЕЦТЕХНИКА' },
@@ -1410,8 +1439,6 @@ input:focus, select:focus { border-color: var(--gold); }
           if (source === 'Telegram') sourceColor = '#0088cc';
 
           const rawText = (o.client_phone || '').replace(/[<>]/g, '');
-          
-          // Ищем телефон в тексте (наши скрипты присылают его в начале: 📞 +996...)
           const phoneMatch = rawText.match(/\+?996\d{9}/);
           let phoneHtml = '';
           let cleanTitle = rawText;
@@ -1419,10 +1446,9 @@ input:focus, select:focus { border-color: var(--gold); }
           if (phoneMatch) {
               const phone = phoneMatch[0];
               phoneHtml = `<a href="tel:${phone}" style="color:#00ff00; font-weight:bold; text-decoration:none;">📞 ${phone}</a> `;
-              cleanTitle = rawText.replace(phone, '').replace('📞', '').trim(); // Убираем номер из текста
+              cleanTitle = rawText.replace(phone, '').replace('📞', '').trim();
           }
 
-          // Определяем, куда отправлять
           const targetHunter = SVC_MAP[o.service_id]?.group === 'СПЕЦТЕХНИКА' ? 'HUNTER_01' : 'HUNTER_02';
 
           html += `      <span style="color:#888;">${time}</span> ` +
@@ -1447,7 +1473,6 @@ input:focus, select:focus { border-color: var(--gold); }
     el.innerHTML = html;
   }
 
-  // НОВАЯ ФУНКЦИЯ: Взять наводку в работу
   window.takeLead = async function(id, targetHunter) {
       if (!confirm('Отправить эту наводку в работу?')) return;
       const { error } = await supabase.from('orders').update({ hunter: targetHunter }).eq('id', id);
@@ -1455,11 +1480,10 @@ input:focus, select:focus { border-color: var(--gold); }
           alert('Ошибка: ' + error.message);
       } else {
           alert('✅ Наводка переброшена в журнал!');
-          loadExtTerminal(); // Обновляем терминал
+          loadExtTerminal();
       }
   }
 
-  // НОВАЯ ФУНКЦИЯ: Очистка терминала от старых записей
   window.clearTerminal = async function() {
       if (!confirm('Удалить ВСЕ наводки из терминала? Это действие необратимо.')) return;
       const { error } = await supabase.from('orders').delete().eq('hunter', 'LEAD');
@@ -1470,8 +1494,7 @@ input:focus, select:focus { border-color: var(--gold); }
       }
   }
 
-  // Инициализация
   loadMarket();
 </script>
 </body>
-                                                      </html>
+  </html>
