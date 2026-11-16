@@ -1,4 +1,4 @@
-here<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -715,11 +715,39 @@ input:focus, select:focus { border-color: var(--gold); }
 
   async function loadReceipts() {
       const list = document.getElementById('receipts-list'); list.innerHTML = 'Загрузка...';
-      const { data } = await supabase.from('orders').select('*').eq('status', 'DONE').like('address', '%| ЧЕК: %').order('created_at', { ascending: false });
-      if (!data || data.length === 0) { list.innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Нет чеков на проверку. Все отлично!</div>'; return; }
-      list.innerHTML = data.map(o => {
-          const shortId = o.id.split('-')[0].toUpperCase(); const addressParts = o.address.split('| ЧЕК: '); const cleanAddress = addressParts[0]; const receiptUrl = addressParts[1]; const sName = names[o.service_id] || o.service_id;
-          return `<div class="card" style="padding:12px; margin-bottom:10px; border-left:3px solid var(--blue);"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><div style="font-weight:bold; color:var(--blue);">Заказ #${shortId}</div><div style="font-size:11px; color:#888;">${new Date(o.created_at).toLocaleDateString('ru-RU')}</div></div><div style="font-size:12px; margin-bottom:8px;">Водитель: ${sName} · Адрес: ${escapeHTML(cleanAddress)}</div><a href="${receiptUrl}" target="_blank" style="display:block; margin-bottom:10px;"><img src="${receiptUrl}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; border:1px solid #444;"><div style="text-align:center; font-size:12px; color:var(--gold); margin-top:4px;">👆 Нажмите, чтобы открыть в полном размере</div></a><div class="row-btn"><button class="btn green" onclick="approveReceipt('${o.id}')">✅ Оплата получена</button><button class="btn sec red" onclick="rejectReceipt('${o.id}')">❌ Фейк / Отклонить</button></div></div>`;
+      const { data: orders } = await supabase.from('orders').select('*').eq('status', 'DONE').like('address', '%| ЧЕК: %').order('created_at', { ascending: false });
+      
+      if (!orders || orders.length === 0) { list.innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Нет чеков на проверку. Все отлично!</div>'; return; }
+
+      // Собираем данные исполнителей, чтобы показать имя и кнопку позвонить
+      const execIds = [...new Set(orders.map(o => o.executor_id).filter(Boolean))];
+      let execMap = {};
+      if (execIds.length > 0) {
+          const { data: execs } = await supabase.from('executors').select('id, name, phone').in('id', execIds);
+          if (execs) execs.forEach(e => execMap[e.id] = e);
+      }
+
+      list.innerHTML = orders.map(o => {
+          const shortId = o.id.split('-')[0].toUpperCase(); 
+          const addressParts = o.address.split('| ЧЕК: '); 
+          const cleanAddress = addressParts[0]; 
+          const receiptUrl = addressParts[1]; 
+          const sName = names[o.service_id] || o.service_id;
+          const executor = execMap[o.executor_id];
+          
+          let executorBlock = '';
+          if (executor) {
+              executorBlock = `
+              <div style="background: var(--bg); padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                      <div style="font-size: 14px; font-weight: bold;">👤 ${escapeHTML(executor.name || 'Без имени')}</div>
+                      <div style="font-size: 12px; color: var(--muted);">${escapeHTML(executor.phone)}</div>
+                  </div>
+                  <a href="tel:${executor.phone}" class="btn green" style="width: auto; padding: 8px 12px; text-decoration: none;">📞 Позвонить</a>
+              </div>`;
+          }
+
+          return `<div class="card" style="padding:12px; margin-bottom:10px; border-left:3px solid var(--blue);"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><div style="font-weight:bold; color:var(--blue);">Заказ #${shortId}</div><div style="font-size:11px; color:#888;">${new Date(o.created_at).toLocaleDateString('ru-RU')}</div></div><div style="font-size:12px; margin-bottom:8px;">Услуга: ${sName} · Адрес: ${escapeHTML(cleanAddress)}</div>${executorBlock}<a href="${receiptUrl}" target="_blank" style="display:block; margin-bottom:10px;"><img src="${receiptUrl}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; border:1px solid #444;"><div style="text-align:center; font-size:12px; color:var(--gold); margin-top:4px;">👆 Нажмите, чтобы открыть в полном размере</div></a><div class="row-btn"><button class="btn green" onclick="approveReceipt('${o.id}')">✅ Оплата получена</button><button class="btn sec red" onclick="rejectReceipt('${o.id}')">❌ Фейк / Отклонить</button></div></div>`;
       }).join('');
   }
 
@@ -729,30 +757,23 @@ input:focus, select:focus { border-color: var(--gold); }
       if (data) { const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Оплачено)'; await supabase.from('orders').update({ address: cleanAddress }).eq('id', orderId); loadReceipts(); }
   };
 
-  // 👇 ИСПРАВЛЕННАЯ ФУНКЦИЯ (Снимает с линии, но не блокирует навсегда)
   window.rejectReceipt = async function(orderId) {
-      if (!confirm("Отклонить чек? Водитель будет снят с линии (но не заблокирован).")) return;
+      if (!confirm("Отклонить чек? Исполнитель будет снят с линии (но не заблокирован).")) return;
       
       const { data } = await supabase.from('orders').select('address, executor_id').eq('id', orderId).single();
       
       if (data) {
-          // 1. Помечаем заказ как отклоненный
           const cleanAddress = data.address.split('| ЧЕК: ')[0] + ' (Чек отклонен)';
           await supabase.from('orders').update({ address: cleanAddress }).eq('id', orderId);
           
-          // 2. Просто выключаем линию у водителя
           if (data.executor_id) {
-              await supabase.from('executors').update({ 
-                  is_online: false, 
-                  is_busy: false 
-              }).eq('id', data.executor_id);
+              await supabase.from('executors').update({ is_online: false, is_busy: false }).eq('id', data.executor_id);
           }
           
           loadReceipts();
-          alert("❌ Чек отклонен. Водитель снят с линии.");
+          alert("❌ Чек отклонен. Исполнитель снят с линии.");
       }
   };
-  // 👆 КОНЕЦ ИСПРАВЛЕННОЙ ФУНКЦИИ
 
   async function loadClients() {
     const list = document.getElementById('clients-stats'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
@@ -769,15 +790,38 @@ input:focus, select:focus { border-color: var(--gold); }
   async function loadOrders() {
     const list = document.getElementById('orders-list'); list.innerHTML = 'Загрузка...';
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { data, error } = await supabase.from('orders').select('*').neq('hunter', 'CLIENT').gte('created_at', yesterday).order('created_at', { ascending: false });
-    if(!data || data.length === 0) { list.innerHTML = 'Заказов нет.'; return; }
-    list.innerHTML = data.map(o => {
-      const shortId = o.id.split('-')[0].toUpperCase(); const sName = names[o.service_id] || o.service_id || o.hunter; const execId = o.executor_id || o.assigned_executor_id; const isTaken = !!execId; let displayAddress = o.address || 'Адрес не указан'; let receiptUrl = null;
+    const { data: orders, error } = await supabase.from('orders').select('*').neq('hunter', 'CLIENT').gte('created_at', yesterday).order('created_at', { ascending: false });
+    if(!orders || orders.length === 0) { list.innerHTML = 'Заказов нет.'; return; }
+
+    const execIds = [...new Set(orders.map(o => o.executor_id || o.assigned_executor_id).filter(Boolean))];
+    let execMap = {};
+    if (execIds.length > 0) {
+        const { data: execs } = await supabase.from('executors').select('id, name, phone').in('id', execIds);
+        if (execs) execs.forEach(e => execMap[e.id] = e);
+    }
+    
+    list.innerHTML = orders.map(o => {
+      const shortId = o.id.split('-')[0].toUpperCase(); 
+      const sName = names[o.service_id] || o.service_id || o.hunter; 
+      const execId = o.executor_id || o.assigned_executor_id; 
+      const isTaken = !!execId; 
+      const executor = execMap[execId];
+
+      let displayAddress = o.address || 'Адрес не указан';
+      let receiptUrl = null;
       if (displayAddress.includes('| ЧЕК: ')) { const parts = displayAddress.split('| ЧЕК: '); displayAddress = parts[0]; receiptUrl = parts[1]; }
       const parts = displayAddress.split(' | ');
       if (o.service_id === 'workers') displayAddress = `${parts[0] || ''} · ${parts[1] || ''}`;
       if (o.service_id === 'market') displayAddress = `${parts[0] || ''} · ${parts[1] || ''} · ${parts[3] || ''}`;
-      return `<div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${isTaken ? 'var(--green)' : 'var(--red)'};"><div style="display:flex; justify-content:space-between;"><div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div><div style="font-size:11px; color:${isTaken ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">${isTaken ? '✅ ВЗЯТ' : '⏳ ЖДЕТ'}</div></div><div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div><div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName} ${o.variant_id ? '('+o.variant_id+')' : ''}</div><div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(displayAddress)}</div><div class="row-btn"><button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn blue" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : (o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}</div></div>`;
+
+      let executorHtml = '';
+      if (executor) {
+          executorHtml = `<div style="background: var(--bg); padding: 8px 10px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; display:flex; justify-content:space-between; align-items:center;"><div>👤 <b>Взял:</b> ${escapeHTML(executor.name || 'Без имени')}</div><a href="tel:${executor.phone}" style="color:var(--green); font-weight:bold; text-decoration:none;">📞 Позвонить</a></div>`;
+      } else if (isTaken) {
+          executorHtml = `<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Исполнитель: Неизвестен</div>`;
+      }
+
+      return `<div class="card" style="padding:12px; margin:0 0 10px 0; border-left: 3px solid ${isTaken ? 'var(--green)' : 'var(--red)'};"><div style="display:flex; justify-content:space-between;"><div style="font-size:11px; color:var(--muted);">${new Date(o.created_at).toLocaleString('ru-RU')}</div><div style="font-size:11px; color:${isTaken ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">${isTaken ? '✅ ВЗЯТ' : '⏳ ЖДЕТ'}</div></div><div style="font-size:16px; font-weight:700; margin:4px 0;">#${shortId}</div><div style="font-size:12px; margin-bottom:4px;">Услуга: ${sName} ${o.variant_id ? '('+o.variant_id+')' : ''}</div><div style="font-size:12px; margin-bottom:8px; color:var(--muted);">📍 ${escapeHTML(displayAddress)}</div>${executorHtml}<div class="row-btn"><button class="btn" style="padding:8px; font-size:12px;" onclick="copyOrder('${o.id}', '${sName}', ${safeParam(displayAddress)})">📋 Копировать</button>${receiptUrl ? `<a href="${receiptUrl}" target="_blank" class="btn blue" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📄 Чек</a>` : (o.client_phone ? `<a href="tel:${encodeURIComponent(o.client_phone)}" class="btn green" style="padding:8px; text-decoration:none; font-size:12px; text-align:center;">📞 Позвонить</a>` : `<button class="btn sec" disabled style="padding:8px; font-size:12px;">Нет телефона</button>`)}</div></div>`;
     }).join('');
   }
 
@@ -932,4 +976,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-        </html>
+  </html>
