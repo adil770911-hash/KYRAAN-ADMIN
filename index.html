@@ -156,7 +156,7 @@ input:focus, select:focus { border-color: var(--gold); }
   <section id="page-market" class="page active">
     <h1>Рынок</h1>
     
-    <!-- НОВАЯ КАРТОЧКА: СЧЕТЧИК КЛИЕНТОВ -->
+    <!-- СЧЕТЧИК КЛИЕНТОВ -->
     <div class="fin-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--green); background: linear-gradient(135deg, #1f2a24 0%, #151b17 100%);">
         <div>
             <div style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px;">Зарегистрировано в приложении</div>
@@ -239,7 +239,7 @@ input:focus, select:focus { border-color: var(--gold); }
 
   <section id="page-waves" class="page">
     <h1>Настройки волн</h1>
-    <p class="sub">Радиусы и время ожидания по каждой услуге.</p>
+    <p class="sub">Радиусы и время ожидания по каждой услуге (включая Бишкек Такси и спецтехнику).</p>
     <div class="list-container" id="waves-list"></div>
   </section>
 
@@ -299,7 +299,8 @@ input:focus, select:focus { border-color: var(--gold); }
         <label>Категория</label>
         <select id="add-service" onchange="updateAddVariant()">
           <option value="">Выберите...</option>
-          <optgroup label="HUNTER 01 · Спецтехника (через WhatsApp)">
+          <optgroup label="HUNTER 01 · Спецтехника и Такси (через WhatsApp)">
+            <option value="city_taxi">Бишкек Такси</option>
             <option value="evacuator">Эвакуатор</option>
             <option value="manipulator">Манипулятор</option>
             <option value="cargo">Грузоперевозки</option>
@@ -348,6 +349,11 @@ input:focus, select:focus { border-color: var(--gold); }
       <div class="field hidden" id="add-passport-field">
         <label>Ссылка на техпаспорт (необязательно)</label>
         <input type="text" id="add-tech-passport" placeholder="https://...">
+      </div>
+
+      <div class="field hidden" id="add-license-field">
+        <label>Ссылка на водительское удостоверение (обязательно для такси)</label>
+        <input type="text" id="add-driver-license" placeholder="https://...">
       </div>
 
       <div class="row-btn" style="margin-top: 20px;">
@@ -421,6 +427,7 @@ input:focus, select:focus { border-color: var(--gold); }
   function safeParam(str) { if (!str) return "''"; return JSON.stringify(str).replace(/"/g, '&quot;'); }
 
   const names = { 
+      'city_taxi': 'Бишкек Такси',
       'evacuator': 'Эвакуатор', 'manipulator': 'Манипулятор', 'cargo': 'Грузоперевозки', 
       'intercity': 'Такси', 'plumber': 'Сантехник', 'electrician': 'Электрик', 
       'cleaning': 'Клининг', 'welder': 'Сварщик', 'fridge': 'Ремонт холод.', 
@@ -429,6 +436,7 @@ input:focus, select:focus { border-color: var(--gold); }
   };
   
   const hunters = { 
+      'city_taxi': 'HUNTER_01',
       'evacuator': 'HUNTER_01', 'manipulator': 'HUNTER_01', 'cargo': 'HUNTER_01', 
       'plumber': 'HUNTER_02', 'electrician': 'HUNTER_02', 'cleaning': 'HUNTER_02', 
       'welder': 'HUNTER_02', 'fridge': 'HUNTER_02', 'washer': 'HUNTER_02', 
@@ -439,10 +447,11 @@ input:focus, select:focus { border-color: var(--gold); }
   const vmap = { 
       'cargo': ['Porter','Sprinter 1-скат','1-скатная будка','1-скатный бортовой','Sprinter 2-скат','2-скатная будка','2-скатный бортовой','Гигант бортовой','Гигант будка'], 
       'evacuator': ['Sprinter','Sprinter+прицеп','Atego','Atego+прицеп'], 
-      'manipulator': ['3т','5т','8т','10т'] 
+      'manipulator': ['3т','5т','8т','10т'],
+      'city_taxi': ['Комфорт', 'Эконом', 'Универсал', 'Минивэн']
   };
   
-  const icons = { 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷', 'plumber':'🔧', 'electrician':'⚡', 'cleaning':'🧹', 'welder':'🔨', 'fridge':'❄️', 'washer':'🌀', 'tv':'📺', 'hour':'⏰' };
+  const icons = { 'city_taxi': '🚖', 'evacuator': '🚛', 'manipulator': '🏗', 'cargo': '📦', 'intercity': '🚖', 'workers': '👷', 'plumber':'🔧', 'electrician':'⚡', 'cleaning':'🧹', 'welder':'🔨', 'fridge':'❄️', 'washer':'🌀', 'tv':'📺', 'hour':'⏰' };
 
   let unreadCount = 0;
   let notifications = [];
@@ -529,7 +538,6 @@ input:focus, select:focus { border-color: var(--gold); }
         if (newOrder.hunter === 'CLIENT' && newOrder.status === 'REGISTERED') {
             window.addNotification(`👤 Новый клиент: ${newOrder.client_phone}`);
             if(document.getElementById('page-clients').classList.contains('active')) loadClients();
-            // Обновляем счетчик клиентов при регистрации нового
             const c = document.getElementById('total-clients-count');
             if (c) c.textContent = Number(c.textContent) + 1;
         } else if (!newOrder.executor_id && !newOrder.assigned_executor_id) {
@@ -592,13 +600,11 @@ input:focus, select:focus { border-color: var(--gold); }
   async function loadMarket() {
     const list = document.getElementById('market-list'); list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Загрузка...</div>';
     
-    // 1. Считаем клиентов
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('hunter', 'CLIENT').eq('status', 'REGISTERED').then(({ count, error }) => {
         const el = document.getElementById('total-clients-count');
         if (el) el.textContent = count || 0;
     });
 
-    // 2. Считаем исполнителей
     const { data, error } = await supabase.from('executors').select('service_id, is_online, is_busy, is_approved');
     if(error) { list.innerHTML = 'Ошибка: ' + error.message; return; }
     let stats = {}; for (let key in names) { stats[key] = { total: 0, online: 0, busy: 0, pending: 0 }; }
@@ -668,7 +674,8 @@ input:focus, select:focus { border-color: var(--gold); }
     let html = '';
     for (let key in names) {
       const s = map[key] || { radius_1_km: 5, seconds_1: 15, radius_2_km: 10, seconds_2: 40, wave_size: 3, enabled: true };
-      html += `<div class="card" style="padding:12px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font-weight:700;">${names[key]}</div><label style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted);"><input type="checkbox" id="en-${key}" ${s.enabled?'checked':''} style="width:auto;">Вкл</label></div><div style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; font-size:11px;"><div><label>R1, км</label><input type="number" id="r1-${key}" value="${s.radius_1_km}"></div><div><label>C1, сек</label><input type="number" id="c1-${key}" value="${s.seconds_1}"></div><div><label>R2, км</label><input type="number" id="r2-${key}" value="${s.radius_2_km}"></div><div><label>C2, сек</label><input type="number" id="c2-${key}" value="${s.seconds_2}"></div><div><label>Размер</label><input type="number" id="sz-${key}" value="${s.wave_size}"></div></div></div>`;
+      const hTag = hunters[key] || 'HUNTER_02';
+      html += `<div class="card" style="padding:12px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font-weight:700;">${icons[key] || '🔧'} ${names[key]} <span style="font-size:10px; color:var(--muted); font-weight:600;">(${hTag})</span></div><label style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted);"><input type="checkbox" id="en-${key}" ${s.enabled?'checked':''} style="width:auto;">Вкл</label></div><div style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; font-size:11px;"><div><label>R1, км</label><input type="number" id="r1-${key}" value="${s.radius_1_km}"></div><div><label>C1, сек</label><input type="number" id="c1-${key}" value="${s.seconds_1}"></div><div><label>R2, км</label><input type="number" id="r2-${key}" value="${s.radius_2_km}"></div><div><label>C2, сек</label><input type="number" id="c2-${key}" value="${s.seconds_2}"></div><div><label>Размер</label><input type="number" id="sz-${key}" value="${s.wave_size}"></div></div></div>`;
     }
     html += `<button class="btn green" onclick="saveWaves()">💾 Сохранить всё</button>`;
     list.innerHTML = html;
@@ -697,8 +704,8 @@ input:focus, select:focus { border-color: var(--gold); }
     const { data } = await supabase.from('orders').select('*').eq('hunter', waHunter).is('executor_id', null).is('assigned_executor_id', null).lt('created_at', oneMinAgo).order('created_at', { ascending: true });
     if (!data || data.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Пусто. Все заказы разобраны.</div>'; return; }
     
-    const colors = { evacuator:'#FF3B30', manipulator:'#F5A623', cargo:'#007AFF', intercity:'#a78bfa', plumber:'#00D09C', electrician:'#00D09C', cleaning:'#00D09C', welder:'#00D09C', fridge:'#00D09C', washer:'#00D09C', tv:'#00D09C', hour:'#00D09C' };
-    const icos = { evacuator:'🚛', manipulator:'🏗', cargo:'📦', intercity:'🚖', plumber:'🔧', electrician:'⚡', cleaning:'🧹', welder:'🔨', fridge:'❄️', washer:'🌀', tv:'📺', hour:'⏰' };
+    const colors = { city_taxi:'#F5A623', evacuator:'#FF3B30', manipulator:'#F5A623', cargo:'#007AFF', intercity:'#a78bfa', plumber:'#00D09C', electrician:'#00D09C', cleaning:'#00D09C', welder:'#00D09C', fridge:'#00D09C', washer:'#00D09C', tv:'#00D09C', hour:'#00D09C' };
+    const icos = { city_taxi:'🚖', evacuator:'🚛', manipulator:'🏗', cargo:'📦', intercity:'🚖', plumber:'🔧', electrician:'⚡', cleaning:'🧹', welder:'🔨', fridge:'❄️', washer:'🌀', tv:'📺', hour:'⏰' };
 
     list.innerHTML = data.map(o => {
       const shortId = o.id.split('-')[0].toUpperCase().slice(0,4); const sName = names[o.service_id] || o.service_id; const color = colors[o.service_id] || '#888'; const icon = icos[o.service_id] || '🔧'; const waited = Math.floor((Date.now() - new Date(o.created_at).getTime()) / 60000); const address = (o.address || 'Адрес не указан').split('| ЧЕК:')[0]; const copyText = `${icon} #${shortId} · ${sName}${o.variant_id ? ' · ' + o.variant_id : ''} · ${address}`;
@@ -899,7 +906,14 @@ input:focus, select:focus { border-color: var(--gold); }
       let subInfoHtml = '';
       if (u.service_id === 'intercity') { let subUntil = u.sub_until ? new Date(u.sub_until) : new Date(new Date(u.created_at).getTime() + 30 * 24 * 60 * 60 * 1000); const daysLeft = Math.ceil((subUntil - new Date()) / (1000 * 60 * 60 * 24)); if (daysLeft > 0) subInfoHtml = `<div style="color:var(--green); font-weight:bold; margin-top:4px;">Такси: Подписка ${daysLeft} дн.</div>`; else subInfoHtml = `<div style="color:var(--red); font-weight:bold; margin-top:4px;">Такси: Подписка истекла</div>`; }
       let photosHtml = '';
-      if (u.car_photo || u.tech_passport || u.plate_number || u.vehicle_number) { photosHtml = `<div style="margin-top:6px; font-size:12px;">`; if (u.plate_number || u.vehicle_number) photosHtml += `<div style="color:var(--text);"><b>Авто:</b> ${escapeHTML(u.plate_number || u.vehicle_number)}</div>`; if (u.car_photo) photosHtml += `<div><a href="${u.car_photo}" target="_blank" style="color:var(--blue);">📸 Фото машины</a></div>`; if (u.tech_passport) photosHtml += `<div><a href="${u.tech_passport}" target="_blank" style="color:var(--blue);">📄 Техпаспорт</a></div>`; photosHtml += `</div>`; }
+      if (u.car_photo || u.tech_passport || u.driver_license || u.plate_number || u.vehicle_number) {
+        photosHtml = `<div style="margin-top:6px; font-size:12px;">`;
+        if (u.plate_number || u.vehicle_number) photosHtml += `<div style="color:var(--text);"><b>Авто:</b> ${escapeHTML(u.plate_number || u.vehicle_number)}</div>`;
+        if (u.car_photo) photosHtml += `<div><a href="${escapeHTML(u.car_photo)}" target="_blank" style="color:var(--blue);">📸 Фото машины</a></div>`;
+        if (u.tech_passport) photosHtml += `<div><a href="${escapeHTML(u.tech_passport)}" target="_blank" style="color:var(--blue);">📄 Техпаспорт</a></div>`;
+        if (u.driver_license) photosHtml += `<div><a href="${escapeHTML(u.driver_license)}" target="_blank" style="color:var(--blue);">🪪 Вод. удостоверение</a></div>`;
+        photosHtml += `</div>`;
+      }
       return `<div class="dossier"><div class="dossier-head"><div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="dossier-name">${escapeHTML(u.name || 'Без имени')}</h2><div class="dossier-phone">${escapeHTML(u.phone)}</div></div><div style="background:var(--bg); padding:4px 8px; border-radius:6px; font-size:10px; color:var(--gold);">ID: ${u.id.split('-')[0].toUpperCase()}</div></div></div><div class="dossier-stats"><div class="d-stat"><div class="d-val" style="color:var(--gold);">${u.rating ?? 15}</div><div class="d-lbl">Рейтинг</div></div><div class="d-stat"><div class="d-val">${u.completed_orders || 0}</div><div class="d-lbl">Заказов</div></div><div class="d-stat"><div class="d-val" style="color:${u.is_blacklisted ? 'var(--red)' : 'var(--green)'};">${u.is_blacklisted ? '🚫' : '✅'}</div><div class="d-lbl">Статус</div></div></div><div style="font-size:13px; color:var(--muted); margin-bottom:16px;"><div><b>Категория:</b> ${names[u.service_id] || u.service_id} ${u.variant_id ? '('+u.variant_id+')' : ''}</div>${photosHtml}<div><b>Регистрация:</b> ${new Date(u.created_at).toLocaleDateString('ru-RU')}</div>${subInfoHtml}</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;"><button class="btn" onclick="adminAction('BLOCK', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, ${!u.is_active})">${!u.is_active ? '✅ Разблок' : '⛔ Блок'}</button><button class="btn sec" style="color:var(--red);" onclick="adminAction('DELETE', '${u.id}', ${safeParam(u.name)}, ${safeParam(u.phone)}, false)">🗑 Удалить</button></div></div>`;
     }).join('');
   }
@@ -913,9 +927,26 @@ input:focus, select:focus { border-color: var(--gold); }
   }
 
   window.updateAddVariant = function() {
-    let s = document.getElementById('add-service').value; let vf = document.getElementById('add-variant-field'); let v = document.getElementById('add-variant'); let carf = document.getElementById('add-vehicle-field'); let photof = document.getElementById('add-photo-field'); let passportf = document.getElementById('add-passport-field');
-    v.innerHTML = ''; let arr = vmap[s] || []; vf.classList.toggle('hidden', arr.length === 0); arr.forEach(x => { let o = document.createElement('option'); o.textContent = x; v.appendChild(o); });
-    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); carf.classList.toggle('hidden', !needCar); photof.classList.toggle('hidden', !needCar); passportf.classList.toggle('hidden', !needCar);
+    let s = document.getElementById('add-service').value;
+    let vf = document.getElementById('add-variant-field');
+    let v = document.getElementById('add-variant');
+    let carf = document.getElementById('add-vehicle-field');
+    let photof = document.getElementById('add-photo-field');
+    let passportf = document.getElementById('add-passport-field');
+    let licensef = document.getElementById('add-license-field');
+
+    v.innerHTML = '';
+    let arr = vmap[s] || [];
+    vf.classList.toggle('hidden', arr.length === 0);
+    arr.forEach(x => { let o = document.createElement('option'); o.textContent = x; v.appendChild(o); });
+
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity', 'city_taxi'].includes(s);
+    carf.classList.toggle('hidden', !needCar);
+    photof.classList.toggle('hidden', !needCar);
+    passportf.classList.toggle('hidden', !needCar);
+
+    let needLicense = ['city_taxi', 'intercity'].includes(s);
+    licensef.classList.toggle('hidden', !needLicense);
   }
 
   window.pickFromContacts = async function() {
@@ -924,14 +955,38 @@ input:focus, select:focus { border-color: var(--gold); }
   }
 
   window.submitAdd = async function() {
-    let s = document.getElementById('add-service').value; let phone = document.getElementById('add-phone').value.replace(/\D/g, ''); let name = document.getElementById('add-name').value.trim(); let car = document.getElementById('add-vehicle').value.trim(); let carPhoto = document.getElementById('add-car-photo').value.trim(); let techPassport = document.getElementById('add-tech-passport').value.trim(); let res = document.getElementById('add-result');
+    let s = document.getElementById('add-service').value;
+    let phone = document.getElementById('add-phone').value.replace(/\D/g, '');
+    let name = document.getElementById('add-name').value.trim();
+    let car = document.getElementById('add-vehicle').value.trim();
+    let carPhoto = document.getElementById('add-car-photo').value.trim();
+    let techPassport = document.getElementById('add-tech-passport').value.trim();
+    let licenseUrl = document.getElementById('add-driver-license').value.trim();
+    let res = document.getElementById('add-result');
+
     if(!s || phone.length !== 9) { res.style.color = 'var(--red)'; res.textContent = 'Заполните поля (тел 9 цифр).'; return; }
-    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity'].includes(s); if(needCar && !car) { res.style.color = 'var(--red)'; res.textContent = 'Введите номер автомобиля!'; return; }
-    const fullPhone = '+996' + phone; const { data: existing } = await supabase.from('executors').select('id').eq('phone', fullPhone).maybeSingle(); if (existing) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: этот номер уже зарегистрирован!'; return; }
-    let hunter = hunters[s] || 'HUNTER_02'; let variant = document.getElementById('add-variant').value;
+    let needCar = ['cargo', 'evacuator', 'manipulator', 'intercity', 'city_taxi'].includes(s);
+    if(needCar && !car) { res.style.color = 'var(--red)'; res.textContent = 'Введите номер автомобиля!'; return; }
+
+    let needLicense = ['city_taxi', 'intercity'].includes(s);
+    if (needLicense && !licenseUrl) {
+      res.style.color = 'var(--red)';
+      res.textContent = 'Для такси нужна ссылка на водительское удостоверение!';
+      return;
+    }
+
+    const fullPhone = '+996' + phone;
+    const { data: existing } = await supabase.from('executors').select('id').eq('phone', fullPhone).maybeSingle();
+    if (existing) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: этот номер уже зарегистрирован!'; return; }
+
+    let hunter = hunters[s] || 'HUNTER_02';
+    let variant = document.getElementById('add-variant').value;
     let insertData = { name: name, phone: fullPhone, service_id: s, hunter: hunter, variant_id: variant, plate_number: car, is_approved: true, rating: 15, is_online: false, is_busy: false, is_active: true };
     if (s === 'intercity') { const subDate = new Date(); subDate.setDate(subDate.getDate() + 30); insertData.sub_until = subDate.toISOString(); }
-    if (carPhoto) insertData.car_photo = carPhoto; if (techPassport) insertData.tech_passport = techPassport;
+    if (carPhoto) insertData.car_photo = carPhoto;
+    if (techPassport) insertData.tech_passport = techPassport;
+    if (licenseUrl) insertData.driver_license = licenseUrl;
+
     const { error } = await supabase.from('executors').insert([insertData]);
     if(error) { res.style.color = 'var(--red)'; res.textContent = 'Ошибка: ' + error.message; } else { res.style.color = 'var(--green)'; res.innerHTML = '✅ Успешно добавлен!'; setTimeout(() => page('market'), 1500); }
   }
@@ -953,7 +1008,7 @@ input:focus, select:focus { border-color: var(--gold); }
       if (error) { alert('Ошибка: ' + error.message); } else { alert('✅ Заказ переброшен! Через 1 минуту он появится в WhatsApp-журнале.'); loadClientOrders(); loadMarket(); }
   }
 
-  const SVC_MAP = { evacuator: { name: 'Эвакуатор', group: 'СПЕЦТЕХНИКА' }, manipulator: { name: 'Манипулятор', group: 'СПЕЦТЕХНИКА' }, cargo: { name: 'Грузоперевозки', group: 'СПЕЦТЕХНИКА' }, plumber: { name: 'Сантехник', group: 'БЫТОВЫЕ' }, electrician: { name: 'Электрик', group: 'БЫТОВЫЕ' }, cleaning: { name: 'Клининг', group: 'БЫТОВЫЕ' }, welder: { name: 'Сварщик', group: 'БЫТОВЫЕ' }, fridge: { name: 'Ремонт холодильника', group: 'БЫТОВЫЕ' }, washer: { name: 'Ремонт стиральной', group: 'БЫТОВЫЕ' }, tv: { name: 'Телемастер', group: 'БЫТОВЫЕ' }, hour: { name: 'Мастер на час', group: 'БЫТОВЫЕ' } };
+  const SVC_MAP = { city_taxi: { name: 'Бишкек Такси', group: 'СПЕЦТЕХНИКА' }, evacuator: { name: 'Эвакуатор', group: 'СПЕЦТЕХНИКА' }, manipulator: { name: 'Манипулятор', group: 'СПЕЦТЕХНИКА' }, cargo: { name: 'Грузоперевозки', group: 'СПЕЦТЕХНИКА' }, plumber: { name: 'Сантехник', group: 'БЫТОВЫЕ' }, electrician: { name: 'Электрик', group: 'БЫТОВЫЕ' }, cleaning: { name: 'Клининг', group: 'БЫТОВЫЕ' }, welder: { name: 'Сварщик', group: 'БЫТОВЫЕ' }, fridge: { name: 'Ремонт холодильника', group: 'БЫТОВЫЕ' }, washer: { name: 'Ремонт стиральной', group: 'БЫТОВЫЕ' }, tv: { name: 'Телемастер', group: 'БЫТОВЫЕ' }, hour: { name: 'Мастер на час', group: 'БЫТОВЫЕ' } };
 
   async function loadExtTerminal() {
     const el = document.getElementById('ext-term-body'); el.innerHTML = '// Сканируем эфир...';
@@ -996,4 +1051,4 @@ input:focus, select:focus { border-color: var(--gold); }
   loadMarket();
 </script>
 </body>
-    </html>
+</html>
